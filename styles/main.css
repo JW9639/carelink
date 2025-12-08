@@ -1,0 +1,241 @@
+/* Global Styles for Healthcare System */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Root Variables */
+:root {
+    --primary-color: #0066CC;
+    --secondary-color: #00A896;
+    --success-color: #06D6A0;
+    --warning-color: #FFB703;
+    --error-color: #EF476F;
+    --dark-color: #2B2D42;
+    --light-bg: #F0F4F8;
+    --white: #FFFFFF;
+    --border-radius: 12px;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --box-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Hide Streamlit Default Elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* Remove top padding */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Global Body Styling */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--light-bg);
+    color: var(--dark-color);
+}
+
+/* Main Container */
+.main {
+    background-color: var(--light-bg);
+}
+
+/* Card Styling */
+.card {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--box-shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* Stat Card */
+.stat-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.03);
+}
+
+.stat-card-value {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+.stat-card-label {
+    font-size: 14px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Info Card with Border */
+.info-card {
+    background-color: var(--white);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 12px 0;
+    box-shadow: var(--box-shadow);
+}
+
+.info-card-primary { border-left-color: var(--primary-color); }
+.info-card-success { border-left-color: var(--success-color); }
+.info-card-warning { border-left-color: var(--warning-color); }
+.info-card-error { border-left-color: var(--error-color); }
+
+/* Button Styling */
+.stButton>button {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+}
+
+.stButton>button:hover {
+    background-color: #0052A3;
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+    transform: translateY(-2px);
+}
+
+.stButton>button:active {
+    transform: translateY(0);
+}
+
+/* Secondary Button */
+.stButton.secondary>button {
+    background-color: var(--secondary-color);
+}
+
+.stButton.secondary>button:hover {
+    background-color: #008C7A;
+}
+
+/* Input Fields */
+.stTextInput>div>div>input,
+.stSelectbox>div>div>select,
+.stTextArea>div>div>textarea {
+    border-radius: 8px;
+    border: 2px solid #E0E7ED;
+    padding: 12px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.stTextInput>div>div>input:focus,
+.stSelectbox>div>div>select:focus,
+.stTextArea>div>div>textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 24px;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+/* Divider */
+hr {
+    border: none;
+    border-top: 2px solid #E0E7ED;
+    margin: 24px 0;
+}
+
+/* Metrics */
+.stMetric {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Sidebar Styling */
+.css-1d391kg {
+    background-color: var(--white);
+}
+
+/* Table Styling */
+.stDataFrame {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+/* Alert/Info Boxes */
+.stAlert {
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* Loading Spinner */
+.stSpinner>div {
+    border-top-color: var(--primary-color);
+}
+
+/* Success Message */
+.success-message {
+    background-color: #D1FAE5;
+    border-left: 4px solid var(--success-color);
+    color: #065F46;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+/* Error Message */
+.error-message {
+    background-color: #FEE2E2;
+    border-left: 4px solid var(--error-color);
+    color: #991B1B;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+/* Warning Message */
+.warning-message {
+    background-color: #FEF3C7;
+    border-left: 4px solid var(--warning-color);
+    color: #92400E;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+}

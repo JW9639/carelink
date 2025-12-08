@@ -1,0 +1,115 @@
+/* Login Page Specific Styles */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px;
+}
+
+.login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-logo {
+    margin-bottom: 24px;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2B2D42;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: #6B7280;
+    margin-bottom: 32px;
+}
+
+.login-form {
+    text-align: left;
+}
+
+.login-input-group {
+    margin-bottom: 20px;
+}
+
+.login-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.login-button {
+    width: 100%;
+    background: linear-gradient(135deg, #0066CC, #00A896);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+.login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+}
+
+.mock-login-section {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 2px solid #E5E7EB;
+}
+
+.mock-login-title {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.role-button {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 2px solid #E5E7EB;
+    background: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.role-button:hover {
+    border-color: #0066CC;
+    background-color: #F0F9FF;
+    transform: translateX(4px);
+}
+
+.role-button.patient {
+    color: #0066CC;
+}
+
+.role-button.doctor {
+    color: #00A896;
+}
+
+.role-button.admin {
+    color: #EF476F;
+}
