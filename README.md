@@ -2,17 +2,17 @@
 
 A modern healthcare management platform built with Streamlit and Python.
 
-## 🏥 Features
+## Features
 
-- 🔐 **Role-based authentication** - Patient, Doctor, and Admin user types
-- 👤 **Patient Dashboard** - View appointments, medical records, prescriptions, and messages
-- ⚕️ **Doctor Dashboard** - Manage patients, appointments, and medical information
-- ⚙️ **Admin Dashboard** - System management, analytics, and user administration
-- 🎨 **Modern UI** - Custom CSS styling with professional healthcare color scheme
-- 📱 **Responsive Design** - Works on desktop and mobile devices
-- 📊 **Data Visualization** - Interactive charts and graphs with Plotly
+- **Role-based authentication** - Patient, Doctor, and Admin user types
+- **Patient Dashboard** - View appointments, medical records, prescriptions, and messages
+- **Doctor Dashboard** - Manage patients, appointments, and medical information
+- **Admin Dashboard** - System management, analytics, and user administration
+- **Modern UI** - Custom CSS styling with professional healthcare color scheme
+- **Responsive Design** - Works on desktop and mobile devices
+- **Data Visualization** - Interactive charts and graphs with Plotly
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
@@ -50,7 +50,7 @@ A modern healthcare management platform built with Streamlit and Python.
    pip install -r requirements.txt
    ```
 
-## 🎯 Running the Application
+## Running the Application
 
 ```bash
 streamlit run Home.py
@@ -68,7 +68,7 @@ For testing purposes, use the mock login buttons on the home page:
 | **Doctor** | Dr. Sarah Johnson | Cardiology |
 | **Admin** | Admin User | System Administration |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── .streamlit/          # Streamlit configuration
@@ -88,9 +88,9 @@ For testing purposes, use the mock login buttons on the home page:
 │   ├── models.py        # Data models
 │   └── connection.py    # Database connection handler
 ├── pages/               # Multi-page dashboards
-│   ├── 1_👤_Patient_Dashboard.py
-│   ├── 2_⚕️_Doctor_Dashboard.py
-│   └── 3_⚙️_Admin_Dashboard.py
+│   ├── Patient_Dashboard.py
+│   ├── Doctor_Dashboard.py
+│   └── Admin_Dashboard.py
 ├── services/            # Business logic
 │   ├── auth_service.py      # Authentication logic
 │   └── session_manager.py   # Session state management
@@ -106,7 +106,7 @@ For testing purposes, use the mock login buttons on the home page:
 └── README.md           # This file
 ```
 
-## 🎨 Design System
+## Design System
 
 ### Color Palette
 
@@ -124,7 +124,7 @@ For testing purposes, use the mock login buttons on the home page:
 - **Headers:** 600-700 weight
 - **Body:** 400 weight
 
-## 🔧 Technologies Used
+## Technologies Used
 
 - **Streamlit** - Web framework for Python
 - **Python** - Backend programming language
@@ -133,9 +133,9 @@ For testing purposes, use the mock login buttons on the home page:
 - **Custom CSS** - Professional styling
 - **SQLite** - Database (planned)
 
-## 📊 Development Status
+## Development Status
 
-### ✅ Completed
+### Completed
 - Login page with mock authentication
 - Role-based dashboards (Patient, Doctor, Admin)
 - Modern UI with custom CSS
@@ -144,11 +144,11 @@ For testing purposes, use the mock login buttons on the home page:
 - Component library
 - Data visualization charts
 
-### 🚧 In Progress
+### In Progress
 - Backend API integration
 - Real database implementation
 
-### 📋 Planned
+### Planned
 - Real authentication system with password hashing
 - Appointment booking functionality
 - Medical records management
@@ -159,7 +159,7 @@ For testing purposes, use the mock login buttons on the home page:
 - Report generation
 - Email notifications
 
-## 🔐 Security Notes
+## Security Notes
 
 **Current Status:** This is a prototype with mock authentication. For production use, implement:
 
@@ -172,7 +172,7 @@ For testing purposes, use the mock login buttons on the home page:
 - XSS protection
 - CSRF tokens
 
-## 📝 Documentation
+## Documentation
 
 ### Adding New Pages
 
@@ -187,7 +187,7 @@ For testing purposes, use the mock login buttons on the home page:
 2. Import and use in dashboard pages
 3. Follow existing component patterns (cards.py)
 
-## 🤝 Contributing
+## Contributing
 
 This is an educational project. For improvements or bug fixes:
 
@@ -196,11 +196,8 @@ This is an educational project. For improvements or bug fixes:
 3. Follow existing code structure
 4. Update README if needed
 
-## 📄 License
 
-© 2025 MediCare Health System. Educational project for academic purposes.
-
-## 👥 Contact
+## Contact
 
 For questions or support regarding this project, please contact the development team.
 
