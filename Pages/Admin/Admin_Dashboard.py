@@ -12,7 +12,6 @@ from Components.sidebar import admin_sidebar
 # Page config
 st.set_page_config(
     page_title="Admin Dashboard",
-    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -166,32 +165,6 @@ with tab2:
     if st.button("View All Users", use_container_width=True):
         st.info("Full user management page coming soon!")
 
-with tab3:
-    st.markdown("### System Health")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
-                <h3 style="color: #06D6A0; margin: 0; font-size: 24px;">System Online</h3>
-                <p style="color: #6B7280; margin: 12px 0 0 0; font-size: 16px;">Uptime: 99.9%</p>
-                <p style="color: #6B7280; margin: 4px 0 0 0; font-size: 14px;">Last restart: 30 days ago</p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
-                <h3 style="color: #0066CC; margin: 0; font-size: 24px;">Database</h3>
-                <p style="color: #6B7280; margin: 12px 0 0 0; font-size: 16px;">Healthy - 2.4GB used</p>
-                <p style="color: #6B7280; margin: 4px 0 0 0; font-size: 14px;">Last backup: 2 hours ago</p>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-            <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center;">
 with tab3:
     st.markdown("### System Overview")
     

@@ -1,0 +1,12 @@
+/* Sidebar Navigation Styles */
+
+/* Hide Streamlit default navigation */
+[data-testid="stSidebarNav"] {
+    display: none;
+}
+
+/* Tighter spacing for sidebar buttons */
+[data-testid="stSidebar"] button[kind="secondary"] {
+    padding: 0.25rem 0.75rem !important;
+    margin-bottom: 0.25rem !important;
+}

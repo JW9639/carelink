@@ -10,7 +10,6 @@ from Components.sidebar import doctor_sidebar
 # Page config
 st.set_page_config(
     page_title="Doctor Dashboard",
-    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )

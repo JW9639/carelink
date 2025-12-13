@@ -25,6 +25,8 @@ def load_css():
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
         with open("Styles/login.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        with open("Styles/footer.css") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         st.warning("CSS files not found. Using default styling.")
 
@@ -62,19 +64,16 @@ with col2:
     # Traditional Login Form (Non-functional for now)
     login_form()
     
-   
     # Divider
     st.markdown("---")
     
     # Mock Login Section
     mock_login_buttons()
 
-# Footer
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("---")
+# Footer - Sticky at bottom
 st.markdown("""
-    <div style="text-align: center; color: #6B7280; font-size: 14px; padding: 20px;">
-        <p>Your health information is secure and private</p>
-        <p style="margin-top: 8px;">© 2025 CARELINK Health System. All rights reserved.</p>
+    <div class="footer">
+        <p style="margin: 0;">Your health information is secure and private</p>
+        <p style="margin: 8px 0 0 0;">© 2025 CARELINK Health System. All rights reserved.</p>
     </div>
 """, unsafe_allow_html=True)

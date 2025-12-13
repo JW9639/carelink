@@ -1,0 +1,19 @@
+/* Footer Styles */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    text-align: center;
+    color: #6B7280;
+    font-size: 18px;
+    padding: 20px 0;
+    border-top: 1px solid #E5E7EB;
+    z-index: 999;
+}
+
+/* Add padding to main content to prevent overlap with fixed footer */
+.main .block-container {
+    padding-bottom: 100px;
+}
