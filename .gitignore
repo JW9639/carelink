@@ -9,7 +9,7 @@ venv/
 .venv/
 ENV/
 *.egg-info/
-
+ 
 # Streamlit
 .streamlit/secrets.toml
 

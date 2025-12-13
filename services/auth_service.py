@@ -1,5 +1,5 @@
 """Authentication service for user login."""
-from database.mock_data import MOCK_USERS
+from Database.mock_Data import MOCK_USERS
 import hashlib
 
 class AuthService:

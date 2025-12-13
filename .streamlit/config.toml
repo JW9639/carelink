@@ -4,6 +4,13 @@ backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#F0F4F8"
 textColor = "#2B2D42"
 font = "sans serif"
+[theme.sidebar]
+backgroundColor = "#FFFFFF"
+textColor = "#2B2D42"
+widgetBackgroundColor = "#FFFFFF"
+widgetBorderColor = "#E0E7ED"
+widgetFocusedBorderColor = "#0066CC"
+skeletonBackgroundColor = "#F0F4F8"
 
 [server]
 port = 8501

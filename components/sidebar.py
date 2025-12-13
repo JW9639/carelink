@@ -1,10 +1,59 @@
 """Sidebar navigation components for different user roles."""
 import streamlit as st
-from services.session_manager import SessionManager
+from Services.session_manager import SessionManager
+
+
+def render_sidebar_toggle():
+    """Inject the custom floating button used to open/close the sidebar."""
+    st.markdown(
+        """
+        <div class="cl-sidebar-toggle">
+            <button id="clSidebarToggleBtn" class="cl-sidebar-toggle__btn" type="button" aria-label="Toggle sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="cl-sidebar-overlay" id="clSidebarOverlay"></div>
+        <script>
+        (function() {
+            const body = document.body;
+            const toggleBtn = document.getElementById("clSidebarToggleBtn");
+            const overlay = document.getElementById("clSidebarOverlay");
+            if (!toggleBtn || toggleBtn.dataset.bound === "true") {
+                return;
+            }
+            toggleBtn.dataset.bound = "true";
+            const saved = window.localStorage.getItem("clSidebarOpen") === "true";
+            if (saved) {
+                body.classList.add("sidebar-open");
+            }
+            const setState = (open) => {
+                if (open) {
+                    body.classList.add("sidebar-open");
+                } else {
+                    body.classList.remove("sidebar-open");
+                }
+                window.localStorage.setItem("clSidebarOpen", open);
+            };
+            toggleBtn.addEventListener("click", (event) => {
+                event.preventDefault();
+                const open = !body.classList.contains("sidebar-open");
+                setState(open);
+            });
+            if (overlay) {
+                overlay.addEventListener("click", () => setState(false));
+            }
+        })();
+        </script>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def patient_sidebar():
     """Display patient portal sidebar navigation."""
+    render_sidebar_toggle()
     with st.sidebar:
         st.markdown("### Patient Portal")
         st.info(f"**{st.session_state.user_name}**")
@@ -26,11 +75,11 @@ def patient_sidebar():
         </style>
         """, unsafe_allow_html=True)
         
-        st.page_link("pages/Patient_Dashboard.py", label="• Dashboard", use_container_width=True)
-        st.page_link("pages/Appointments.py", label="• Appointments", use_container_width=True)
-        st.page_link("pages/Prescriptions.py", label="• Prescriptions", use_container_width=True)
-        st.page_link("pages/Lab_Results.py", label="• Lab Results", use_container_width=True)
-        st.page_link("pages/Profile.py", label="• Profile", use_container_width=True)
+        st.page_link("Pages/Patient/Patient_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("Pages/Patient/Patient_Appointments.py", label="• Appointments", use_container_width=True)
+        st.page_link("Pages/Patient/Patient_Prescriptions.py", label="• Prescriptions", use_container_width=True)
+        st.page_link("Pages/Patient/Patient_Lab_Results.py", label="• Lab Results", use_container_width=True)
+        st.page_link("Pages/Patient/Patient_Profile.py", label="• Profile", use_container_width=True)
         
         st.markdown("---")
         if st.button("Logout", use_container_width=True, type="primary"):
@@ -49,6 +98,7 @@ def doctor_sidebar():
     user_data = SessionManager.get_user_data()
     specialty = user_data.get('specialty', 'General Medicine') if user_data else 'General Medicine'
     
+    render_sidebar_toggle()
     with st.sidebar:
         st.markdown("### Doctor Portal")
         st.info(f"**{st.session_state.user_name}**")
@@ -70,11 +120,8 @@ def doctor_sidebar():
         </style>
         """, unsafe_allow_html=True)
         
-        st.page_link("pages/Doctor_Dashboard.py", label="• Dashboard", use_container_width=True)
-        st.page_link("pages/Appointments.py", label="• Schedule", use_container_width=True)
-        st.page_link("pages/Prescriptions.py", label="• Prescriptions", use_container_width=True)
-        st.page_link("pages/Lab_Results.py", label="• Lab Results", use_container_width=True)
-        st.page_link("pages/Profile.py", label="• Profile", use_container_width=True)
+        st.page_link("Pages/Doctor/Doctor_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("Pages/Doctor/Doctor_Profile.py", label="• Profile", use_container_width=True)
         
         st.markdown("---")
         if st.button("Logout", use_container_width=True, type="primary"):
@@ -89,6 +136,7 @@ def doctor_sidebar():
 
 def admin_sidebar():
     """Display admin portal sidebar navigation."""
+    render_sidebar_toggle()
     with st.sidebar:
         st.markdown("### Admin Portal")
         st.info(f"**{st.session_state.user_name}**")
@@ -110,9 +158,8 @@ def admin_sidebar():
         </style>
         """, unsafe_allow_html=True)
         
-        st.page_link("pages/Admin_Dashboard.py", label="• Dashboard", use_container_width=True)
-        st.page_link("pages/Appointments.py", label="• Appointments", use_container_width=True)
-        st.page_link("pages/Profile.py", label="• Profile", use_container_width=True)
+        st.page_link("Pages/Admin/Admin_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("Pages/Admin/Admin_Profile.py", label="• Profile", use_container_width=True)
         
         st.markdown("---")
         if st.button("Logout", use_container_width=True, type="primary"):

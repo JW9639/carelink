@@ -1,15 +1,14 @@
 """Patient Dashboard - View appointments, medical records, prescriptions."""
 import streamlit as st
-from services.session_manager import SessionManager
-from database.mock_data import MOCK_STATS, MOCK_APPOINTMENTS, MOCK_MEDICAL_RECORDS, MOCK_PRESCRIPTIONS, MOCK_MESSAGES
-from components.cards import stat_card, appointment_card, medical_record_card, prescription_card, message_card
+from Services.session_manager import SessionManager
+from Database.mock_Data import MOCK_STATS, MOCK_APPOINTMENTS, MOCK_MEDICAL_RECORDS, MOCK_PRESCRIPTIONS, MOCK_MESSAGES
+from Components.cards import stat_card, appointment_card, medical_record_card, prescription_card, message_card
 
-from components.sidebar import patient_sidebar
+from Components.sidebar import patient_sidebar
 
 # Page config
 st.set_page_config(
     page_title="Patient Dashboard",
-    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -18,9 +17,9 @@ st.set_page_config(
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("styles/main.css") as f:
+        with open("Styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("styles/dashboard.css") as f:
+        with open("Styles/dashboard.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass

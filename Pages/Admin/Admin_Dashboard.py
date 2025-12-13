@@ -1,13 +1,13 @@
 """Admin Dashboard - System management, user management, analytics."""
 import streamlit as st
-from services.session_manager import SessionManager
-from database.mock_data import MOCK_STATS, MOCK_PATIENTS
-from components.cards import stat_card
+from Services.session_manager import SessionManager
+from Database.mock_Data import MOCK_STATS, MOCK_PATIENTS
+from Components.cards import stat_card
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-from components.sidebar import admin_sidebar
+from Components.sidebar import admin_sidebar
 
 # Page config
 st.set_page_config(
@@ -21,9 +21,9 @@ st.set_page_config(
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("styles/main.css") as f:
+        with open("Styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("styles/dashboard.css") as f:
+        with open("Styles/dashboard.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass

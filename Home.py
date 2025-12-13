@@ -3,18 +3,17 @@ MediCare Health System - Login Page
 Main entry point for the application.
 """
 import streamlit as st
-from services.session_manager import SessionManager
-from components.auth import login_form, mock_login_buttons
-from config.settings import APP_NAME
+from Services.session_manager import SessionManager
+from Components.login_Portal import login_form, mock_login_buttons
+from Config.settings import APP_NAME
 
 # Page configuration
 st.set_page_config(
     page_title=f"{APP_NAME} - Login",
-    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-
+ 
 # Initialize session
 SessionManager.init_session()
 
@@ -22,9 +21,9 @@ SessionManager.init_session()
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("styles/main.css") as f:
+        with open("Styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("styles/login.css") as f:
+        with open("Styles/login.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         st.warning("CSS files not found. Using default styling.")
@@ -34,24 +33,16 @@ load_css()
 # Check if already logged in
 if SessionManager.is_authenticated():
     role = SessionManager.get_user_role()
-    user_name = SessionManager.get_user_name()
-    
-    st.success(f"Already logged in as {role.title()}")
-    st.info(f"Welcome back, {user_name}!")
-    
-    # Show appropriate dashboard link
     if role == "patient":
-        st.info("Navigate to **Patient Dashboard** using the sidebar")
+        st.switch_page("Pages/Patient/Patient_Dashboard.py")
     elif role == "doctor":
-        st.info("Navigate to **Doctor Dashboard** using the sidebar")
+        st.switch_page("Pages/Doctor/Doctor_Dashboard.py")
     elif role == "admin":
-        st.info("Navigate to **Admin Dashboard** using the sidebar")
-    
-    if st.button("Logout", type="primary"):
+        st.switch_page("Pages/Admin/Admin_Dashboard.py")
+    else:
+        st.warning("Unable to determine your role. Please log in again.")
         SessionManager.logout()
         st.rerun()
-    
-    st.stop()
 
 # Login Page Header
 st.markdown("""
