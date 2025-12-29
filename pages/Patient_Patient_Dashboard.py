@@ -112,4 +112,36 @@ with col_right:
 
 st.markdown("---")
 
+# Messages Section
+st.markdown("### Recent Messages")
+patient_messages = [msg for msg in MOCK_MESSAGES if msg["recipient"] == st.session_state.user_name][:3]
+
+if patient_messages:
+    for message in patient_messages:
+        message_card(message)
+    
+    if len([msg for msg in MOCK_MESSAGES if msg["recipient"] == st.session_state.user_name]) > 3:
+        if st.button("📬 View All Messages", use_container_width=True, type="secondary"):
+            st.info("Navigation to Messages page coming soon!")
+else:
+    st.info("No messages yet.")
+
+st.markdown("---")
+
+# Recent Prescriptions Section
+st.markdown("### Active Prescriptions")
+patient_prescriptions = [rx for rx in MOCK_PRESCRIPTIONS if rx["patient_name"] == st.session_state.user_name and rx.get("status") == "Active"][:3]
+
+if patient_prescriptions:
+    for prescription in patient_prescriptions:
+        prescription_card(prescription)
+    
+    if len([rx for rx in MOCK_PRESCRIPTIONS if rx["patient_name"] == st.session_state.user_name and rx.get("status") == "Active"]) > 3:
+        if st.button("💊 View All Prescriptions", use_container_width=True, type="secondary"):
+            st.info("Navigation to Prescriptions page coming soon!")
+else:
+    st.info("No active prescriptions.")
+
+st.markdown("---")
+
 # Bottom section - Important notices
