@@ -11,6 +11,17 @@
     margin-bottom: 0.25rem !important;
 }
 
+/* Force hide Streamlit's collapse button */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+/* Sidebar background styling */
+[data-testid="stSidebar"] {
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB;
+}
+
 /* === Sidebar Toggle Button === */
 .cl-sidebar-toggle {
     position: fixed;
@@ -72,36 +83,36 @@ body.sidebar-open .cl-sidebar-toggle__btn span:nth-child(3) {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
+    z-index: 99998;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
 }
 
 body.sidebar-open .cl-sidebar-overlay {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
 
 /* === Sidebar State Management === */
 
-/* Default: Sidebar collapsed, full width content */
+/* Default: Sidebar collapsed and hidden off-screen */
 [data-testid="stSidebar"] {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-}
-
-[data-testid="stSidebar"][aria-expanded="false"] {
-    transform: translateX(-100%);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    width: 21rem !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease !important;
+    z-index: 99999 !important;
 }
 
 /* When sidebar is open */
 body.sidebar-open [data-testid="stSidebar"] {
-    transform: translateX(0);
-}
-
-body.sidebar-open [data-testid="stSidebar"][aria-expanded="true"] {
-    transform: translateX(0);
+    transform: translateX(0) !important;
 }
 
 /* Main content area adjustments - ONLY when sidebar toggle is present */
@@ -121,16 +132,6 @@ body.has-sidebar-toggle.sidebar-open section.main > div.block-container {
 [data-testid="stSidebar"],
 section.main > div.block-container {
     will-change: transform, padding-left;
-}
-
-/* Force sidebar to stay collapsed initially */
-[data-testid="collapsedControl"] {
-    display: none !important;
-}
-
-/* Override Streamlit's default sidebar behavior */
-[data-testid="stSidebar"] > div:first-child {
-    width: 21rem;
 }
 
 /* Mobile responsiveness */
@@ -153,7 +154,7 @@ section.main > div.block-container {
         padding-left: 3.5rem !important;
     }
     
-    [data-testid="stSidebar"] > div:first-child {
-        width: 18rem;
+    [data-testid="stSidebar"] {
+        width: 18rem !important;
     }
 }

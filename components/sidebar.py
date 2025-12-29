@@ -26,6 +26,11 @@ def render_sidebar_toggle():
         <div class="cl-sidebar-overlay" id="clSidebarOverlay"></div>
         <script>
         (function() {
+            // Prevent multiple initializations
+            if (window.clSidebarInitialized) {
+                return;
+            }
+            
             // Wait for Streamlit to fully load
             const initToggle = () => {
                 const body = document.body;
@@ -34,52 +39,50 @@ def render_sidebar_toggle():
                 const sidebar = document.querySelector('[data-testid="stSidebar"]');
                 
                 if (!toggleBtn || !sidebar) {
-                    setTimeout(initToggle, 100);
+                    setTimeout(initToggle, 50);
                     return;
                 }
                 
-                if (toggleBtn.dataset.bound === "true") {
-                    return;
-                }
-                toggleBtn.dataset.bound = "true";
+                // Mark as initialized
+                window.clSidebarInitialized = true;
                 
                 // Add class to body to indicate sidebar toggle is present
                 body.classList.add("has-sidebar-toggle");
                 
-                // Check saved state
-                const saved = window.localStorage.getItem("clSidebarOpen") === "true";
-                if (saved) {
-                    body.classList.add("sidebar-open");
-                    sidebar.setAttribute("aria-expanded", "true");
-                } else {
-                    body.classList.remove("sidebar-open");
-                    sidebar.setAttribute("aria-expanded", "false");
-                }
+                // Start with sidebar closed (do NOT check localStorage on first load)
+                body.classList.remove("sidebar-open");
                 
                 const setState = (open) => {
+                    console.log("Setting sidebar state:", open);
                     if (open) {
                         body.classList.add("sidebar-open");
-                        sidebar.setAttribute("aria-expanded", "true");
                     } else {
                         body.classList.remove("sidebar-open");
-                        sidebar.setAttribute("aria-expanded", "false");
                     }
                     window.localStorage.setItem("clSidebarOpen", open);
                 };
                 
+                // Button click handler
                 toggleBtn.addEventListener("click", (event) => {
                     event.preventDefault();
                     event.stopPropagation();
                     const isOpen = body.classList.contains("sidebar-open");
+                    console.log("Toggle clicked. Current state:", isOpen, "-> Setting to:", !isOpen);
                     setState(!isOpen);
                 });
                 
+                // Overlay click handler
                 if (overlay) {
-                    overlay.addEventListener("click", () => setState(false));
+                    overlay.addEventListener("click", () => {
+                        console.log("Overlay clicked, closing sidebar");
+                        setState(false);
+                    });
                 }
+                
+                console.log("Sidebar toggle initialized successfully");
             };
             
-            // Initialize on load and on Streamlit reruns
+            // Initialize
             if (document.readyState === "loading") {
                 document.addEventListener("DOMContentLoaded", initToggle);
             } else {
