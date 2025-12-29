@@ -1,5 +1,6 @@
 """Sidebar navigation components for different user roles."""
 import streamlit as st
+import streamlit.components.v1 as components
 from services.session_manager import SessionManager
 
 
@@ -13,85 +14,109 @@ def load_sidebar_css():
 
 
 def render_sidebar_toggle():
-    """Inject the custom floating button used to open/close the sidebar."""
-    st.markdown(
+    """Inject the custom floating button and toggle logic - no visible space taken."""
+    # Put everything in one components.html call - both HTML and JavaScript
+    # This creates only ONE iframe container at height=0, so no blank space
+    components.html(
         """
-        <div class="cl-sidebar-toggle">
-            <button id="clSidebarToggleBtn" class="cl-sidebar-toggle__btn" type="button" aria-label="Toggle sidebar">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-        <div class="cl-sidebar-overlay" id="clSidebarOverlay"></div>
+        <!-- Inject button and overlay into parent document -->
         <script>
         (function() {
-            // Prevent multiple initializations
-            if (window.clSidebarInitialized) {
-                return;
+            const parentDoc = window.parent.document;
+            const body = parentDoc.body;
+            
+            // Only inject once
+            if (!parentDoc.getElementById("clSidebarToggleBtn")) {
+                // Create toggle button
+                const toggleDiv = parentDoc.createElement("div");
+                toggleDiv.className = "cl-sidebar-toggle";
+                toggleDiv.innerHTML = `
+                    <button id="clSidebarToggleBtn" class="cl-sidebar-toggle__btn" type="button" aria-label="Toggle sidebar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                `;
+                body.appendChild(toggleDiv);
+                
+                // Create overlay
+                const overlay = parentDoc.createElement("div");
+                overlay.className = "cl-sidebar-overlay";
+                overlay.id = "clSidebarOverlay";
+                body.appendChild(overlay);
             }
             
-            // Wait for Streamlit to fully load
+            // Initialize toggle functionality
             const initToggle = () => {
-                const body = document.body;
-                const toggleBtn = document.getElementById("clSidebarToggleBtn");
-                const overlay = document.getElementById("clSidebarOverlay");
-                const sidebar = document.querySelector('[data-testid="stSidebar"]');
+                const toggleBtn = parentDoc.getElementById("clSidebarToggleBtn");
+                const overlay = parentDoc.getElementById("clSidebarOverlay");
+                const sidebar = parentDoc.querySelector('[data-testid="stSidebar"]');
                 
                 if (!toggleBtn || !sidebar) {
-                    setTimeout(initToggle, 50);
+                    setTimeout(initToggle, 100);
                     return;
                 }
                 
-                // Mark as initialized
-                window.clSidebarInitialized = true;
+                // Force sidebar to use fixed positioning
+                sidebar.style.setProperty("position", "fixed", "important");
+                sidebar.style.setProperty("top", "0", "important");
+                sidebar.style.setProperty("height", "100vh", "important");
+                sidebar.style.setProperty("width", "21rem", "important");
+                sidebar.style.setProperty("z-index", "99999", "important");
+                sidebar.style.setProperty("transition", "left 0.3s ease", "important");
+                sidebar.style.setProperty("transform", "none", "important");
                 
-                // Add class to body to indicate sidebar toggle is present
                 body.classList.add("has-sidebar-toggle");
                 
-                // Start with sidebar closed (do NOT check localStorage on first load)
-                body.classList.remove("sidebar-open");
+                // Start with sidebar closed
+                if (!window.parent.clSidebarInitialized) {
+                    body.classList.remove("sidebar-open");
+                    sidebar.style.setProperty("left", "-21rem", "important");
+                    window.parent.clSidebarInitialized = true;
+                }
                 
                 const setState = (open) => {
-                    console.log("Setting sidebar state:", open);
                     if (open) {
                         body.classList.add("sidebar-open");
+                        sidebar.style.setProperty("left", "0", "important");
+                        sidebar.style.setProperty("visibility", "visible", "important");
+                        sidebar.style.setProperty("display", "block", "important");
                     } else {
                         body.classList.remove("sidebar-open");
+                        sidebar.style.setProperty("left", "-21rem", "important");
                     }
-                    window.localStorage.setItem("clSidebarOpen", open);
+                    try {
+                        window.parent.localStorage.setItem("clSidebarOpen", open);
+                    } catch(e) {}
                 };
                 
+                // Remove old handler if exists
+                if (toggleBtn._clickHandler) {
+                    toggleBtn.removeEventListener("click", toggleBtn._clickHandler);
+                }
+                
                 // Button click handler
-                toggleBtn.addEventListener("click", (event) => {
+                const clickHandler = (event) => {
                     event.preventDefault();
                     event.stopPropagation();
                     const isOpen = body.classList.contains("sidebar-open");
-                    console.log("Toggle clicked. Current state:", isOpen, "-> Setting to:", !isOpen);
                     setState(!isOpen);
-                });
+                };
+                
+                toggleBtn._clickHandler = clickHandler;
+                toggleBtn.addEventListener("click", clickHandler);
                 
                 // Overlay click handler
                 if (overlay) {
-                    overlay.addEventListener("click", () => {
-                        console.log("Overlay clicked, closing sidebar");
-                        setState(false);
-                    });
+                    overlay.addEventListener("click", () => setState(false));
                 }
-                
-                console.log("Sidebar toggle initialized successfully");
             };
             
-            // Initialize
-            if (document.readyState === "loading") {
-                document.addEventListener("DOMContentLoaded", initToggle);
-            } else {
-                initToggle();
-            }
+            setTimeout(initToggle, 100);
         })();
         </script>
         """,
-        unsafe_allow_html=True,
+        height=0,
     )
 
 

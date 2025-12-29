@@ -11,7 +11,11 @@
     margin-bottom: 0.25rem !important;
 }
 
-/* Force hide Streamlit's collapse button */
+/* Force hide Streamlit's collapse button using exact testid */
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
 [data-testid="collapsedControl"] {
     display: none !important;
 }

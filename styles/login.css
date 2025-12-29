@@ -1,11 +1,13 @@
 /* Login Page Specific Styles */
 
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    padding: 20px;
+/* Center the main content area between header and footer */
+.block-container {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: 75vh !important;
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
 }
 
 .login-card {

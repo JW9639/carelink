@@ -50,8 +50,8 @@ if SessionManager.is_authenticated():
 st.markdown("""
     <div style="text-align: center; padding: 10px 20px;">
         <div style="font-size: 72px; margin-bottom: 16px;"></div>
-        <h1 style="color: #0066CC; margin-bottom: 4px; font-size: 42px;">CARELINK</h1>
-        <p style="color: #6B7280; font-size: 18px; margin-top: 0;">Modern Healthcare Management Platform</p>
+        <h1 style="color: #0066CC; margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px; font-size: 42px;">CARELINK</h1>
+        <p style="color: #6B7280; font-size: 18px; margin-top: 2px; margin-bottom: 0;">Modern Healthcare Management Platform</p>
     </div>
 """, unsafe_allow_html=True)
 

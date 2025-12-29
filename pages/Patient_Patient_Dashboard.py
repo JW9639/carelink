@@ -10,7 +10,7 @@ from components.sidebar import patient_sidebar
 st.set_page_config(
     page_title="Patient Dashboard",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # Load CSS
@@ -114,13 +114,13 @@ st.markdown("---")
 
 # Messages Section
 st.markdown("### Recent Messages")
-patient_messages = [msg for msg in MOCK_MESSAGES if msg["recipient"] == st.session_state.user_name][:3]
+patient_messages = [msg for msg in MOCK_MESSAGES if msg["to"] == st.session_state.user_name][:3]
 
 if patient_messages:
     for message in patient_messages:
         message_card(message)
     
-    if len([msg for msg in MOCK_MESSAGES if msg["recipient"] == st.session_state.user_name]) > 3:
+    if len([msg for msg in MOCK_MESSAGES if msg["to"] == st.session_state.user_name]) > 3:
         if st.button("📬 View All Messages", use_container_width=True, type="secondary"):
             st.info("Navigation to Messages page coming soon!")
 else:

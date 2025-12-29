@@ -28,10 +28,45 @@ header {
     display: none !important;
 }
 
+/* Hide Streamlit's sidebar navigation arrow button */
+.st-emotion-cache-hzo1qh,
+.st-emotion-cache-azqww9 {
+    display: none !important;
+}
+
+/* Hide alert/notification containers */
+[data-testid="stAlertContainer"],
+.stAlertContainer {
+    display: none !important;
+}
+
+/* Increase label font size for better readability */
+.st-emotion-cache-o0mgxd,
+.st-emotion-cache-165t172 p,
+label p {
+    font-size: 16px !important;
+}
+
+/* Collapse iframe container completely - no space taken */
+.stElementContainer:has(iframe[height="0"]),
+.stMarkdown:has(style),
+.stElementContainer:has(.stMarkdown style) {
+    display: none !important;
+}
+
 /* Remove top padding */
 .block-container {
-    padding-top: 2rem;
+    padding-top: 1rem !important;
     padding-bottom: 2rem;
+}
+
+/* Reduce main container padding */
+[data-testid="stAppViewContainer"] > div:first-child {
+    padding-top: 0 !important;
+}
+
+.st-emotion-cache-1jicfl2 {
+    padding-top: 1rem !important;
 }
 
 /* Global Body Styling */
@@ -39,6 +74,17 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--light-bg);
     color: var(--dark-color);
+}
+
+/* Remove padding from all headers */
+h1, h2, h3, h4, h5, h6 {
+    padding: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Hide anchor link icons on headers */
+[data-testid="stHeaderActionElements"] {
+    display: none !important;
 }
 
 /* Main Container */
