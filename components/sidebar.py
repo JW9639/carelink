@@ -43,6 +43,9 @@ def render_sidebar_toggle():
                 }
                 toggleBtn.dataset.bound = "true";
                 
+                // Add class to body to indicate sidebar toggle is present
+                body.classList.add("has-sidebar-toggle");
+                
                 // Check saved state
                 const saved = window.localStorage.getItem("clSidebarOpen") === "true";
                 if (saved) {

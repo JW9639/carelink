@@ -104,8 +104,8 @@ body.sidebar-open [data-testid="stSidebar"][aria-expanded="true"] {
     transform: translateX(0);
 }
 
-/* Main content area - full width by default */
-section.main > div.block-container {
+/* Main content area adjustments - ONLY when sidebar toggle is present */
+body.has-sidebar-toggle section.main > div.block-container {
     max-width: 100% !important;
     padding-left: 5rem;
     padding-right: 2rem;
@@ -113,7 +113,7 @@ section.main > div.block-container {
 }
 
 /* When sidebar is open, add left padding to content */
-body.sidebar-open section.main > div.block-container {
+body.has-sidebar-toggle.sidebar-open section.main > div.block-container {
     padding-left: calc(21rem + 5rem);
 }
 
@@ -145,11 +145,11 @@ section.main > div.block-container {
         height: 40px;
     }
     
-    section.main > div.block-container {
+    body.has-sidebar-toggle section.main > div.block-container {
         padding-left: 3.5rem !important;
     }
     
-    body.sidebar-open section.main > div.block-container {
+    body.has-sidebar-toggle.sidebar-open section.main > div.block-container {
         padding-left: 3.5rem !important;
     }
     
