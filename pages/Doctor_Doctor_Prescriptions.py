@@ -91,61 +91,151 @@ if st.session_state.get('show_new_prescription_form', False):
     st.markdown("---")
 
 # Display recent prescriptions written by doctor
-st.markdown("### Recent Prescriptions Written")
+st.markdown("### Prescription Management")
+
+# Initialize prescriptions in session state (shared with patient workflow)
+if 'prescriptions' not in st.session_state:
+    st.session_state.prescriptions = MOCK_PRESCRIPTIONS.copy()
+
+# Tabs for different views
+tab1, tab2, tab3 = st.tabs(["Active Prescriptions", "Refill Requests", "History"])
 
 # Get current doctor's name
 doctor_name = SessionManager.get_user_name()
 
-# Filter prescriptions by doctor
-doctor_prescriptions = [
-    rx for rx in MOCK_PRESCRIPTIONS 
-    if rx.get("prescribed_by") == doctor_name or rx.get("doctor_id") == SessionManager.get_user_id()
-]
-
-# Apply search filter
-if search_patient:
+with tab1:
+    # Filter prescriptions by doctor
     doctor_prescriptions = [
-        rx for rx in doctor_prescriptions 
-        if search_patient.lower() in rx.get("patient_name", "").lower()
+        rx for rx in st.session_state.prescriptions
+        if rx.get("prescribed_by") == doctor_name or rx.get("doctor_id") == SessionManager.get_user_id()
     ]
+    
+    # Apply search filter
+    if search_patient:
+        doctor_prescriptions = [
+            rx for rx in doctor_prescriptions 
+            if search_patient.lower() in rx.get("patient_name", "").lower()
+        ]
+    
+    # Filter to active only for this tab
+    active_prescriptions = [rx for rx in doctor_prescriptions if rx.get("status") == "Active"]
+    
+    if active_prescriptions:
+        for rx in active_prescriptions:
+            col1, col2 = st.columns([5, 1])
+            
+            with col1:
+                status_color = "#00A896"
+                refills_remaining = rx.get("refills_remaining", 0)
+                refill_warning = "⚠️ Low refills" if refills_remaining <= 1 else ""
+                
+                st.markdown(
+                    f"""
+                    <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); border-left: 4px solid {status_color}; margin-bottom: 16px;">
+                        <h4 style="margin: 0 0 12px 0; color: #2B2D42;">{rx['medication']} {refill_warning}</h4>
+                        <p style="margin: 4px 0; color: #6B7280; font-size: 15px; line-height: 1.8;">
+                            • <strong>Patient:</strong> {rx.get('patient_name', 'Unknown')}<br>
+                            • <strong>Dosage:</strong> {rx['dosage']}<br>
+                            • <strong>Instructions:</strong> {rx['instructions']}<br>
+                            • <strong>Refills Remaining:</strong> {refills_remaining} of {rx.get('refills_authorized', 0)}<br>
+                            • <strong>Prescribed:</strong> {rx.get('date', 'N/A')}
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            
+            with col2:
+                st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+                if st.button("👁️ View", key=f"view_{rx['id']}", use_container_width=True):
+                    st.info(f"Viewing details for {rx['medication']}")
+                if st.button("✏️ Modify", key=f"modify_{rx['id']}", use_container_width=True, disabled=True):
+                    st.warning("Modification feature coming soon")
+                st.caption("Coming soon")
+    else:
+        st.info("No active prescriptions found.")
 
-# Apply status filter
-if filter_status != "All":
-    doctor_prescriptions = [
-        rx for rx in doctor_prescriptions 
-        if rx.get("status", "Active") == filter_status
+with tab2:
+    # Refill Requests Tab
+    st.markdown("#### Pending Refill Requests")
+    
+    refill_requests = [
+        rx for rx in st.session_state.prescriptions
+        if (rx.get("prescribed_by") == doctor_name or rx.get("doctor_id") == SessionManager.get_user_id())
+        and rx.get("refill_status") == "Pending"
     ]
+    
+    if refill_requests:
+        st.info(f"🔔 {len(refill_requests)} refill request(s) awaiting approval")
+        
+        for rx in refill_requests:
+            with st.container():
+                col1, col2 = st.columns([4, 1])
+                
+                with col1:
+                    st.markdown(
+                        f"""
+                        <div style="background: #FFF8E1; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); border-left: 4px solid #F77F00; margin-bottom: 16px;">
+                            <h4 style="margin: 0 0 12px 0; color: #2B2D42;">🕐 {rx['medication']}</h4>
+                            <p style="margin: 4px 0; color: #6B7280; font-size: 15px; line-height: 1.8;">
+                                • <strong>Patient:</strong> {rx.get('patient_name', 'Unknown')}<br>
+                                • <strong>Dosage:</strong> {rx['dosage']}<br>
+                                • <strong>Current Refills Remaining:</strong> {rx.get('refills_remaining', 0)} of {rx.get('refills_authorized', 0)}<br>
+                                • <strong>Original Date:</strong> {rx.get('date', 'N/A')}
+                            </p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                
+                with col2:
+                    st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+                    
+                    if st.button("✅ Approve", key=f"approve_{rx['id']}", use_container_width=True, type="primary"):
+                        # Update refill status
+                        for i, prescription in enumerate(st.session_state.prescriptions):
+                            if prescription['id'] == rx['id']:
+                                st.session_state.prescriptions[i]['refill_status'] = "Approved"
+                                # Don't decrement refills yet - that happens when picked up
+                        st.success(f"✅ Refill approved for {rx['patient_name']}! Notification sent to patient and pharmacy.")
+                        st.balloons()
+                        st.rerun()
+                    
+                    if st.button("❌ Deny", key=f"deny_{rx['id']}", use_container_width=True):
+                        for i, prescription in enumerate(st.session_state.prescriptions):
+                            if prescription['id'] == rx['id']:
+                                st.session_state.prescriptions[i]['refill_status'] = "Denied"
+                                st.session_state.prescriptions[i]['refill_requested'] = False
+                        st.warning("Refill request denied")
+                        st.rerun()
+    else:
+        st.success("✅ No pending refill requests")
 
-if doctor_prescriptions:
-    for rx in doctor_prescriptions:
-        col1, col2 = st.columns([5, 1])
-        
-        with col1:
-            status_color = "#00A896" if rx.get("status", "Active") == "Active" else "#F77F00"
-            st.markdown(
-                f"""
-                <div style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); border-left: 4px solid {status_color}; margin-bottom: 16px;">
-                    <h4 style="margin: 0 0 12px 0; color: #2B2D42;">{rx['medication']}</h4>
-                    <p style="margin: 4px 0; color: #6B7280; font-size: 15px; line-height: 1.8;">
-                        • <strong>Patient:</strong> {rx.get('patient_name', 'Unknown')}<br>
-                        • <strong>Dosage:</strong> {rx['dosage']}<br>
-                        • <strong>Instructions:</strong> {rx['instructions']}<br>
-                        • <strong>Refills Remaining:</strong> {rx.get('refills', 0)}<br>
-                        • <strong>Status:</strong> <span style="color: {status_color};">{rx.get('status', 'Active')}</span>
-                    </p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        
-        with col2:
-            st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
-            if st.button("View Details", key=f"view_{rx['id']}", use_container_width=True):
-                st.info(f"Viewing details for {rx['medication']}")
-            if st.button("Modify", key=f"modify_{rx['id']}", use_container_width=True):
-                st.warning(f"Modification feature coming soon")
-else:
-    st.info("No prescriptions found matching your criteria.")
+with tab3:
+    # History Tab
+    all_prescriptions = [
+        rx for rx in st.session_state.prescriptions
+        if rx.get("prescribed_by") == doctor_name or rx.get("doctor_id") == SessionManager.get_user_id()
+    ]
+    
+    st.markdown(f"Total prescriptions written: **{len(all_prescriptions)}**")
+    
+    # Simple table view
+    if all_prescriptions:
+        import pandas as pd
+        df_data = []
+        for rx in all_prescriptions:
+            df_data.append({
+                "Patient": rx.get('patient_name', 'Unknown'),
+                "Medication": rx['medication'],
+                "Date": rx.get('date', 'N/A'),
+                "Status": rx.get('status', 'Active'),
+                "Refills": f"{rx.get('refills_remaining', 0)}/{rx.get('refills_authorized', 0)}"
+            })
+        df = pd.DataFrame(df_data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+    else:
+        st.info("No prescription history found.")
 
 st.markdown("---")
 
@@ -153,13 +243,20 @@ st.markdown("---")
 st.markdown("### Prescription Statistics")
 stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
+# Get all doctor prescriptions for stats
+all_doctor_rx = [
+    rx for rx in st.session_state.prescriptions
+    if rx.get("prescribed_by") == doctor_name or rx.get("doctor_id") == SessionManager.get_user_id()
+]
+
 with stat_col1:
-    st.metric("Total Prescribed", len(doctor_prescriptions))
+    st.metric("Total Prescribed", len(all_doctor_rx))
 with stat_col2:
-    active_count = len([rx for rx in doctor_prescriptions if rx.get("status", "Active") == "Active"])
+    active_count = len([rx for rx in all_doctor_rx if rx.get("status") == "Active"])
     st.metric("Active", active_count)
 with stat_col3:
-    refill_pending = len([rx for rx in doctor_prescriptions if rx.get("refills", 0) == 0])
-    st.metric("Pending Refill", refill_pending)
+    pending_refills = len([rx for rx in all_doctor_rx if rx.get("refill_status") == "Pending"])
+    st.metric("Pending Refill Requests", pending_refills)
 with stat_col4:
-    st.metric("This Month", len(doctor_prescriptions[:5]))
+    low_refills = len([rx for rx in all_doctor_rx if rx.get("refills_remaining", 0) <= 1 and rx.get("status") == "Active"])
+    st.metric("Low Refills", low_refills)

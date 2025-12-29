@@ -134,17 +134,16 @@ def admin_sidebar():
         st.markdown("---")
         st.markdown("### Management")
         
-        # Add CSS for hiding Streamlit nav and tighter spacing
-        st.markdown("""
-        <style>
-        [data-testid="stSidebarNav"] {
-            display: none;
-        }
-        [data-testid="stSidebar"] button[kind="secondary"] {
-            padding: 0.25rem 0.75rem !important;
-            margin-bottom: 0.25rem !important;
-        }
-        st.markdown("---")
-        st.markdown("### Management")
-        
         st.page_link("pages/Admin_Admin_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("pages/Admin_Admin_Appointments.py", label="• Appointments", use_container_width=True)
+        st.page_link("pages/Admin_Admin_Profile.py", label="• Profile", use_container_width=True)
+        
+        st.markdown("---")
+        if st.button("Logout", use_container_width=True, type="primary"):
+            SessionManager.logout()
+            st.switch_page("Home.py")
+        
+        st.markdown("---")
+        st.markdown("### System Status")
+        st.success("✓ All systems operational")
+        st.caption("Last backup: Today 2:00 AM")

@@ -102,12 +102,16 @@ if st.session_state.get('show_new_lab_order', False):
 # Display lab results
 st.markdown("### Recent Lab Results for Your Patients")
 
+# Initialize lab results in session state if not exists
+if 'lab_results' not in st.session_state:
+    st.session_state.lab_results = MOCK_LAB_RESULTS.copy()
+
 # Get current doctor's name
 doctor_name = SessionManager.get_user_name()
 
 # Filter lab results by doctor
 doctor_lab_results = [
-    lab for lab in MOCK_LAB_RESULTS 
+    lab for lab in st.session_state.lab_results
     if lab.get("ordered_by") == doctor_name or lab.get("doctor_id") == SessionManager.get_user_id()
 ]
 
@@ -127,11 +131,25 @@ if filter_type != "All":
 
 if doctor_lab_results:
     for lab in doctor_lab_results:
-        status_color = "#00A896" if lab.get("status") == "Completed" else "#F77F00"
+        review_status = lab.get("review_status", "Pending Review")
+        
+        # Status color coding
+        if review_status == "Pending Review":
+            status_color = "#F77F00"  # Orange
+            status_emoji = "⚠️"
+        elif review_status == "Reviewed":
+            status_color = "#0066CC"  # Blue
+            status_emoji = "✓"
+        else:  # Shared with Patient
+            status_color = "#00A896"  # Green
+            status_emoji = "✅"
+        
+        # Auto-expand pending reviews
+        is_expanded = (review_status == "Pending Review")
         
         with st.expander(
-            f"**{lab.get('patient_name', 'Unknown Patient')}** - {lab['test_type']} ({lab['date']})", 
-            expanded=False
+            f"{status_emoji} **{lab.get('patient_name', 'Unknown Patient')}** - {lab['test_type']} ({lab['date']}) - *{review_status}*", 
+            expanded=is_expanded
         ):
             col_info1, col_info2 = st.columns(2)
             
@@ -141,11 +159,11 @@ if doctor_lab_results:
                 st.markdown(f"**Date:** {lab['date']}")
             
             with col_info2:
-                st.markdown(f"**Status:** <span style='color: {status_color};'>{lab['status']}</span>", unsafe_allow_html=True)
+                st.markdown(f"**Review Status:** <span style='color: {status_color}; font-weight: bold;'>{review_status}</span>", unsafe_allow_html=True)
                 st.markdown(f"**Ordered by:** {lab.get('ordered_by', 'Dr. Unknown')}")
             
             st.markdown("---")
-            st.markdown("**Results:**")
+            st.markdown("**Lab Values:**")
             
             results_data = []
             for test_name, result in lab['results'].items():
@@ -161,40 +179,61 @@ if doctor_lab_results:
             
             st.markdown("---")
             
-            # Doctor actions
+            # Clinical Interpretation Section
+            st.markdown("**Clinical Interpretation:**")
+            current_interpretation = lab.get('interpretation', '')
+            
+            if current_interpretation:
+                st.info(f"📝 {current_interpretation}")
+            else:
+                st.warning("⚠️ No interpretation added yet")
+            
+            # Interpretation form
+            interpretation_key = f"interpretation_input_{lab['id']}"
+            interpretation_text = st.text_area(
+                "Add/Update Interpretation", 
+                value=current_interpretation,
+                key=interpretation_key,
+                placeholder="Enter your clinical interpretation of these results...",
+                height=100
+            )
+            
+            st.markdown("---")
+            
+            # Action buttons
             action_col1, action_col2, action_col3 = st.columns(3)
             
             with action_col1:
-                if st.button("Add Interpretation", key=f"interpret_{lab['id']}", use_container_width=True):
-                    st.session_state[f"show_interpretation_{lab['id']}"] = True
+                if st.button("💾 Save Interpretation", key=f"save_{lab['id']}", use_container_width=True, type="primary"):
+                    # Update interpretation and status
+                    for i, result in enumerate(st.session_state.lab_results):
+                        if result['id'] == lab['id']:
+                            st.session_state.lab_results[i]['interpretation'] = interpretation_text
+                            if st.session_state.lab_results[i]['review_status'] == "Pending Review":
+                                st.session_state.lab_results[i]['review_status'] = "Reviewed"
+                    st.success("✅ Interpretation saved and status updated to 'Reviewed'")
+                    st.rerun()
             
             with action_col2:
-                if st.button("Download Report", key=f"download_{lab['id']}", use_container_width=True):
-                    st.info("PDF download coming soon!")
+                # Can only share if reviewed
+                can_share = (review_status in ["Reviewed", "Shared with Patient"])
+                share_disabled = not can_share
+                
+                if st.button("📤 Share with Patient", key=f"share_{lab['id']}", use_container_width=True, disabled=share_disabled):
+                    # Update status to shared
+                    for i, result in enumerate(st.session_state.lab_results):
+                        if result['id'] == lab['id']:
+                            st.session_state.lab_results[i]['review_status'] = "Shared with Patient"
+                    st.success(f"✅ Lab results shared with {lab.get('patient_name')}! Patient can now view these results.")
+                    st.rerun()
+                
+                if share_disabled and review_status == "Pending Review":
+                    st.caption("⚠️ Save interpretation first")
             
             with action_col3:
-                if st.button("Share with Patient", key=f"share_{lab['id']}", use_container_width=True):
-                    st.success("Results shared with patient!")
-            
-            # Show interpretation form if requested
-            if st.session_state.get(f"show_interpretation_{lab['id']}", False):
-                st.markdown("**Add Clinical Interpretation:**")
-                interpretation = st.text_area(
-                    "Interpretation", 
-                    key=f"interpretation_text_{lab['id']}",
-                    placeholder="Enter your clinical interpretation of these results..."
-                )
-                
-                interp_col1, interp_col2 = st.columns([1, 3])
-                with interp_col1:
-                    if st.button("Save Interpretation", key=f"save_interp_{lab['id']}", type="primary"):
-                        st.success("Interpretation saved!")
-                        st.session_state[f"show_interpretation_{lab['id']}"] = False
-                        st.rerun()
-                with interp_col2:
-                    if st.button("Cancel", key=f"cancel_interp_{lab['id']}"):
-                        st.session_state[f"show_interpretation_{lab['id']}"] = False
-                        st.rerun()
+                if st.button("📄 Download PDF", key=f"download_{lab['id']}", use_container_width=True, disabled=True):
+                    st.info("PDF generation coming soon!")
+                st.caption("Coming soon")
 else:
     st.info("No lab results found matching your criteria.")
 
@@ -205,12 +244,13 @@ st.markdown("### Lab Test Statistics")
 stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
 with stat_col1:
-    st.metric("Total Tests Ordered", len(doctor_lab_results))
+    st.metric("Total Tests", len(doctor_lab_results))
 with stat_col2:
-    completed_count = len([lab for lab in doctor_lab_results if lab.get("status") == "Completed"])
-    st.metric("Completed", completed_count)
+    pending_review = len([lab for lab in doctor_lab_results if lab.get("review_status") == "Pending Review"])
+    st.metric("Pending Review", pending_review, delta=f"-{pending_review} to review" if pending_review > 0 else "All clear!")
 with stat_col3:
-    pending_count = len([lab for lab in doctor_lab_results if lab.get("status") == "Pending"])
-    st.metric("Pending", pending_count)
+    reviewed = len([lab for lab in doctor_lab_results if lab.get("review_status") == "Reviewed"])
+    st.metric("Reviewed", reviewed)
 with stat_col4:
-    st.metric("This Month", len(doctor_lab_results[:5]))
+    shared = len([lab for lab in doctor_lab_results if lab.get("review_status") == "Shared with Patient"])
+    st.metric("Shared", shared)

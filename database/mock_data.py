@@ -109,22 +109,50 @@ MOCK_PRESCRIPTIONS = [
     {
         "id": "RX001",
         "patient_id": "P001",
+        "patient_name": "John Smith",
         "medication": "Lisinopril 10mg",
         "dosage": "Once daily",
         "prescribed_by": "Dr. Sarah Johnson",
+        "doctor_id": "D001",
         "date": "2025-11-20",
-        "refills": 3,
-        "instructions": "Take with water in the morning"
+        "refills_authorized": 3,
+        "refills_remaining": 2,
+        "instructions": "Take with water in the morning",
+        "status": "Active",
+        "refill_requested": False,
+        "refill_status": "None"  # "None", "Pending", "Approved", "Denied"
     },
     {
         "id": "RX002",
         "patient_id": "P001",
+        "patient_name": "John Smith",
+        "medication": "Atorvastatin 20mg",
+        "dosage": "Once daily",
+        "prescribed_by": "Dr. Sarah Johnson",
+        "doctor_id": "D001",
+        "date": "2025-10-15",
+        "refills_authorized": 5,
+        "refills_remaining": 0,
+        "instructions": "Take at bedtime",
+        "status": "Active",
+        "refill_requested": False,
+        "refill_status": "None"
+    },
+    {
+        "id": "RX003",
+        "patient_id": "P001",
+        "patient_name": "John Smith",
         "medication": "Multivitamin",
         "dosage": "Once daily",
         "prescribed_by": "Dr. Sarah Johnson",
+        "doctor_id": "D001",
         "date": "2025-11-20",
-        "refills": 6,
-        "instructions": "Take with food"
+        "refills_authorized": 6,
+        "refills_remaining": 5,
+        "instructions": "Take with food",
+        "status": "Active",
+        "refill_requested": False,
+        "refill_status": "None"
     }
 ]
 
@@ -133,6 +161,7 @@ MOCK_LAB_RESULTS = [
     {
         "id": "LAB001",
         "patient_id": "P001",
+        "patient_name": "John Smith",
         "date": "2025-11-19",
         "test_type": "Complete Blood Count",
         "results": {
@@ -141,22 +170,44 @@ MOCK_LAB_RESULTS = [
             "Hemoglobin": "15.2 g/dL (Normal)",
             "Platelets": "250 K/uL (Normal)"
         },
-        "status": "Completed",
-        "ordered_by": "Dr. Sarah Johnson"
+        "status": "Shared with Patient",
+        "review_status": "Shared with Patient",  # For doctor workflow: "Pending Review", "Reviewed", "Shared with Patient"
+        "ordered_by": "Dr. Sarah Johnson",
+        "interpretation": "All blood count values are within normal range. No concerns noted."
     },
     {
         "id": "LAB002",
         "patient_id": "P001",
-        "date": "2025-11-19",
+        "patient_name": "John Smith",
+        "date": "2025-12-05",
         "test_type": "Lipid Panel",
         "results": {
-            "Total Cholesterol": "185 mg/dL (Normal)",
-            "LDL": "110 mg/dL (Normal)",
-            "HDL": "55 mg/dL (Normal)",
-            "Triglycerides": "100 mg/dL (Normal)"
+            "Total Cholesterol": "195 mg/dL",
+            "LDL": "120 mg/dL",
+            "HDL": "52 mg/dL",
+            "Triglycerides": "115 mg/dL"
         },
         "status": "Completed",
-        "ordered_by": "Dr. Sarah Johnson"
+        "review_status": "Pending Review",  # This one is pending review by doctor
+        "ordered_by": "Dr. Sarah Johnson",
+        "interpretation": ""
+    },
+    {
+        "id": "LAB003",
+        "patient_id": "P001",
+        "patient_name": "John Smith",
+        "date": "2025-12-01",
+        "test_type": "Metabolic Panel",
+        "results": {
+            "Glucose": "105 mg/dL",
+            "Sodium": "140 mEq/L (Normal)",
+            "Potassium": "4.2 mEq/L (Normal)",
+            "Creatinine": "1.0 mg/dL (Normal)"
+        },
+        "status": "Completed",
+        "review_status": "Reviewed",  # Reviewed but not yet shared
+        "ordered_by": "Dr. Sarah Johnson",
+        "interpretation": "Glucose slightly elevated. Recommend dietary modifications."
     }
 ]
 

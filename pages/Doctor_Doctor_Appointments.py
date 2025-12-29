@@ -103,12 +103,16 @@ if st.session_state.get('show_new_appointment_form', False):
 # Display appointments for doctor
 st.markdown("### Your Schedule")
 
+# Initialize appointments in session state if not exists (shared with patient workflow)
+if 'appointments' not in st.session_state:
+    st.session_state.appointments = MOCK_APPOINTMENTS.copy()
+
 # Get current doctor's name
 doctor_name = SessionManager.get_user_name()
 
 # Filter appointments by doctor
 doctor_appointments = [
-    apt for apt in MOCK_APPOINTMENTS 
+    apt for apt in st.session_state.appointments
     if apt.get("doctor_name") == doctor_name or apt.get("doctor_id") == SessionManager.get_user_id()
 ]
 
@@ -127,9 +131,47 @@ if filter_status != "All":
     ]
 
 if doctor_appointments:
-    # Group by date for better organization
+    # Separate pending requests from confirmed
+    pending_appointments = [apt for apt in doctor_appointments if apt.get("status") == "Pending"]
+    confirmed_appointments = [apt for apt in doctor_appointments if apt.get("status") != "Pending"]
+    
+    # Show pending requests first
+    if pending_appointments:
+        st.markdown("#### 🔔 Pending Appointment Requests")
+        st.info(f"{len(pending_appointments)} appointment request(s) awaiting confirmation")
+        
+        for appointment in pending_appointments:
+            with st.container():
+                col1, col2 = st.columns([3, 1])
+                
+                with col1:
+                    appointment_card(appointment)
+                
+                with col2:
+                    st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+                    if st.button("✅ Confirm", key=f"confirm_{appointment['id']}", use_container_width=True, type="primary"):
+                        # Update status to Confirmed
+                        for i, apt in enumerate(st.session_state.appointments):
+                            if apt['id'] == appointment['id']:
+                                st.session_state.appointments[i]['status'] = "Confirmed"
+                        st.success(f"✅ Appointment confirmed for {appointment['patient_name']}")
+                        st.rerun()
+                    
+                    if st.button("✏️ Reschedule", key=f"reschedule_{appointment['id']}", use_container_width=True):
+                        st.info("Rescheduling feature coming soon")
+                    
+                    if st.button("❌ Decline", key=f"decline_{appointment['id']}", use_container_width=True):
+                        for i, apt in enumerate(st.session_state.appointments):
+                            if apt['id'] == appointment['id']:
+                                st.session_state.appointments[i]['status'] = "Cancelled"
+                        st.warning("Appointment declined")
+                        st.rerun()
+        
+        st.markdown("---")
+    
+    # Group confirmed by date
     st.markdown("#### Today's Appointments")
-    today_appointments = [apt for apt in doctor_appointments[:3]]  # Mock: first 3 as today
+    today_appointments = [apt for apt in confirmed_appointments[:3]]  # Mock: first 3 as today
     
     if today_appointments:
         for appointment in today_appointments:
@@ -140,11 +182,11 @@ if doctor_appointments:
             
             with col2:
                 st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
-                if st.button("Start Visit", key=f"start_{appointment['id']}", use_container_width=True, type="primary"):
-                    st.success("Starting virtual visit...")
-                if st.button("Reschedule", key=f"reschedule_{appointment['id']}", use_container_width=True):
+                if st.button("▶️ Start Visit", key=f"start_{appointment['id']}", use_container_width=True, type="primary"):
+                    st.success("Starting visit workflow...")
+                if st.button("✏️ Reschedule", key=f"resched_confirmed_{appointment['id']}", use_container_width=True):
                     st.info("Rescheduling...")
-                if st.button("Cancel", key=f"cancel_{appointment['id']}", use_container_width=True):
+                if st.button("❌ Cancel", key=f"cancel_{appointment['id']}", use_container_width=True):
                     st.warning("Cancelling...")
     else:
         st.info("No appointments scheduled for today.")
@@ -153,7 +195,7 @@ if doctor_appointments:
     
     # Upcoming appointments
     st.markdown("#### Upcoming Appointments")
-    upcoming_appointments = [apt for apt in doctor_appointments[3:]]  # Mock: rest as upcoming
+    upcoming_appointments = [apt for apt in confirmed_appointments[3:]]  # Mock: rest as upcoming
     
     if upcoming_appointments:
         for appointment in upcoming_appointments:
