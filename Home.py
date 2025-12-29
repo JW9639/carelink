@@ -36,11 +36,11 @@ load_css()
 if SessionManager.is_authenticated():
     role = SessionManager.get_user_role()
     if role == "patient":
-        st.switch_page("pages/Patient/Patient_Dashboard.py")
+        st.switch_page("pages/Patient_Patient_Dashboard.py")
     elif role == "doctor":
-        st.switch_page("pages/Doctor/Doctor_Dashboard.py")
+        st.switch_page("pages/Doctor_Doctor_Dashboard.py")
     elif role == "admin":
-        st.switch_page("pages/Admin/Admin_Dashboard.py")
+        st.switch_page("pages/Admin_Admin_Dashboard.py")
     else:
         st.warning("Unable to determine your role. Please log in again.")
         SessionManager.logout()
