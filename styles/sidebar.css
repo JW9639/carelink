@@ -10,3 +10,150 @@
     padding: 0.25rem 0.75rem !important;
     margin-bottom: 0.25rem !important;
 }
+
+/* === Sidebar Toggle Button === */
+.cl-sidebar-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 999999;
+}
+
+.cl-sidebar-toggle__btn {
+    background: #0066CC;
+    border: none;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+}
+
+.cl-sidebar-toggle__btn:hover {
+    background: #0052a3;
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+    transform: scale(1.05);
+}
+
+.cl-sidebar-toggle__btn span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger animation when sidebar is open */
+body.sidebar-open .cl-sidebar-toggle__btn span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+body.sidebar-open .cl-sidebar-toggle__btn span:nth-child(2) {
+    opacity: 0;
+}
+
+body.sidebar-open .cl-sidebar-toggle__btn span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+/* === Sidebar Overlay === */
+.cl-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+body.sidebar-open .cl-sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* === Sidebar State Management === */
+
+/* Default: Sidebar collapsed, full width content */
+[data-testid="stSidebar"] {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+[data-testid="stSidebar"][aria-expanded="false"] {
+    transform: translateX(-100%);
+}
+
+/* When sidebar is open */
+body.sidebar-open [data-testid="stSidebar"] {
+    transform: translateX(0);
+}
+
+body.sidebar-open [data-testid="stSidebar"][aria-expanded="true"] {
+    transform: translateX(0);
+}
+
+/* Main content area - full width by default */
+section.main > div.block-container {
+    max-width: 100% !important;
+    padding-left: 5rem;
+    padding-right: 2rem;
+    transition: padding-left 0.3s ease;
+}
+
+/* When sidebar is open, add left padding to content */
+body.sidebar-open section.main > div.block-container {
+    padding-left: calc(21rem + 5rem);
+}
+
+/* Ensure smooth transitions */
+[data-testid="stSidebar"],
+section.main > div.block-container {
+    will-change: transform, padding-left;
+}
+
+/* Force sidebar to stay collapsed initially */
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
+/* Override Streamlit's default sidebar behavior */
+[data-testid="stSidebar"] > div:first-child {
+    width: 21rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .cl-sidebar-toggle {
+        top: 0.5rem;
+        left: 0.5rem;
+    }
+    
+    .cl-sidebar-toggle__btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    section.main > div.block-container {
+        padding-left: 3.5rem !important;
+    }
+    
+    body.sidebar-open section.main > div.block-container {
+        padding-left: 3.5rem !important;
+    }
+    
+    [data-testid="stSidebar"] > div:first-child {
+        width: 18rem;
+    }
+}

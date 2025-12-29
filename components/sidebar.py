@@ -26,32 +26,61 @@ def render_sidebar_toggle():
         <div class="cl-sidebar-overlay" id="clSidebarOverlay"></div>
         <script>
         (function() {
-            const body = document.body;
-            const toggleBtn = document.getElementById("clSidebarToggleBtn");
-            const overlay = document.getElementById("clSidebarOverlay");
-            if (!toggleBtn || toggleBtn.dataset.bound === "true") {
-                return;
-            }
-            toggleBtn.dataset.bound = "true";
-            const saved = window.localStorage.getItem("clSidebarOpen") === "true";
-            if (saved) {
-                body.classList.add("sidebar-open");
-            }
-            const setState = (open) => {
-                if (open) {
+            // Wait for Streamlit to fully load
+            const initToggle = () => {
+                const body = document.body;
+                const toggleBtn = document.getElementById("clSidebarToggleBtn");
+                const overlay = document.getElementById("clSidebarOverlay");
+                const sidebar = document.querySelector('[data-testid="stSidebar"]');
+                
+                if (!toggleBtn || !sidebar) {
+                    setTimeout(initToggle, 100);
+                    return;
+                }
+                
+                if (toggleBtn.dataset.bound === "true") {
+                    return;
+                }
+                toggleBtn.dataset.bound = "true";
+                
+                // Check saved state
+                const saved = window.localStorage.getItem("clSidebarOpen") === "true";
+                if (saved) {
                     body.classList.add("sidebar-open");
+                    sidebar.setAttribute("aria-expanded", "true");
                 } else {
                     body.classList.remove("sidebar-open");
+                    sidebar.setAttribute("aria-expanded", "false");
                 }
-                window.localStorage.setItem("clSidebarOpen", open);
+                
+                const setState = (open) => {
+                    if (open) {
+                        body.classList.add("sidebar-open");
+                        sidebar.setAttribute("aria-expanded", "true");
+                    } else {
+                        body.classList.remove("sidebar-open");
+                        sidebar.setAttribute("aria-expanded", "false");
+                    }
+                    window.localStorage.setItem("clSidebarOpen", open);
+                };
+                
+                toggleBtn.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const isOpen = body.classList.contains("sidebar-open");
+                    setState(!isOpen);
+                });
+                
+                if (overlay) {
+                    overlay.addEventListener("click", () => setState(false));
+                }
             };
-            toggleBtn.addEventListener("click", (event) => {
-                event.preventDefault();
-                const open = !body.classList.contains("sidebar-open");
-                setState(open);
-            });
-            if (overlay) {
-                overlay.addEventListener("click", () => setState(false));
+            
+            // Initialize on load and on Streamlit reruns
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", initToggle);
+            } else {
+                initToggle();
             }
         })();
         </script>
