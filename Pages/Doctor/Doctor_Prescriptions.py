@@ -1,10 +1,10 @@
 """Doctor Prescriptions Page - View and manage prescriptions."""
 import streamlit as st
-from Services.session_manager import SessionManager
-from Database.mock_Data import MOCK_PRESCRIPTIONS
-from Components.cards import prescription_card
+from services.session_manager import SessionManager
+from database.mock_data import MOCK_PRESCRIPTIONS
+from components.cards import prescription_card
 
-from Components.sidebar import doctor_sidebar
+from components.sidebar import doctor_sidebar
 
 # Page config
 st.set_page_config(
@@ -17,7 +17,7 @@ st.set_page_config(
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("Styles/main.css") as f:
+        with open("styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass

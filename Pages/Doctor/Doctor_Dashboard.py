@@ -1,11 +1,11 @@
 """Doctor Dashboard - Manage patients, appointments, and medical records."""
 import streamlit as st
-from Services.session_manager import SessionManager
-from Database.mock_Data import MOCK_STATS, MOCK_APPOINTMENTS, MOCK_PATIENTS
-from Components.cards import stat_card, appointment_card
+from services.session_manager import SessionManager
+from database.mock_data import MOCK_STATS, MOCK_APPOINTMENTS, MOCK_PATIENTS
+from components.cards import stat_card, appointment_card
 import pandas as pd
 
-from Components.sidebar import doctor_sidebar
+from components.sidebar import doctor_sidebar
 
 # Page config
 st.set_page_config(
@@ -18,9 +18,9 @@ st.set_page_config(
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("Styles/main.css") as f:
+        with open("styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("Styles/dashboard.css") as f:
+        with open("styles/dashboard.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass

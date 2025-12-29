@@ -3,9 +3,9 @@ MediCare Health System - Login Page
 Main entry point for the application.
 """
 import streamlit as st
-from Services.session_manager import SessionManager
-from Components.login_Portal import login_form, mock_login_buttons
-from Config.settings import APP_NAME
+from services.session_manager import SessionManager
+from components.login_Portal import login_form, mock_login_buttons
+from config.settings import APP_NAME
 
 # Page configuration
 st.set_page_config(
@@ -21,11 +21,11 @@ SessionManager.init_session()
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("Styles/main.css") as f:
+        with open("styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("Styles/login.css") as f:
+        with open("styles/login.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        with open("Styles/footer.css") as f:
+        with open("styles/footer.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         st.warning("CSS files not found. Using default styling.")
@@ -36,11 +36,11 @@ load_css()
 if SessionManager.is_authenticated():
     role = SessionManager.get_user_role()
     if role == "patient":
-        st.switch_page("Pages/Patient/Patient_Dashboard.py")
+        st.switch_page("pages/Patient/Patient_Dashboard.py")
     elif role == "doctor":
-        st.switch_page("Pages/Doctor/Doctor_Dashboard.py")
+        st.switch_page("pages/Doctor/Doctor_Dashboard.py")
     elif role == "admin":
-        st.switch_page("Pages/Admin/Admin_Dashboard.py")
+        st.switch_page("pages/Admin/Admin_Dashboard.py")
     else:
         st.warning("Unable to determine your role. Please log in again.")
         SessionManager.logout()

@@ -1,12 +1,12 @@
 """Admin Appointments Page - View and manage all appointments."""
 import streamlit as st
-from Services.session_manager import SessionManager
-from Database.mock_Data import MOCK_APPOINTMENTS
-from Components.cards import appointment_card
+from services.session_manager import SessionManager
+from database.mock_data import MOCK_APPOINTMENTS
+from components.cards import appointment_card
 import pandas as pd
 from datetime import datetime
 
-from Components.sidebar import admin_sidebar
+from components.sidebar import admin_sidebar
 
 # Page config
 st.set_page_config(
@@ -20,7 +20,7 @@ st.set_page_config(
 def load_css():
     """Load custom CSS styles."""
     try:
-        with open("Styles/main.css") as f:
+        with open("styles/main.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass

@@ -1,12 +1,12 @@
 """Sidebar navigation components for different user roles."""
 import streamlit as st
-from Services.session_manager import SessionManager
+from services.session_manager import SessionManager
 
 
 def load_sidebar_css():
     """Load sidebar-specific CSS styles."""
     try:
-        with open("Styles/sidebar.css") as f:
+        with open("styles/sidebar.css") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except FileNotFoundError:
         pass
@@ -72,11 +72,11 @@ def patient_sidebar():
         st.markdown("---")
         st.markdown("### Quick Links")
         
-        st.page_link("Pages/Patient/Patient_Dashboard.py", label="• Dashboard", use_container_width=True)
-        st.page_link("Pages/Patient/Patient_Appointments.py", label="• Appointments", use_container_width=True)
-        st.page_link("Pages/Patient/Patient_Prescriptions.py", label="• Prescriptions", use_container_width=True)
-        st.page_link("Pages/Patient/Patient_Lab_Results.py", label="• Lab Results", use_container_width=True)
-        st.page_link("Pages/Patient/Patient_Profile.py", label="• Profile", use_container_width=True)
+        st.page_link("pages/Patient/Patient_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("pages/Patient/Patient_Appointments.py", label="• Appointments", use_container_width=True)
+        st.page_link("pages/Patient/Patient_Prescriptions.py", label="• Prescriptions", use_container_width=True)
+        st.page_link("pages/Patient/Patient_Lab_Results.py", label="• Lab Results", use_container_width=True)
+        st.page_link("pages/Patient/Patient_Profile.py", label="• Profile", use_container_width=True)
         
         st.markdown("---")
         if st.button("Logout", use_container_width=True, type="primary"):
@@ -105,11 +105,11 @@ def doctor_sidebar():
         st.markdown("---")
         st.markdown("### Quick Links")
         
-        st.page_link("Pages/Doctor/Doctor_Dashboard.py", label="• Dashboard", use_container_width=True)
-        st.page_link("Pages/Doctor/Doctor_Appointments.py", label="• Appointments", use_container_width=True)
-        st.page_link("Pages/Doctor/Doctor_Prescriptions.py", label="• Prescriptions", use_container_width=True)
-        st.page_link("Pages/Doctor/Doctor_Lab_Results.py", label="• Lab Results", use_container_width=True)
-        st.page_link("Pages/Doctor/Doctor_Profile.py", label="• Profile", use_container_width=True)
+        st.page_link("pages/Doctor/Doctor_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("pages/Doctor/Doctor_Appointments.py", label="• Appointments", use_container_width=True)
+        st.page_link("pages/Doctor/Doctor_Prescriptions.py", label="• Prescriptions", use_container_width=True)
+        st.page_link("pages/Doctor/Doctor_Lab_Results.py", label="• Lab Results", use_container_width=True)
+        st.page_link("pages/Doctor/Doctor_Profile.py", label="• Profile", use_container_width=True)
         
         st.markdown("---")
         if st.button("Logout", use_container_width=True, type="primary"):
@@ -147,4 +147,4 @@ def admin_sidebar():
         st.markdown("---")
         st.markdown("### Management")
         
-        st.page_link("Pages/Admin/Admin_Dashboard.py", label="• Dashboard", use_container_width=True)
+        st.page_link("pages/Admin/Admin_Dashboard.py", label="• Dashboard", use_container_width=True)

@@ -1,7 +1,7 @@
 """Authentication and login form components."""
 import streamlit as st
-from Services.auth_service import AuthService
-from Services.session_manager import SessionManager
+from services.auth_service import AuthService
+from services.session_manager import SessionManager
 
 def login_form():
     """
@@ -51,7 +51,7 @@ def mock_login_buttons():
                 SessionManager.login(user['id'], user['name'], user['role'], user)
                 st.success(f"Logged in as {user['name']} (Patient)")
                 st.balloons()
-                st.switch_page("Pages/Patient/Patient_Dashboard.py")
+                st.switch_page("pages/Patient/Patient_Dashboard.py")
     
     with col2:
         if st.button("Login as Doctor", use_container_width=True, type="primary"):
@@ -60,7 +60,7 @@ def mock_login_buttons():
                 SessionManager.login(user['id'], user['name'], user['role'], user)
                 st.success(f"Logged in as {user['name']} (Doctor)")
                 st.balloons()
-                st.switch_page("Pages/Doctor/Doctor_Dashboard.py")
+                st.switch_page("pages/Doctor/Doctor_Dashboard.py")
     
     with col3:
         if st.button("Login as Admin", use_container_width=True, type="primary"):
@@ -69,7 +69,7 @@ def mock_login_buttons():
                 SessionManager.login(user['id'], user['name'], user['role'], user)
                 st.success(f"Logged in as {user['name']} (Admin)")
                 st.balloons()
-                st.switch_page("Pages/Admin/Admin_Dashboard.py")
+                st.switch_page("pages/Admin/Admin_Dashboard.py")
 
 
 def logout_button():
