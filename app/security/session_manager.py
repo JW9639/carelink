@@ -21,6 +21,8 @@ def init_session_state() -> None:
         "last_activity": None,
         "is_authenticated": False,
         "session_timeout_minutes": settings.SESSION_TIMEOUT_MINUTES,
+        "user_name": "Unknown",
+        "sidebar_open": True,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
@@ -29,9 +31,11 @@ def init_session_state() -> None:
 
 def set_user(user: UserResponse) -> None:
     """Store the authenticated user in session state."""
+    role_value = user.role.value if hasattr(user.role, "value") else user.role
     st.session_state.user = user
-    st.session_state.role = user.role
+    st.session_state.role = role_value
     st.session_state.is_authenticated = True
+    st.session_state.user_name = user.email
     update_last_activity()
 
 

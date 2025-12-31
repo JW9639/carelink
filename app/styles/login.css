@@ -1,0 +1,157 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--light-bg);
+}
+
+.login-header,
+.login-footer {
+  text-align: center;
+  padding: 20px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.login-footer {
+  border-top: 1px solid var(--border-color);
+  border-bottom: none;
+}
+
+.login-header h1 {
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.login-card-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 48px 40px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.login-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin: 24px 0 16px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.demo-button {
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+  width: 100%;
+  background: var(--white);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.demo-button:hover {
+  transform: translateX(4px);
+  border-color: var(--primary-color);
+}
+
+.demo-patient {
+  border-color: rgba(0, 102, 204, 0.4);
+}
+
+.demo-doctor {
+  border-color: rgba(0, 168, 150, 0.4);
+}
+
+.demo-admin {
+  border-color: rgba(239, 71, 111, 0.4);
+}
+
+.login-card div[data-testid="stForm"] input {
+  border: 2px solid #e0e7ed !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+}
+
+.login-card div[data-testid="stForm"] input:focus {
+  border-color: #0066cc !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
+}
+
+.login-card div[data-testid="stForm"] button {
+  background: linear-gradient(135deg, #0066cc, #00a896) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  border: none !important;
+  padding: 12px 18px !important;
+  transition: all 0.3s ease !important;
+}
+
+.login-card div[data-testid="stForm"] button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.quick-access div[data-testid="stButton"] button {
+  border: 2px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 10px 12px !important;
+  background: #ffffff !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+}
+
+.quick-access div[data-testid="stButton"]:nth-child(1) button {
+  border-color: #0066cc !important;
+}
+
+.quick-access div[data-testid="stButton"]:nth-child(2) button {
+  border-color: #00a896 !important;
+}
+
+.quick-access div[data-testid="stButton"]:nth-child(3) button {
+  border-color: #ef476f !important;
+}
+
+.quick-access div[data-testid="stButton"] button:hover {
+  transform: translateX(4px);
+}

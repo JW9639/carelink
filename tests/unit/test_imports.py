@@ -18,9 +18,7 @@ def test_module_imports():
     import app.services.notification_service  # noqa: F401
     import app.services.admin_service  # noqa: F401
     import app.pages  # noqa: F401
-    import app.pages.patient.Dashboard  # noqa: F401
-    import app.pages.doctor.Dashboard  # noqa: F401
-    import app.pages.admin.Dashboard  # noqa: F401
+    import app.pages.Home  # noqa: F401
 
 
 def test_apply_theme():

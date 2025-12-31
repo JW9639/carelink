@@ -29,8 +29,20 @@ SQLAlchemy 2.0, and Pydantic.
 ## Quick Start
 
 1. Copy environment template: `cp .env.example .env`
-2. Build and start services: `docker-compose up --build`
-3. Visit `http://localhost:8501` for the Streamlit app.
+2. Generate a secret key:
+   `python -c "import secrets; print(secrets.token_urlsafe(32))"`
+3. Update `SECRET_KEY` in `.env`
+4. Start services: `docker-compose up --build`
+5. Seed the database: `docker-compose exec app python scripts/seed_data.py`
+6. Visit `http://localhost:8501`
+
+## Test Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@carelink.nhs.uk | Admin123! |
+| Doctor | dr.johnson@carelink.nhs.uk | Doctor123! |
+| Patient | patient@carelink.nhs.uk | Patient123! |
 
 ## Development Setup
 

@@ -28,7 +28,8 @@ def test_set_and_get_user():
     session_manager.set_user(user)
     assert session_manager.get_current_user() == user
     assert st.session_state.is_authenticated is True
-    assert st.session_state.role == UserRole.PATIENT
+    assert st.session_state.role == UserRole.PATIENT.value
+    assert st.session_state.user_name == "patient@example.com"
 
 
 def test_session_timeout_logic():
