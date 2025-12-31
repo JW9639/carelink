@@ -1,0 +1,66 @@
+[project]
+name = "carelink"
+version = "0.1.0"
+description = "CareLink - Role-based patient and doctor dashboard with Streamlit"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.28.0",
+    "streamlit-authenticator>=0.3.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "bcrypt>=4.0.0",
+    "python-dotenv>=1.0.0",
+    "alembic>=1.12.0",
+    "email-validator>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "flake8>=6.1.0",
+    "mypy>=1.5.0",
+    "faker>=19.0.0",
+    "bandit>=1.7.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+per-file-ignores = ["__init__.py:F401"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/pages/*",
+    "app/services/*",
+    "app/ui/components/*",
+    "app/ui/layouts/*",
+    "app/db/repositories/*",
+    "app/main.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=app --cov-report=term-missing"
+filterwarnings = ["ignore::DeprecationWarning"]

@@ -27,3 +27,47 @@ secret_detection:
   stage: secret-detection
 include:
 - template: Auto-DevOps.gitlab-ci.yml
+image: python:3.11
+
+stages:
+  - lint
+  - test
+  - security
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DATABASE_URL: "postgresql://carelink:carelink@postgres:5432/carelink_test"
+  POSTGRES_DB: carelink_test
+  POSTGRES_USER: carelink
+  POSTGRES_PASSWORD: carelink
+
+cache:
+  paths:
+    - .cache/pip
+
+.install-deps: &install-deps |
+  pip install --upgrade pip
+  pip install .[dev]
+
+lint:
+  stage: lint
+  script:
+    - *install-deps
+    - black --check app tests
+    - flake8 app tests
+
+test:
+  stage: test
+  services:
+    - name: postgres:15
+      alias: postgres
+  script:
+    - *install-deps
+    - pytest
+
+security:
+  stage: security
+  allow_failure: true
+  script:
+    - pip install bandit
+    - bandit -r app
