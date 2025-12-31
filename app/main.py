@@ -24,7 +24,7 @@ def _credentials() -> dict:
         "doctor@example.com": "Doctor123!",
         "admin@example.com": "Admin123!",
     }
-    hashed = stauth.Hasher().generate(list(passwords.values()))
+    hashed = stauth.Hasher().hash_list(list(passwords.values()))
     emails = list(passwords.keys())
     return {
         "usernames": {
