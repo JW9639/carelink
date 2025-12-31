@@ -4,7 +4,12 @@ import streamlit as st
 import pytest
 
 from app.security import session_manager
-from app.security.rbac import Permission, has_permission, require_permission, require_role
+from app.security.rbac import (
+    Permission,
+    has_permission,
+    require_permission,
+    require_role,
+)
 from app.utils.constants import UserRole
 
 

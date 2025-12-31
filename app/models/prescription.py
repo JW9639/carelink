@@ -34,9 +34,7 @@ class Prescription(TimestampMixin, Base):
     discontinued_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     discontinuation_reason: Mapped[str | None] = mapped_column(Text)
 
-    patient: Mapped["Patient"] = relationship(
-        "Patient", back_populates="prescriptions"
-    )
+    patient: Mapped["Patient"] = relationship("Patient", back_populates="prescriptions")
     prescribed_by_doctor: Mapped["Doctor"] = relationship(
         "Doctor",
         back_populates="prescriptions",

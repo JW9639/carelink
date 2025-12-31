@@ -43,9 +43,7 @@ class Appointment(TimestampMixin, Base):
     cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     cancellation_reason: Mapped[str | None] = mapped_column(Text)
 
-    patient: Mapped["Patient"] = relationship(
-        "Patient", back_populates="appointments"
-    )
+    patient: Mapped["Patient"] = relationship("Patient", back_populates="appointments")
     doctor: Mapped["Doctor"] = relationship("Doctor", back_populates="appointments")
     created_by_user: Mapped["User"] = relationship(
         "User", back_populates="appointments_created"

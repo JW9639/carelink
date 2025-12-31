@@ -6,7 +6,11 @@ from app.schemas.appointment import (
     AppointmentCreate,
     AppointmentResponse,
 )
-from app.schemas.profile import DoctorProfileUpdate, PasswordChange, PatientProfileUpdate
+from app.schemas.profile import (
+    DoctorProfileUpdate,
+    PasswordChange,
+    PatientProfileUpdate,
+)
 from app.schemas.user import UserBase, UserCreate, UserLogin, UserResponse
 
 __all__ = [

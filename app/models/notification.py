@@ -31,9 +31,7 @@ class Notification(TimestampMixin, Base):
     action_url: Mapped[str | None] = mapped_column(String(255))
     triggered_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
 
-    patient: Mapped["Patient"] = relationship(
-        "Patient", back_populates="notifications"
-    )
+    patient: Mapped["Patient"] = relationship("Patient", back_populates="notifications")
     triggered_by_user: Mapped["User | None"] = relationship(
         "User", back_populates="notifications_triggered"
     )

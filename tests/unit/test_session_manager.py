@@ -38,9 +38,7 @@ def test_session_timeout_logic():
     session_manager.update_last_activity()
     assert session_manager.check_session_timeout() is True
 
-    st.session_state.last_activity = datetime.now(timezone.utc) - timedelta(
-        minutes=120
-    )
+    st.session_state.last_activity = datetime.now(timezone.utc) - timedelta(minutes=120)
     assert session_manager.check_session_timeout() is False
 
 

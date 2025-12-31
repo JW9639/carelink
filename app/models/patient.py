@@ -46,9 +46,7 @@ class Patient(TimestampMixin, Base):
     doctor_id: Mapped[int | None] = mapped_column(ForeignKey("doctors.id"))
 
     user: Mapped["User"] = relationship("User", back_populates="patient")
-    doctor: Mapped["Doctor | None"] = relationship(
-        "Doctor", back_populates="patients"
-    )
+    doctor: Mapped["Doctor | None"] = relationship("Doctor", back_populates="patients")
     appointments: Mapped[list["Appointment"]] = relationship(
         "Appointment", back_populates="patient"
     )

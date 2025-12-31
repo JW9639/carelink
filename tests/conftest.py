@@ -5,24 +5,28 @@ from __future__ import annotations
 import os
 import uuid
 from datetime import date
-
-os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
-os.environ.setdefault("SECRET_KEY", "test-secret")
+from typing import TYPE_CHECKING
 
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import models  # noqa: F401  # ensure models are registered
-from app.db.base import Base
-from app.models import Doctor, Patient, User
-from app.security.auth import hash_password
-from app.utils.constants import UserRole
+if TYPE_CHECKING:
+    from app.models import Doctor, Patient, User
+
+
+def pytest_configure() -> None:
+    """Configure environment variables for tests."""
+    os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
+    os.environ.setdefault("SECRET_KEY", "test-secret")
 
 
 @pytest.fixture(scope="session")
 def test_engine():
     """Create an in-memory SQLite engine for tests."""
+    from app import models  # noqa: F401  # ensure models are registered
+    from app.db.base import Base
+
     engine = create_engine("sqlite:///:memory:", future=True)
     Base.metadata.create_all(engine)
     yield engine
@@ -46,6 +50,10 @@ def test_db(test_engine) -> Session:
 @pytest.fixture
 def test_user(test_db: Session) -> User:
     """Create a sample patient user."""
+    from app.models import User
+    from app.security.auth import hash_password
+    from app.utils.constants import UserRole
+
     user = User(
         email=f"{uuid.uuid4()}@example.com",
         hashed_password=hash_password("Patient123!"),
@@ -60,6 +68,10 @@ def test_user(test_db: Session) -> User:
 @pytest.fixture
 def test_doctor(test_db: Session) -> Doctor:
     """Create a sample doctor."""
+    from app.models import Doctor, User
+    from app.security.auth import hash_password
+    from app.utils.constants import UserRole
+
     user = User(
         email=f"{uuid.uuid4()}@example.com",
         hashed_password=hash_password("Doctor123!"),
@@ -86,6 +98,8 @@ def test_doctor(test_db: Session) -> Doctor:
 @pytest.fixture
 def test_patient(test_db: Session, test_user: User, test_doctor: Doctor) -> Patient:
     """Create a sample patient linked to user and doctor."""
+    from app.models import Patient
+
     patient = Patient(
         user_id=test_user.id,
         nhs_number=str(uuid.uuid4().int)[:10],
