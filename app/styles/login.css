@@ -1,157 +1,332 @@
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: var(--light-bg);
+/* Override Streamlit's main background */
+.st-emotion-cache-13k62yr {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%) !important;
 }
 
-.login-header,
-.login-footer {
-  text-align: center;
-  padding: 20px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border-color);
+/* Disable scrolling and fix content */
+.st-emotion-cache-4rsbii {
+  overflow: hidden !important;
 }
 
-.login-footer {
-  border-top: 1px solid var(--border-color);
-  border-bottom: none;
+.st-emotion-cache-zy6yx3 {
+  overflow: visible !important;
 }
 
-.login-header h1 {
-  font-size: 22px;
-  letter-spacing: 2px;
+/* Style the main block container to create card effect */
+.st-emotion-cache-zy6yx3 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
 }
 
-.login-card-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 16px;
-}
-
-.login-card {
-  background: var(--white);
+/* Create white card effect around the middle column */
+[data-testid="column"]:nth-child(2) {
+  background: #ffffff;
   border-radius: 16px;
-  padding: 48px 40px;
-  max-width: 450px;
-  width: 100%;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2.5rem !important;
+  margin-top: 2rem;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* App header - appears on all pages */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  padding: 1.5rem 2rem;
+  box-shadow: none;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Center the main content area vertically */
+.st-emotion-cache-4rsbii {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  min-height: 100vh !important;
+  padding-top: 100px !important;
+  padding-bottom: 80px !important;
+}
+
+/* Fixed footer at bottom */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  padding: 1.5rem 2rem;
   text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  z-index: 1000;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.login-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.login-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--dark-color);
-  margin-bottom: 4px;
-}
-
-.login-subtitle {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-}
-
-.login-divider {
+/* Brand container - holds logo and title horizontally */
+.header-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: var(--text-muted);
-  font-weight: 600;
-  margin: 24px 0 16px;
+  justify-content: center;
+  gap: 1rem;
 }
 
-.login-divider::before,
-.login-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--border-color);
+/* Header logo circle */
+.header-logo {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #0066cc, #00a896);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25);
+  flex-shrink: 0;
 }
 
-.demo-button {
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  padding: 10px 12px;
-  width: 100%;
-  background: var(--white);
-  font-weight: 600;
-  transition: all 0.2s ease;
-  margin-bottom: 10px;
-  text-align: left;
+/* Header title */
+.header-title {
+  color: #2b2d42 !important;
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  letter-spacing: 3px;
+  line-height: 1 !important;
 }
 
-.demo-button:hover {
-  transform: translateX(4px);
-  border-color: var(--primary-color);
+/* Header subtitle - only on login page */
+.header-subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+  text-align: center;
+  margin: 0.75rem 0 0 0;
+  font-weight: 500;
 }
 
-.demo-patient {
-  border-color: rgba(0, 102, 204, 0.4);
+/* Form styling */
+[data-testid="stForm"] {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
-.demo-doctor {
-  border-color: rgba(0, 168, 150, 0.4);
+/* Form group spacing */
+.form-group {
+  margin-bottom: 1.25rem;
 }
 
-.demo-admin {
-  border-color: rgba(239, 71, 111, 0.4);
+/* Input labels */
+[data-testid="stForm"] label {
+  font-weight: 600 !important;
+  color: #2b2d42 !important;
+  font-size: 14px !important;
+  margin-bottom: 0.5rem !important;
 }
 
-.login-card div[data-testid="stForm"] input {
-  border: 2px solid #e0e7ed !important;
+/* Input fields */
+[data-testid="stForm"] [data-testid="stTextInput"] input {
+  border: 2px solid #e2e8f0 !important;
   border-radius: 8px !important;
-  padding: 12px !important;
+  padding: 14px 18px !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease !important;
+  background: #ffffff !important;
+  color: #2b2d42 !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  pointer-events: auto !important;
+  min-height: 48px !important;
 }
 
-.login-card div[data-testid="stForm"] input:focus {
+/* Hide Streamlit's "Press Enter to submit form" caption */
+[data-testid="stForm"] [data-testid="stCaptionContainer"],
+[data-testid="stForm"] .st-emotion-cache-1cpf04v,
+[data-testid="stForm"] [data-testid="stTextInput"] + div,
+[data-testid="stForm"] [class*="caption"],
+.st-emotion-cache-1cpf04v,
+[data-testid="stCaptionContainer"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+/* Hide any caption/help text in the form */
+[data-testid="stForm"] p[class*="caption"] {
+  display: none !important;
+}
+
+/* Hide all small text elements that might be captions */
+[data-testid="stForm"] small,
+[data-testid="stForm"] [class*="StyledCaption"] {
+  display: none !important;
+}
+
+/* Placeholder text - make more visible */
+[data-testid="stForm"] [data-testid="stTextInput"] input::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Placeholder for password field specifically */
+[data-testid="stForm"] [data-testid="stTextInput"] input[type="password"]::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Password input container - fix background */
+[data-testid="stTextInput"] [data-baseweb="input"] {
+  background: #ffffff !important;
+}
+
+[data-testid="stTextInput"] [data-baseweb="base-input"] {
+  background: #ffffff !important;
+}
+
+/* Remove dark borders from input container */
+[data-testid="stForm"] [data-testid="stTextInput"] [data-baseweb="input"] {
+  border: none !important;
+  background: #ffffff !important;
+}
+
+/* Password show/hide button - fix styling */
+[data-testid="stTextInput"] button {
+  background: transparent !important;
+  border: none !important;
+  padding: 4px !important;
+  border-radius: 4px !important;
+  margin-right: 4px !important;
+}
+
+[data-testid="stTextInput"] button:hover {
+  background: #f0f4f8 !important;
+}
+
+[data-testid="stTextInput"] button svg {
+  fill: #2b2d42 !important;
+  color: #2b2d42 !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+[data-testid="stForm"] [data-testid="stTextInput"] input:focus {
   border-color: #0066cc !important;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
+  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1) !important;
+  outline: none !important;
 }
 
-.login-card div[data-testid="stForm"] button {
+/* Submit button - gradient */
+[data-testid="stForm"] [data-testid="stFormSubmitButton"] button {
   background: linear-gradient(135deg, #0066cc, #00a896) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
+  font-size: 16px !important;
   border-radius: 8px !important;
   border: none !important;
-  padding: 12px 18px !important;
+  padding: 14px 24px !important;
+  margin-top: 1rem !important;
   transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3) !important;
 }
 
-.login-card div[data-testid="stForm"] button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+[data-testid="stForm"] [data-testid="stFormSubmitButton"] button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4) !important;
 }
 
-.quick-access div[data-testid="stButton"] button {
-  border: 2px solid var(--border-color) !important;
+/* Divider section */
+.divider-section {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 2rem 0 1.5rem 0;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.divider-section::before,
+.divider-section::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.divider-section span {
+  padding: 0 1rem;
+}
+
+/* Demo buttons - 3 column layout */
+[data-testid="stButton"] button {
+  border: 2px solid #e2e8f0 !important;
   border-radius: 8px !important;
-  padding: 10px 12px !important;
+  padding: 16px 12px !important;
   background: #ffffff !important;
+  color: #2b2d42 !important;
   font-weight: 600 !important;
-  text-align: left !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+  height: 70px !important;
+  white-space: pre-line !important;
+  text-align: center !important;
 }
 
-.quick-access div[data-testid="stButton"]:nth-child(1) button {
+/* Patient button - blue */
+[data-testid="stHorizontalBlock"] > div:nth-child(1) [data-testid="stButton"] button {
   border-color: #0066cc !important;
+  color: #0066cc !important;
 }
 
-.quick-access div[data-testid="stButton"]:nth-child(2) button {
+[data-testid="stHorizontalBlock"] > div:nth-child(1) [data-testid="stButton"] button:hover {
+  background: #0066cc !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3) !important;
+}
+
+/* Doctor button - teal */
+[data-testid="stHorizontalBlock"] > div:nth-child(2) [data-testid="stButton"] button {
   border-color: #00a896 !important;
+  color: #00a896 !important;
 }
 
-.quick-access div[data-testid="stButton"]:nth-child(3) button {
+[data-testid="stHorizontalBlock"] > div:nth-child(2) [data-testid="stButton"] button:hover {
+  background: #00a896 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 168, 150, 0.3) !important;
+}
+
+/* Admin button - pink */
+[data-testid="stHorizontalBlock"] > div:nth-child(3) [data-testid="stButton"] button {
   border-color: #ef476f !important;
+  color: #ef476f !important;
 }
 
-.quick-access div[data-testid="stButton"] button:hover {
-  transform: translateX(4px);
+[data-testid="stHorizontalBlock"] > div:nth-child(3) [data-testid="stButton"] button:hover {
+  background: #ef476f !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(239, 71, 111, 0.3) !important;
+}
+
+/* Footer */
+.login-footer {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
 }

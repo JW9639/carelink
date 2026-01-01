@@ -12,17 +12,25 @@ from app.security.session_manager import (
     init_session_state,
     update_last_activity,
 )
+from app.ui.components.header import render_app_header
 from app.ui.components.sidebar import render_sidebar, render_sidebar_toggle
 
 
 def load_css(filename: str) -> None:
     """Load a CSS file from the styles directory."""
-    css_path = Path(__file__).parent.parent.parent / "styles" / filename
-    try:
-        css = css_path.read_text()
-    except FileNotFoundError:
-        return
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    possible_paths = [
+        Path(__file__).resolve().parent.parent.parent / "styles" / filename,
+        Path("/app/app/styles") / filename,
+    ]
+
+    for css_path in possible_paths:
+        if css_path.exists():
+            try:
+                css_content = css_path.read_text()
+                st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
+                return
+            except Exception:
+                continue
 
 
 def render_page_header(title: str) -> None:
@@ -61,6 +69,10 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
     load_css("sidebar.css")
 
     init_session_state()
+    
+    # Render header without subtitle
+    render_app_header(show_subtitle=False)
+    
     render_sidebar_toggle()
 
     if not st.session_state.get("is_authenticated", False):

@@ -26,6 +26,13 @@ header {
   display: none !important;
 }
 
+/* Remove default padding from main container for login page */
+.main .block-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  max-width: 100% !important;
+}
+
 /* Global type scale */
 html,
 body {
@@ -179,4 +186,58 @@ a {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
   outline: none;
+}
+
+/* Streamlit-specific selectors */
+.stApp {
+  background-color: var(--light-bg);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Form styling for Streamlit */
+[data-testid="stForm"] {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Input fields for Streamlit */
+[data-testid="stTextInput"] input {
+  border: 2px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  font-size: 16px !important;
+}
+
+[data-testid="stTextInput"] input:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
+}
+
+/* Primary button (form submit) for Streamlit */
+[data-testid="stForm"] button[kind="primaryFormSubmit"],
+[data-testid="stForm"] button[type="submit"],
+[data-testid="stFormSubmitButton"] button {
+  background: linear-gradient(135deg, #0066cc, #00a896) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+}
+
+/* Regular buttons for Streamlit */
+[data-testid="stButton"] button {
+  border: 2px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  background: var(--white) !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-testid="stButton"] button:hover {
+  border-color: var(--primary-color) !important;
+  transform: translateX(4px);
 }
