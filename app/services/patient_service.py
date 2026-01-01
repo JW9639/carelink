@@ -31,6 +31,7 @@ class NextAppointmentInfo:
     specialty: str
     scheduled_datetime: datetime
     reason: str | None
+    is_pending: bool = False
 
 
 class PatientService:
@@ -66,15 +67,26 @@ class PatientService:
         """Get formatted info for next upcoming appointment."""
         appointment = self.appointment_repo.get_next_appointment(patient_id)
         
-        if not appointment or not appointment.doctor:
+        if not appointment:
             return None
         
-        doctor = appointment.doctor
+        # Handle pending appointments (no doctor assigned yet)
+        if appointment.doctor:
+            doctor = appointment.doctor
+            doctor_name = f"Dr. {doctor.first_name} {doctor.last_name}"
+            specialty = doctor.specialty
+            is_pending = False
+        else:
+            doctor_name = "TBD"
+            specialty = "Awaiting doctor assignment"
+            is_pending = True
+        
         return NextAppointmentInfo(
-            doctor_name=f"Dr. {doctor.user.first_name} {doctor.user.last_name}",
-            specialty=doctor.specialty,
+            doctor_name=doctor_name,
+            specialty=specialty,
             scheduled_datetime=appointment.scheduled_datetime,
             reason=appointment.reason,
+            is_pending=is_pending,
         )
 
     def get_upcoming_appointments(self, patient_id: int) -> list[Appointment]:

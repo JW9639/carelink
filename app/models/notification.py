@@ -23,7 +23,9 @@ class Notification(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), nullable=False)
-    type: Mapped[NotificationType] = mapped_column(Enum(NotificationType))
+    type: Mapped[NotificationType] = mapped_column(
+        Enum(NotificationType, name="notificationtype", create_type=False, values_callable=lambda x: [e.value for e in x])
+    )
     title: Mapped[str] = mapped_column(String(255))
     message: Mapped[str] = mapped_column(Text)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)

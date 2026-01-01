@@ -66,15 +66,15 @@ def _handle_login(email: str, password: str) -> None:
         set_user(user_response)  # This sets is_authenticated, role, and user_name
         
         # Route to appropriate dashboard based on role
-        role = st.session_state.get("role", "patient")
-        if role == "patient":
+        role = st.session_state.get("role", "")
+        if role == UserRole.PATIENT.value:
             st.switch_page("pages/patient_1_Dashboard.py")
-        elif role == "doctor":
+        elif role == UserRole.DOCTOR.value:
             st.switch_page("pages/doctor_1_Dashboard.py")
-        elif role == "admin":
+        elif role == UserRole.ADMIN.value:
             st.switch_page("pages/admin_1_Dashboard.py")
         else:
-            st.rerun()
+            st.error(f"Unknown role: {role}")
     finally:
         db.close()
 

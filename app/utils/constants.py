@@ -16,7 +16,8 @@ class UserRole(str, Enum):
 class AppointmentStatus(str, Enum):
     """Appointment statuses."""
 
-    SCHEDULED = "scheduled"
+    PENDING = "pending"  # Patient booked, awaiting admin to assign doctor
+    SCHEDULED = "scheduled"  # Doctor assigned, appointment confirmed
     COMPLETED = "completed"
     CANCELLED = "cancelled"
     NO_SHOW = "no_show"

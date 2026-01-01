@@ -73,7 +73,10 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
 
     user_role = st.session_state.get("role", "")
     role_value = user_role.value if hasattr(user_role, "value") else user_role
-    if role_value not in allowed_roles:
+    # Case-insensitive role comparison
+    role_lower = role_value.lower() if isinstance(role_value, str) else ""
+    allowed_lower = [r.lower() for r in allowed_roles]
+    if role_lower not in allowed_lower:
         st.error("You do not have permission to access this page.")
         st.stop()
         return False

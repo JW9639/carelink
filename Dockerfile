@@ -5,12 +5,11 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-COPY pyproject.toml /app/pyproject.toml
-COPY app /app/app
-
-RUN pip install --upgrade pip && pip install --no-cache-dir .
-
+# Copy all files first
 COPY . /app
+
+# Install in editable mode so it uses the local files directly
+RUN pip install --upgrade pip && pip install --no-cache-dir -e .
 
 EXPOSE 8501
 

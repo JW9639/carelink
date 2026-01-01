@@ -32,8 +32,8 @@ try:
         stats = patient_service.get_dashboard_stats(patient.id)
         next_appt_info = patient_service.get_next_appointment_info(patient.id)
         
-        # Use real first name from patient's user record
-        first_name = patient.user.first_name if patient.user else first_name
+        # Use real first name from patient record
+        first_name = patient.first_name
     else:
         # Fallback to default stats if patient not found
         stats = None
@@ -153,6 +153,12 @@ with left_col:
         time_str = appt_dt.strftime("%I:%M %p").lstrip("0")
         reason = next_appt_info.reason or "Appointment"
         
+        # Status display based on pending or confirmed
+        if next_appt_info.is_pending:
+            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706; border-radius: 20px; font-size: 13px; font-weight: 600;">⏳ Pending Review</span>'
+        else:
+            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>'
+        
         st.markdown(
             f"""
             <div class="appointment-card">
@@ -172,7 +178,7 @@ with left_col:
                     </div>
                 </div>
                 <div class="appointment-status" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                    <span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>
+                    {status_html}
                 </div>
             </div>
             """,
@@ -194,9 +200,11 @@ with left_col:
     col_a, col_b = st.columns(2)
     with col_a:
         if st.button("View All Appointments", use_container_width=True, key="view_appts"):
+            st.session_state.appointments_tab = "history"
             st.switch_page("pages/patient_4_Appointments.py")
     with col_b:
-        if st.button("Book New Appointment", use_container_width=True, key="book_appt"):
+        if st.button("Book New Appointment", use_container_width=True, key="book_appt", type="primary"):
+            st.session_state.appointments_tab = "book"
             st.switch_page("pages/patient_4_Appointments.py")
 
 with right_col:

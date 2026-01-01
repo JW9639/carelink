@@ -17,6 +17,7 @@ def init_session_state() -> None:
     """Initialize session state keys."""
     defaults: dict[str, Any] = {
         "user": None,
+        "user_id": None,
         "role": None,
         "last_activity": None,
         "is_authenticated": False,
@@ -33,6 +34,7 @@ def set_user(user: UserResponse) -> None:
     """Store the authenticated user in session state."""
     role_value = user.role.value if hasattr(user.role, "value") else user.role
     st.session_state.user = user
+    st.session_state.user_id = user.id
     st.session_state.role = role_value
     st.session_state.is_authenticated = True
     st.session_state.user_name = user.email

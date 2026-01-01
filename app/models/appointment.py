@@ -28,14 +28,16 @@ class Appointment(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), nullable=False)
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.id"), nullable=False)
+    doctor_id: Mapped[int | None] = mapped_column(ForeignKey("doctors.id"), nullable=True)  # Nullable for pending appointments
     scheduled_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    duration_minutes: Mapped[int] = mapped_column(Integer, default=15)
+    duration_minutes: Mapped[int] = mapped_column(Integer, default=30)
     status: Mapped[AppointmentStatus] = mapped_column(
-        Enum(AppointmentStatus), default=AppointmentStatus.SCHEDULED
+        Enum(AppointmentStatus, name="appointmentstatus", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=AppointmentStatus.PENDING
     )
     booking_source: Mapped[BookingSource] = mapped_column(
-        Enum(BookingSource), default=BookingSource.ONLINE
+        Enum(BookingSource, name="bookingsource", create_type=False, values_callable=lambda x: [e.value for e in x]),
+        default=BookingSource.ONLINE
     )
     reason: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
@@ -44,7 +46,7 @@ class Appointment(TimestampMixin, Base):
     cancellation_reason: Mapped[str | None] = mapped_column(Text)
 
     patient: Mapped["Patient"] = relationship("Patient", back_populates="appointments")
-    doctor: Mapped["Doctor"] = relationship("Doctor", back_populates="appointments")
+    doctor: Mapped["Doctor | None"] = relationship("Doctor", back_populates="appointments")
     created_by_user: Mapped["User"] = relationship(
         "User", back_populates="appointments_created"
     )
