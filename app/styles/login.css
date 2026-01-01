@@ -180,7 +180,9 @@
 }
 
 /* Placeholder for password field specifically */
-[data-testid="stForm"] [data-testid="stTextInput"] input[type="password"]::placeholder {
+[data-testid="stForm"]
+  [data-testid="stTextInput"]
+  input[type="password"]::placeholder {
   color: #64748b !important;
   opacity: 1 !important;
 }
@@ -258,7 +260,7 @@
 
 .divider-section::before,
 .divider-section::after {
-  content: '';
+  content: "";
   flex: 1;
   border-bottom: 1px solid #e2e8f0;
 }
@@ -283,12 +285,18 @@
 }
 
 /* Patient button - blue */
-[data-testid="stHorizontalBlock"] > div:nth-child(1) [data-testid="stButton"] button {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(1)
+  [data-testid="stButton"]
+  button {
   border-color: #0066cc !important;
   color: #0066cc !important;
 }
 
-[data-testid="stHorizontalBlock"] > div:nth-child(1) [data-testid="stButton"] button:hover {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(1)
+  [data-testid="stButton"]
+  button:hover {
   background: #0066cc !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
@@ -296,12 +304,18 @@
 }
 
 /* Doctor button - teal */
-[data-testid="stHorizontalBlock"] > div:nth-child(2) [data-testid="stButton"] button {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(2)
+  [data-testid="stButton"]
+  button {
   border-color: #00a896 !important;
   color: #00a896 !important;
 }
 
-[data-testid="stHorizontalBlock"] > div:nth-child(2) [data-testid="stButton"] button:hover {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(2)
+  [data-testid="stButton"]
+  button:hover {
   background: #00a896 !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;
@@ -309,12 +323,18 @@
 }
 
 /* Admin button - pink */
-[data-testid="stHorizontalBlock"] > div:nth-child(3) [data-testid="stButton"] button {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(3)
+  [data-testid="stButton"]
+  button {
   border-color: #ef476f !important;
   color: #ef476f !important;
 }
 
-[data-testid="stHorizontalBlock"] > div:nth-child(3) [data-testid="stButton"] button:hover {
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(3)
+  [data-testid="stButton"]
+  button:hover {
   background: #ef476f !important;
   color: #ffffff !important;
   transform: translateY(-2px) !important;

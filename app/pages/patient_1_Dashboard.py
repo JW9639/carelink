@@ -27,7 +27,7 @@ with col1:
         unsafe_allow_html=True,
     )
     if st.button("View Appointments", use_container_width=True):
-        st.switch_page("pages/patient/4_Appointments.py")
+        st.switch_page("pages/patient_4_Appointments.py")
 
 with col2:
     st.markdown(
@@ -40,7 +40,7 @@ with col2:
         unsafe_allow_html=True,
     )
     if st.button("View Prescriptions", use_container_width=True):
-        st.switch_page("pages/patient/3_Prescriptions.py")
+        st.switch_page("pages/patient_3_Prescriptions.py")
 
 with col3:
     st.markdown(
@@ -53,7 +53,7 @@ with col3:
         unsafe_allow_html=True,
     )
     if st.button("View Notifications", use_container_width=True):
-        st.switch_page("pages/patient/5_Notifications.py")
+        st.switch_page("pages/patient_5_Notifications.py")
 
 with col4:
     st.markdown(
@@ -66,7 +66,7 @@ with col4:
         unsafe_allow_html=True,
     )
     if st.button("View Bloodwork", use_container_width=True):
-        st.switch_page("pages/patient/2_Bloodwork.py")
+        st.switch_page("pages/patient_2_Bloodwork.py")
 
 st.markdown("---")
 
@@ -128,7 +128,7 @@ with col_left:
 with col_right:
     st.markdown("### Quick Actions")
     if st.button("Book Appointment", use_container_width=True):
-        st.switch_page("pages/patient/4_Appointments.py")
+        st.switch_page("pages/patient_4_Appointments.py")
     action_cols = st.columns(2)
     with action_cols[0]:
         st.button("Request Refill", use_container_width=True)

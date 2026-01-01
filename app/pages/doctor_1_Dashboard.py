@@ -105,7 +105,7 @@ col_left, col_right = st.columns([1, 1])
 with col_left:
     st.markdown("### Quick Actions")
     if st.button("Add Clinical Note", use_container_width=True):
-        st.switch_page("pages/doctor/2_Patients.py")
+        st.switch_page("pages/doctor_2_Patients.py")
     action_cols = st.columns(2)
     with action_cols[0]:
         st.button("Prescribe", use_container_width=True)

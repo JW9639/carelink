@@ -63,16 +63,18 @@ def _handle_login(email: str, password: str) -> None:
             st.error("Invalid credentials. Please try again.")
             return
         user_response = UserResponse.model_validate(user)
-        set_user(user_response)
-        st.session_state.user_name = user.email
-        role = user.role.value if isinstance(user.role, UserRole) else str(user.role)
-        st.session_state.role = role
+        set_user(user_response)  # This sets is_authenticated, role, and user_name
+        
+        # Route to appropriate dashboard based on role
+        role = st.session_state.get("role", "patient")
         if role == "patient":
-            st.switch_page("pages/patient/1_Dashboard.py")
+            st.switch_page("pages/patient_1_Dashboard.py")
         elif role == "doctor":
-            st.switch_page("pages/doctor/1_Dashboard.py")
+            st.switch_page("pages/doctor_1_Dashboard.py")
         elif role == "admin":
-            st.switch_page("pages/admin/1_Dashboard.py")
+            st.switch_page("pages/admin_1_Dashboard.py")
+        else:
+            st.rerun()
     finally:
         db.close()
 

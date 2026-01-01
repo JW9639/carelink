@@ -36,7 +36,8 @@ header {
 /* Global type scale */
 html,
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   background: var(--light-bg);
   color: var(--dark-color);
 }
@@ -102,7 +103,11 @@ a {
 }
 
 .stat-card:hover {
-  background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 168, 150, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 102, 204, 0.1),
+    rgba(0, 168, 150, 0.1)
+  );
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
