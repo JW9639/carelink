@@ -29,7 +29,7 @@ def load_css(filename: str) -> None:
                 css_content = css_path.read_text()
                 st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
                 return
-            except Exception:
+            except (IOError, OSError):
                 continue
 
 
