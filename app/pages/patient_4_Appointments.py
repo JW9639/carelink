@@ -414,43 +414,26 @@ try:
                     st.session_state.show_booking_modal = True
                     st.rerun()
         
-        # Booking Modal
+        # Booking Confirmation Form
         if st.session_state.show_booking_modal and st.session_state.selected_date and st.session_state.selected_time:
-            # Dark overlay
-            st.markdown("""
-            <style>
-            .booking-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 9998;
-            }
-            </style>
-            <div class="booking-overlay"></div>
-            """, unsafe_allow_html=True)
+            st.markdown("---")
             
-            # Modal content using Streamlit container
-            with st.container():
+            # Center the form using columns
+            spacer_left, form_col, spacer_right = st.columns([1, 2, 1])
+            
+            with form_col:
+                # Confirmation box
                 st.markdown("""
                 <div style="
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
                     background: white;
                     border-radius: 16px;
-                    padding: 32px;
-                    width: 500px;
-                    max-width: 90vw;
-                    z-index: 9999;
-                    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                    padding: 24px;
+                    border: 2px solid #0066cc;
+                    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
                 ">
                 """, unsafe_allow_html=True)
                 
-                st.markdown("<h4 style='color: #1e293b; font-weight: 600; margin-bottom: 16px;'>Confirm Your Appointment</h4>", unsafe_allow_html=True)
+                st.markdown("<h4 style='color: #1e293b; font-weight: 600; margin-bottom: 16px;'>✅ Confirm Your Appointment</h4>", unsafe_allow_html=True)
                 
                 # Display selected date/time
                 appt_datetime = datetime.combine(st.session_state.selected_date, st.session_state.selected_time)
@@ -470,13 +453,11 @@ try:
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Patient info (pre-filled)
+                # Patient info (pre-filled, just name)
                 patient_name = f"{patient.first_name} {patient.last_name}"
-                patient_address = f"{patient.address_line_1}, {patient.city}" if patient.address_line_1 else "Not on file"
                 
                 st.markdown("**Patient Details**")
                 st.text_input("Name", value=patient_name, disabled=True, key="confirm_name")
-                st.text_input("Address", value=patient_address, disabled=True, key="confirm_address")
                 
                 st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
                 
@@ -494,7 +475,7 @@ try:
                 btn_col1, btn_col2 = st.columns(2)
                 
                 with btn_col1:
-                    if st.button("Cancel", use_container_width=True):
+                    if st.button("← Back", use_container_width=True):
                         st.session_state.show_booking_modal = False
                         st.rerun()
                 

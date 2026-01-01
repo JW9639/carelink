@@ -1,7 +1,9 @@
 # Epic: Patient Appointments Tabbed Interface
 
 ## Epic ID: CARE-2026-001
+
 ## Status: Completed
+
 ## Date: January 1, 2026
 
 ---
@@ -15,11 +17,13 @@ This epic restructures the Patient Appointments page to provide a clearer separa
 ## User Stories
 
 ### US-001: View Appointments Tab
+
 **As a** patient  
 **I want to** see my upcoming and past appointments in one place  
-**So that** I can easily track my appointment history and upcoming visits  
+**So that** I can easily track my appointment history and upcoming visits
 
 #### Acceptance Criteria
+
 - [x] Tab displays up to 2 upcoming appointments
 - [x] Tab displays appointment history with max 3 items per page
 - [x] History section has pagination (Previous/Next buttons)
@@ -28,11 +32,13 @@ This epic restructures the Patient Appointments page to provide a clearer separa
 - [x] Status badges show: Pending Review, Confirmed, Completed, Cancelled, No Show
 
 ### US-002: Book Appointment Tab
+
 **As a** patient  
 **I want to** have a dedicated space for booking appointments  
-**So that** I can focus on the booking process without distraction  
+**So that** I can focus on the booking process without distraction
 
 #### Acceptance Criteria
+
 - [x] Tab contains the calendar date picker
 - [x] Weekends and past dates are disabled
 - [x] Time slot selection appears after date selection
@@ -41,11 +47,13 @@ This epic restructures the Patient Appointments page to provide a clearer separa
 - [x] Success message after booking redirects to appointments tab
 
 ### US-003: Dashboard Navigation
+
 **As a** patient  
 **I want to** navigate directly to specific appointment functions from the dashboard  
-**So that** I can quickly access what I need  
+**So that** I can quickly access what I need
 
 #### Acceptance Criteria
+
 - [x] "View All Appointments" button navigates to My Appointments tab
 - [x] "Book New Appointment" button navigates to Book Appointment tab
 - [x] Book button has primary styling for emphasis
@@ -57,15 +65,18 @@ This epic restructures the Patient Appointments page to provide a clearer separa
 ### Files Modified
 
 1. **`app/pages/patient_4_Appointments.py`**
+
    - Complete rewrite with tabbed interface
    - Added session state for tab selection and history pagination
    - Query parameter support (`?tab=book` or `?tab=history`)
 
 2. **`app/pages/patient_1_Dashboard.py`**
+
    - Updated navigation buttons to include tab query parameters
    - Added primary styling to "Book New Appointment" button
 
 3. **`app/services/appointment_service.py`**
+
    - Added `get_patient_past_appointments()` method with pagination
    - Added `count_patient_past_appointments()` method
 
@@ -94,17 +105,17 @@ Patient Dashboard
 
 ### Session State Variables
 
-| Variable | Type | Purpose |
-|----------|------|---------|
-| `appointments_tab` | str | Tracks active tab |
-| `history_page` | int | Current page in history pagination |
-| `selected_date` | date | Selected booking date |
-| `selected_time` | time | Selected booking time |
-| `selected_duration` | int | Appointment duration (30/60 min) |
-| `show_booking_modal` | bool | Modal visibility |
-| `booking_success` | bool | Success message flag |
-| `calendar_month` | int | Current calendar month view |
-| `calendar_year` | int | Current calendar year view |
+| Variable             | Type | Purpose                            |
+| -------------------- | ---- | ---------------------------------- |
+| `appointments_tab`   | str  | Tracks active tab                  |
+| `history_page`       | int  | Current page in history pagination |
+| `selected_date`      | date | Selected booking date              |
+| `selected_time`      | time | Selected booking time              |
+| `selected_duration`  | int  | Appointment duration (30/60 min)   |
+| `show_booking_modal` | bool | Modal visibility                   |
+| `booking_success`    | bool | Success message flag               |
+| `calendar_month`     | int  | Current calendar month view        |
+| `calendar_year`      | int  | Current calendar year view         |
 
 ---
 
