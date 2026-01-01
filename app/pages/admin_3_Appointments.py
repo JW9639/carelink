@@ -8,7 +8,6 @@ from app.db.session import SessionLocal
 from app.db.repositories.doctor_repository import DoctorRepository
 from app.services.appointment_service import AppointmentService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
-from app.utils.constants import AppointmentStatus
 
 
 if not apply_dashboard_layout("Appointments", ["admin"]):

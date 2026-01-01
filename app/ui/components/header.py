@@ -38,9 +38,9 @@ def render_app_header(
                 var sidebar = parent.document.querySelector('[data-testid="stSidebar"]');
                 var btn = parent.document.getElementById('sidebar-toggle-btn');
                 if (!sidebar) return;
-                
+
                 var expanded = sidebar.getAttribute('aria-expanded') === 'true';
-                
+
                 if (expanded) {
                     sidebar.setAttribute('aria-expanded', 'false');
                     if (btn) btn.classList.remove('open');
@@ -49,22 +49,22 @@ def render_app_header(
                     if (btn) btn.classList.add('open');
                 }
             }
-            
+
             function initSidebar() {
                 var btn = parent.document.getElementById('sidebar-toggle-btn');
                 var sidebar = parent.document.querySelector('[data-testid="stSidebar"]');
-                
+
                 if (btn && !btn._listenerAttached) {
                     btn.addEventListener('click', toggleSidebar);
                     btn._listenerAttached = true;
                 }
-                
+
                 if (sidebar && btn) {
                     var isExpanded = sidebar.getAttribute('aria-expanded') === 'true';
                     btn.classList.toggle('open', isExpanded);
                 }
             }
-            
+
             // Run init after a short delay to ensure DOM is ready
             setTimeout(initSidebar, 100);
             setTimeout(initSidebar, 500);

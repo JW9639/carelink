@@ -36,7 +36,7 @@ class DoctorRepository:
         return (
             self.db.query(Doctor)
             .options(joinedload(Doctor.user))
-            .filter(Doctor.is_approved == True)
+            .filter(Doctor.is_approved.is_(True))
             .all()
         )
 

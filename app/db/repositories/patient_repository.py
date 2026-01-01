@@ -36,7 +36,7 @@ class PatientRepository:
             self.db.query(func.count(Prescription.id))
             .filter(
                 Prescription.patient_id == patient_id,
-                Prescription.is_active == True,
+                Prescription.is_active.is_(True),
             )
             .scalar()
         )
@@ -47,7 +47,7 @@ class PatientRepository:
             self.db.query(func.count(Bloodwork.id))
             .filter(
                 Bloodwork.patient_id == patient_id,
-                Bloodwork.is_published == False,
+                Bloodwork.is_published.is_(False),
             )
             .scalar()
         )
@@ -58,7 +58,7 @@ class PatientRepository:
             self.db.query(func.count(Notification.id))
             .filter(
                 Notification.patient_id == patient_id,
-                Notification.is_read == False,
+                Notification.is_read.is_(False),
             )
             .scalar()
         )
@@ -70,7 +70,7 @@ class PatientRepository:
             .options(joinedload(Prescription.prescribed_by_doctor))
             .filter(
                 Prescription.patient_id == patient_id,
-                Prescription.is_active == True,
+                Prescription.is_active.is_(True),
             )
             .order_by(Prescription.start_date.desc())
             .all()
@@ -82,7 +82,7 @@ class PatientRepository:
             self.db.query(Bloodwork)
             .filter(
                 Bloodwork.patient_id == patient_id,
-                Bloodwork.is_published == True,
+                Bloodwork.is_published.is_(True),
             )
             .order_by(Bloodwork.test_date.desc())
             .limit(limit)
@@ -98,6 +98,6 @@ class PatientRepository:
         )
 
         if unread_only:
-            query = query.filter(Notification.is_read == False)
+            query = query.filter(Notification.is_read.is_(False))
 
         return query.order_by(Notification.created_at.desc()).limit(limit).all()

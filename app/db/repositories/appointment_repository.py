@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone, date, timedelta
+from datetime import datetime, timezone, date
 
 from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session, joinedload
@@ -61,7 +61,6 @@ class AppointmentRepository:
     ) -> list[Appointment]:
         """Get appointments for a patient with optional filtering."""
         from app.models.doctor import Doctor
-        from app.models.user import User
 
         query = (
             self.db.query(Appointment)
