@@ -23,42 +23,51 @@ db = SessionLocal()
 try:
     appointment_service = AppointmentService(db)
     doctor_repo = DoctorRepository(db)
-    
+
     # Get all doctors for assignment
     all_doctors = doctor_repo.get_all_approved()
-    doctor_options = {f"Dr. {d.first_name} {d.last_name} ({d.specialty})": d.id for d in all_doctors}
-    
+    doctor_options = {
+        f"Dr. {d.first_name} {d.last_name} ({d.specialty})": d.id for d in all_doctors
+    }
+
     # Page header
     st.markdown("### 📋 Appointment Management")
     st.markdown("Review pending appointments and assign doctors.")
     st.markdown("---")
-    
+
     # Show success message
     if st.session_state.assignment_success:
         st.success("✅ Doctor assigned successfully! The appointment is now confirmed.")
         st.session_state.assignment_success = False
-    
+
     # Tabs for different views
     tab1, tab2 = st.tabs(["🔔 Pending Appointments", "📅 All Appointments"])
-    
+
     with tab1:
         # Get pending appointments
         pending_appointments = appointment_service.get_pending_appointments()
-        
+
         if not pending_appointments:
             st.info("No pending appointments at this time.")
         else:
-            st.markdown(f"**{len(pending_appointments)} appointment(s) awaiting doctor assignment**")
+            st.markdown(
+                f"**{len(pending_appointments)} appointment(s) awaiting doctor assignment**"
+            )
             st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
-            
+
             for appt in pending_appointments:
                 appt_date = appt.scheduled_datetime.strftime("%A, %B %d, %Y")
                 appt_time = appt.scheduled_datetime.strftime("%I:%M %p")
-                patient_name = f"{appt.patient.first_name} {appt.patient.last_name}" if appt.patient else "Unknown"
+                patient_name = (
+                    f"{appt.patient.first_name} {appt.patient.last_name}"
+                    if appt.patient
+                    else "Unknown"
+                )
                 reason = appt.reason or "No reason provided"
-                
+
                 with st.container():
-                    st.markdown(f"""
+                    st.markdown(
+                        f"""
                     <div style="
                         background: white;
                         border-radius: 12px;
@@ -93,8 +102,10 @@ try:
                             <div style="color: #1e293b; font-size: 14px;">{reason}</div>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
-                    
+                    """,
+                        unsafe_allow_html=True,
+                    )
+
                     # Assignment form
                     col1, col2 = st.columns([3, 1])
                     with col1:
@@ -103,20 +114,29 @@ try:
                             options=list(doctor_options.keys()),
                             key=f"doctor_select_{appt.id}",
                             label_visibility="collapsed",
-                            placeholder="Select a doctor..."
+                            placeholder="Select a doctor...",
                         )
                     with col2:
-                        if st.button("Assign", key=f"assign_{appt.id}", type="primary", use_container_width=True):
+                        if st.button(
+                            "Assign",
+                            key=f"assign_{appt.id}",
+                            type="primary",
+                            use_container_width=True,
+                        ):
                             if selected_doctor:
                                 doctor_id = doctor_options[selected_doctor]
-                                appointment_service.assign_doctor_to_appointment(appt.id, doctor_id)
+                                appointment_service.assign_doctor_to_appointment(
+                                    appt.id, doctor_id
+                                )
                                 st.session_state.assignment_success = True
                                 st.rerun()
                             else:
                                 st.error("Please select a doctor.")
-                    
-                    st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-    
+
+                    st.markdown(
+                        "<div style='height: 8px;'></div>", unsafe_allow_html=True
+                    )
+
     with tab2:
         st.markdown("**All Scheduled Appointments**")
         st.info("Full appointment list coming soon...")

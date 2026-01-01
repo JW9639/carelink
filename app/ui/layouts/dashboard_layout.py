@@ -56,7 +56,7 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
     load_css("sidebar.css")
 
     init_session_state()
-    
+
     # Render header with menu toggle button (enabled by default)
     render_app_header(show_subtitle=False)
 
@@ -83,5 +83,5 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
 
     update_last_activity()
     render_sidebar(str(role_value))
-    
+
     return True

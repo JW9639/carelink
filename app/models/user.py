@@ -28,8 +28,13 @@ class User(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
-        Enum(UserRole, name="userrole", create_type=False, values_callable=lambda x: [e.value for e in x]),
-        nullable=False
+        Enum(
+            UserRole,
+            name="userrole",
+            create_type=False,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        nullable=False,
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     last_login: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

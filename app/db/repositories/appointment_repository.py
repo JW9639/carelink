@@ -26,20 +26,28 @@ class AppointmentRepository:
 
     def get_by_id(self, appointment_id: int) -> Appointment | None:
         """Get appointment by ID."""
-        return self.db.query(Appointment).filter(Appointment.id == appointment_id).first()
+        return (
+            self.db.query(Appointment).filter(Appointment.id == appointment_id).first()
+        )
 
     def get_booked_slots_for_date(self, target_date: date) -> list[Appointment]:
         """Get all booked appointment slots for a specific date."""
-        start_of_day = datetime.combine(target_date, datetime.min.time()).replace(tzinfo=timezone.utc)
-        end_of_day = datetime.combine(target_date, datetime.max.time()).replace(tzinfo=timezone.utc)
-        
+        start_of_day = datetime.combine(target_date, datetime.min.time()).replace(
+            tzinfo=timezone.utc
+        )
+        end_of_day = datetime.combine(target_date, datetime.max.time()).replace(
+            tzinfo=timezone.utc
+        )
+
         return (
             self.db.query(Appointment)
             .filter(
                 and_(
                     Appointment.scheduled_datetime >= start_of_day,
                     Appointment.scheduled_datetime <= end_of_day,
-                    Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]),
+                    Appointment.status.in_(
+                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                    ),
                 )
             )
             .all()
@@ -54,32 +62,32 @@ class AppointmentRepository:
         """Get appointments for a patient with optional filtering."""
         from app.models.doctor import Doctor
         from app.models.user import User
-        
+
         query = (
             self.db.query(Appointment)
-            .options(
-                joinedload(Appointment.doctor).joinedload(Doctor.user)
-            )
+            .options(joinedload(Appointment.doctor).joinedload(Doctor.user))
             .filter(Appointment.patient_id == patient_id)
         )
-        
+
         if status:
             query = query.filter(Appointment.status == status)
-        
+
         if upcoming_only:
             query = query.filter(
                 and_(
                     Appointment.scheduled_datetime >= datetime.now(timezone.utc),
-                    Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]),
+                    Appointment.status.in_(
+                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                    ),
                 )
             )
-        
+
         return query.order_by(Appointment.scheduled_datetime.asc()).all()
 
     def get_next_appointment(self, patient_id: int) -> Appointment | None:
         """Get the next upcoming appointment for a patient (pending or scheduled)."""
         from app.models.doctor import Doctor
-        
+
         return (
             self.db.query(Appointment)
             .options(joinedload(Appointment.doctor).joinedload(Doctor.user))
@@ -87,7 +95,9 @@ class AppointmentRepository:
                 and_(
                     Appointment.patient_id == patient_id,
                     Appointment.scheduled_datetime >= datetime.now(timezone.utc),
-                    Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]),
+                    Appointment.status.in_(
+                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                    ),
                 )
             )
             .order_by(Appointment.scheduled_datetime.asc())
@@ -102,7 +112,9 @@ class AppointmentRepository:
                 and_(
                     Appointment.patient_id == patient_id,
                     Appointment.scheduled_datetime >= datetime.now(timezone.utc),
-                    Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]),
+                    Appointment.status.in_(
+                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                    ),
                 )
             )
             .scalar()
@@ -111,12 +123,10 @@ class AppointmentRepository:
     def get_pending_appointments(self) -> list[Appointment]:
         """Get all pending appointments awaiting doctor assignment (for admin)."""
         from app.models.patient import Patient
-        
+
         return (
             self.db.query(Appointment)
-            .options(
-                joinedload(Appointment.patient).joinedload(Patient.user)
-            )
+            .options(joinedload(Appointment.patient).joinedload(Patient.user))
             .filter(Appointment.status == AppointmentStatus.PENDING)
             .order_by(Appointment.scheduled_datetime.asc())
             .all()
@@ -144,12 +154,12 @@ class AppointmentRepository:
             .options(joinedload(Appointment.patient))
             .filter(Appointment.doctor_id == doctor_id)
         )
-        
+
         if date_from:
             query = query.filter(Appointment.scheduled_datetime >= date_from)
         if date_to:
             query = query.filter(Appointment.scheduled_datetime <= date_to)
-        
+
         return query.order_by(Appointment.scheduled_datetime.asc()).all()
 
     def get_patient_past_appointments(
@@ -160,7 +170,7 @@ class AppointmentRepository:
     ) -> list[Appointment]:
         """Get past/completed appointments for a patient with pagination."""
         from app.models.doctor import Doctor
-        
+
         query = (
             self.db.query(Appointment)
             .options(joinedload(Appointment.doctor).joinedload(Doctor.user))
@@ -169,17 +179,19 @@ class AppointmentRepository:
                     Appointment.patient_id == patient_id,
                     or_(
                         Appointment.scheduled_datetime < datetime.now(timezone.utc),
-                        Appointment.status.in_([AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED]),
+                        Appointment.status.in_(
+                            [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED]
+                        ),
                     ),
                 )
             )
             .order_by(Appointment.scheduled_datetime.desc())
             .offset(offset)
         )
-        
+
         if limit:
             query = query.limit(limit)
-        
+
         return query.all()
 
     def count_patient_past_appointments(self, patient_id: int) -> int:
@@ -191,7 +203,9 @@ class AppointmentRepository:
                     Appointment.patient_id == patient_id,
                     or_(
                         Appointment.scheduled_datetime < datetime.now(timezone.utc),
-                        Appointment.status.in_([AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED]),
+                        Appointment.status.in_(
+                            [AppointmentStatus.COMPLETED, AppointmentStatus.CANCELLED]
+                        ),
                     ),
                 )
             )

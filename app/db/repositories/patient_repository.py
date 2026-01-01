@@ -76,9 +76,7 @@ class PatientRepository:
             .all()
         )
 
-    def get_recent_bloodwork(
-        self, patient_id: int, limit: int = 5
-    ) -> list[Bloodwork]:
+    def get_recent_bloodwork(self, patient_id: int, limit: int = 5) -> list[Bloodwork]:
         """Get recent bloodwork results for a patient."""
         return (
             self.db.query(Bloodwork)
@@ -98,8 +96,8 @@ class PatientRepository:
         query = self.db.query(Notification).filter(
             Notification.patient_id == patient_id
         )
-        
+
         if unread_only:
             query = query.filter(Notification.is_read == False)
-        
+
         return query.order_by(Notification.created_at.desc()).limit(limit).all()

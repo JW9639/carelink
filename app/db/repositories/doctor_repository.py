@@ -42,8 +42,4 @@ class DoctorRepository:
 
     def get_all(self) -> list[Doctor]:
         """Get all doctors."""
-        return (
-            self.db.query(Doctor)
-            .options(joinedload(Doctor.user))
-            .all()
-        )
+        return self.db.query(Doctor).options(joinedload(Doctor.user)).all()

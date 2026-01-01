@@ -17,21 +17,25 @@ if not apply_dashboard_layout("Patient Dashboard", ["patient"]):
 # Get user info from session
 user_id = st.session_state.get("user_id")
 user_email = st.session_state.get("user_name", "Patient")
-first_name = user_email.split("@")[0].replace(".", " ").title() if "@" in user_email else user_email
+first_name = (
+    user_email.split("@")[0].replace(".", " ").title()
+    if "@" in user_email
+    else user_email
+)
 
 # Initialize database session and load real data
 db = SessionLocal()
 try:
     patient_service = PatientService(db)
-    
+
     # Get patient profile
     patient = patient_service.get_patient_by_user_id(user_id) if user_id else None
-    
+
     if patient:
         # Get real dashboard stats
         stats = patient_service.get_dashboard_stats(patient.id)
         next_appt_info = patient_service.get_next_appointment_info(patient.id)
-        
+
         # Use real first name from patient record
         first_name = patient.first_name
     else:
@@ -71,7 +75,10 @@ st.markdown(
 )
 
 # Quick Stats Row
-st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Health Summary</p>', unsafe_allow_html=True)
+st.markdown(
+    '<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Health Summary</p>',
+    unsafe_allow_html=True,
+)
 col1, col2, col3, col4 = st.columns(4)
 
 # Use real stats or fallback to defaults
@@ -143,8 +150,11 @@ left_col, right_col = st.columns([3, 2])
 
 with left_col:
     # Next Appointment Card
-    st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Next Appointment</p>', unsafe_allow_html=True)
-    
+    st.markdown(
+        '<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Next Appointment</p>',
+        unsafe_allow_html=True,
+    )
+
     if next_appt_info:
         # Format the appointment date/time
         appt_dt = next_appt_info.scheduled_datetime
@@ -152,13 +162,13 @@ with left_col:
         month_abbr = appt_dt.strftime("%b").upper()
         time_str = appt_dt.strftime("%I:%M %p").lstrip("0")
         reason = next_appt_info.reason or "Appointment"
-        
+
         # Status display based on pending or confirmed
         if next_appt_info.is_pending:
             status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706; border-radius: 20px; font-size: 13px; font-weight: 600;">⏳ Pending Review</span>'
         else:
             status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>'
-        
+
         st.markdown(
             f"""
             <div class="appointment-card">
@@ -196,21 +206,31 @@ with left_col:
             """,
             unsafe_allow_html=True,
         )
-    
+
     col_a, col_b = st.columns(2)
     with col_a:
-        if st.button("View All Appointments", use_container_width=True, key="view_appts"):
+        if st.button(
+            "View All Appointments", use_container_width=True, key="view_appts"
+        ):
             st.session_state.appointments_tab = "history"
             st.switch_page("pages/patient_4_Appointments.py")
     with col_b:
-        if st.button("Book New Appointment", use_container_width=True, key="book_appt", type="primary"):
+        if st.button(
+            "Book New Appointment",
+            use_container_width=True,
+            key="book_appt",
+            type="primary",
+        ):
             st.session_state.appointments_tab = "book"
             st.switch_page("pages/patient_4_Appointments.py")
 
 with right_col:
     # Quick Actions
-    st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Quick Actions</p>', unsafe_allow_html=True)
-    
+    st.markdown(
+        '<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Quick Actions</p>',
+        unsafe_allow_html=True,
+    )
+
     # Quick action cards
     st.markdown(
         """
@@ -227,15 +247,17 @@ with right_col:
         """,
         unsafe_allow_html=True,
     )
-    
+
     if st.button("View Bloodwork Results", use_container_width=True, key="view_blood"):
         st.switch_page("pages/patient_2_Bloodwork.py")
-    
-    if st.button("View Prescriptions", use_container_width=True, key="view_prescriptions"):
+
+    if st.button(
+        "View Prescriptions", use_container_width=True, key="view_prescriptions"
+    ):
         st.switch_page("pages/patient_3_Prescriptions.py")
-    
+
     if st.button("View Notifications", use_container_width=True, key="view_notifs"):
         st.switch_page("pages/patient_5_Notifications.py")
-    
+
     if st.button("Update Profile", use_container_width=True, key="update_profile"):
         st.switch_page("pages/patient_6_Profile.py")

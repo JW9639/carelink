@@ -64,7 +64,7 @@ def _handle_login(email: str, password: str) -> None:
             return
         user_response = UserResponse.model_validate(user)
         set_user(user_response)  # This sets is_authenticated, role, and user_name
-        
+
         # Route to appropriate dashboard based on role
         role = st.session_state.get("role", "")
         if role == UserRole.PATIENT.value:
@@ -96,23 +96,31 @@ def main() -> None:
 
     # Render header with subtitle (no menu toggle on login page)
     render_app_header(show_subtitle=True, show_menu_toggle=False)
-    
+
     # Create centered columns - wider middle column for larger screens
     col1, col2, col3 = st.columns([1.5, 1.5, 1.5])
-    
+
     with col2:
         # Login form header
-        st.markdown('<h2 style="text-align: center; color: #2b2d42; font-weight: 700; margin-bottom: 1.5rem;">Sign In to CareLink</h2>', unsafe_allow_html=True)
-        
+        st.markdown(
+            '<h2 style="text-align: center; color: #2b2d42; font-weight: 700; margin-bottom: 1.5rem;">Sign In to CareLink</h2>',
+            unsafe_allow_html=True,
+        )
+
         # Login form
         with st.form("login_form", clear_on_submit=False):
             email = st.text_input("Email Address", placeholder="you@carelink.nhs.uk")
-            password = st.text_input("Password", type="password", placeholder="Enter your password")
+            password = st.text_input(
+                "Password", type="password", placeholder="Enter your password"
+            )
             submitted = st.form_submit_button("Sign In", use_container_width=True)
             if submitted:
                 _handle_login(email=email, password=password)
 
-        st.markdown('<div class="divider-section"><span>Quick Access</span></div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="divider-section"><span>Quick Access</span></div>',
+            unsafe_allow_html=True,
+        )
 
         demo = _demo_credentials()
 
@@ -126,9 +134,12 @@ def main() -> None:
         with col_c:
             if st.button("Admin\nDemo", use_container_width=True, key="demo_admin"):
                 _handle_login(demo["admin"]["email"], demo["admin"]["password"])
-    
+
     # Fixed footer
-    st.markdown('<div class="app-footer">© 2025 CareLink Healthcare System</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="app-footer">© 2025 CareLink Healthcare System</div>',
+        unsafe_allow_html=True,
+    )
 
 
 if __name__ == "__main__":

@@ -22,7 +22,7 @@ def main() -> None:
         if check_session_timeout():
             role = st.session_state.get("role", "patient")
             role_value = role.value if hasattr(role, "value") else role
-            
+
             # Route to the appropriate dashboard using flat page structure
             if role_value == "patient":
                 st.switch_page("pages/patient_1_Dashboard.py")

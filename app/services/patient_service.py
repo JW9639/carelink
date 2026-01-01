@@ -61,15 +61,13 @@ class PatientService:
             ),
         )
 
-    def get_next_appointment_info(
-        self, patient_id: int
-    ) -> NextAppointmentInfo | None:
+    def get_next_appointment_info(self, patient_id: int) -> NextAppointmentInfo | None:
         """Get formatted info for next upcoming appointment."""
         appointment = self.appointment_repo.get_next_appointment(patient_id)
-        
+
         if not appointment:
             return None
-        
+
         # Handle pending appointments (no doctor assigned yet)
         if appointment.doctor:
             doctor = appointment.doctor
@@ -80,7 +78,7 @@ class PatientService:
             doctor_name = "TBD"
             specialty = "Awaiting doctor assignment"
             is_pending = True
-        
+
         return NextAppointmentInfo(
             doctor_name=doctor_name,
             specialty=specialty,
