@@ -305,7 +305,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(1)
   [data-testid="stButton"]
-  button p {
+  button
+  p {
   color: #0066cc !important;
 }
 
@@ -322,7 +323,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(1)
   [data-testid="stButton"]
-  button:hover p {
+  button:hover
+  p {
   color: #ffffff !important;
 }
 
@@ -339,7 +341,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(2)
   [data-testid="stButton"]
-  button p {
+  button
+  p {
   color: #00a896 !important;
 }
 
@@ -356,7 +359,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(2)
   [data-testid="stButton"]
-  button:hover p {
+  button:hover
+  p {
   color: #ffffff !important;
 }
 
@@ -373,7 +377,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(3)
   [data-testid="stButton"]
-  button p {
+  button
+  p {
   color: #ef476f !important;
 }
 
@@ -390,7 +395,8 @@
 [data-testid="stHorizontalBlock"]
   > div:nth-child(3)
   [data-testid="stButton"]
-  button:hover p {
+  button:hover
+  p {
   color: #ffffff !important;
 }
 

@@ -66,7 +66,8 @@ section[data-testid="stSidebar"] button[data-testid="stSidebarNavViewButton"] {
   font-weight: 500 !important;
 }
 
-section[data-testid="stSidebar"] button[data-testid="stSidebarNavViewButton"]:hover {
+section[data-testid="stSidebar"]
+  button[data-testid="stSidebarNavViewButton"]:hover {
   background: #e2e8f0 !important;
   color: #0066cc !important;
 }
@@ -93,11 +94,16 @@ section[data-testid="stSidebar"] [data-testid="stButton"]:last-of-type button {
   margin-top: 1rem !important;
 }
 
-section[data-testid="stSidebar"] [data-testid="stButton"]:last-of-type button p {
+section[data-testid="stSidebar"]
+  [data-testid="stButton"]:last-of-type
+  button
+  p {
   color: #dc2626 !important;
 }
 
-section[data-testid="stSidebar"] [data-testid="stButton"]:last-of-type button:hover {
+section[data-testid="stSidebar"]
+  [data-testid="stButton"]:last-of-type
+  button:hover {
   background: #fee2e2 !important;
   border-color: #dc2626 !important;
   transform: none !important;

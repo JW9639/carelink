@@ -134,7 +134,9 @@ header {
 }
 
 /* When sidebar is collapsed, content takes full width */
-section[data-testid="stSidebar"][aria-expanded="false"] ~ .main .block-container {
+section[data-testid="stSidebar"][aria-expanded="false"]
+  ~ .main
+  .block-container {
   margin-left: 0 !important;
 }
 
