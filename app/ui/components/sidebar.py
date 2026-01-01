@@ -27,7 +27,6 @@ def render_sidebar(role: str) -> None:
     with st.sidebar:
         st.markdown("## CareLink")
         st.markdown("---")
-        st.markdown('<div class="sidebar-nav">', unsafe_allow_html=True)
 
         if role == "patient":
             _nav_button("Dashboard", "pages/patient_1_Dashboard.py")
@@ -49,13 +48,10 @@ def render_sidebar(role: str) -> None:
             _nav_button("Audit Log", "pages/admin_4_Audit_Log.py")
             _nav_button("Profile", "pages/admin_5_Profile.py")
 
-        st.markdown("</div>", unsafe_allow_html=True)
         st.markdown("---")
 
-        st.markdown('<div class="sidebar-user">', unsafe_allow_html=True)
         st.markdown(f"**{st.session_state.get('user_name', 'Unknown')}**")
         st.caption(role.capitalize())
-        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         if st.button("Sign Out", use_container_width=True):

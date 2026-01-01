@@ -143,7 +143,7 @@ left_col, right_col = st.columns([3, 2])
 
 with left_col:
     # Next Appointment Card
-    st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">📅 Your Next Appointment</p>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Next Appointment</p>', unsafe_allow_html=True)
     
     if next_appt_info:
         # Format the appointment date/time
