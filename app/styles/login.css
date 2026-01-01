@@ -1,3 +1,16 @@
+/* Hide sidebar completely on login page */
+section[data-testid="stSidebar"],
+section.stSidebar,
+[data-testid="stSidebar"] {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* Override Streamlit's main background */
 .st-emotion-cache-13k62yr {
   background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%) !important;

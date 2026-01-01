@@ -1,5 +1,6 @@
 /* Sidebar Styles - Clean white theme, overlay mode */
-section[data-testid="stSidebar"] {
+section[data-testid="stSidebar"],
+section.stSidebar {
   background: #ffffff !important;
   border-right: 1px solid #e2e8f0 !important;
   padding-top: 80px !important;
@@ -11,14 +12,34 @@ section[data-testid="stSidebar"] {
   bottom: 0 !important;
   z-index: 999 !important;
   transform: translateX(-100%) !important;
-  transition: transform 0.3s ease !important;
+  transition: transform 0.3s ease, visibility 0.3s ease !important;
   box-shadow: none !important;
+  visibility: hidden !important;
 }
 
 /* When sidebar is expanded, slide it in */
-section[data-testid="stSidebar"][aria-expanded="true"] {
+section[data-testid="stSidebar"][aria-expanded="true"],
+section.stSidebar[aria-expanded="true"] {
   transform: translateX(0) !important;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+  visibility: visible !important;
+}
+
+/* Hide the sidebar's parent container background when collapsed */
+[data-testid="stSidebar"]:not([aria-expanded="true"]) {
+  background: transparent !important;
+}
+
+/* Hide the dark sidebar collapse button area */
+[data-testid="stSidebarCollapsedControl"] {
+  display: none !important;
+}
+
+/* Hide all sidebar emotion-cache dark backgrounds */
+.stSidebar,
+.stSidebar > div,
+[data-testid="stSidebar"] > div {
+  background: #ffffff !important;
 }
 
 /* Overlay backdrop when sidebar is open */
