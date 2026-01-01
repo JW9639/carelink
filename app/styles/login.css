@@ -269,19 +269,27 @@
   padding: 0 1rem;
 }
 
-/* Demo buttons - 3 column layout */
-[data-testid="stButton"] button {
+/* Demo buttons - 3 column layout with visible text */
+.login-container [data-testid="stButton"] button,
+[data-testid="stHorizontalBlock"] [data-testid="stButton"] button {
   border: 2px solid #e2e8f0 !important;
   border-radius: 8px !important;
   padding: 16px 12px !important;
   background: #ffffff !important;
-  color: #2b2d42 !important;
+  color: #1e293b !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   transition: all 0.2s ease !important;
   height: 70px !important;
   white-space: pre-line !important;
   text-align: center !important;
+  box-shadow: none !important;
+}
+
+.login-container [data-testid="stButton"] button p,
+[data-testid="stHorizontalBlock"] [data-testid="stButton"] button p {
+  color: #1e293b !important;
+  font-weight: 600 !important;
 }
 
 /* Patient button - blue */
@@ -290,6 +298,14 @@
   [data-testid="stButton"]
   button {
   border-color: #0066cc !important;
+  color: #0066cc !important;
+  background: #ffffff !important;
+}
+
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(1)
+  [data-testid="stButton"]
+  button p {
   color: #0066cc !important;
 }
 
@@ -303,12 +319,27 @@
   box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3) !important;
 }
 
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(1)
+  [data-testid="stButton"]
+  button:hover p {
+  color: #ffffff !important;
+}
+
 /* Doctor button - teal */
 [data-testid="stHorizontalBlock"]
   > div:nth-child(2)
   [data-testid="stButton"]
   button {
   border-color: #00a896 !important;
+  color: #00a896 !important;
+  background: #ffffff !important;
+}
+
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(2)
+  [data-testid="stButton"]
+  button p {
   color: #00a896 !important;
 }
 
@@ -322,12 +353,27 @@
   box-shadow: 0 4px 12px rgba(0, 168, 150, 0.3) !important;
 }
 
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(2)
+  [data-testid="stButton"]
+  button:hover p {
+  color: #ffffff !important;
+}
+
 /* Admin button - pink */
 [data-testid="stHorizontalBlock"]
   > div:nth-child(3)
   [data-testid="stButton"]
   button {
   border-color: #ef476f !important;
+  color: #ef476f !important;
+  background: #ffffff !important;
+}
+
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(3)
+  [data-testid="stButton"]
+  button p {
   color: #ef476f !important;
 }
 
@@ -339,6 +385,13 @@
   color: #ffffff !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 12px rgba(239, 71, 111, 0.3) !important;
+}
+
+[data-testid="stHorizontalBlock"]
+  > div:nth-child(3)
+  [data-testid="stButton"]
+  button:hover p {
+  color: #ffffff !important;
 }
 
 /* Footer */

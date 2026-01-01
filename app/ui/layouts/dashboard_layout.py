@@ -57,7 +57,7 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
 
     init_session_state()
     
-    # Render header (without subtitle for dashboard pages)
+    # Render header with menu toggle button (enabled by default)
     render_app_header(show_subtitle=False)
 
     if not st.session_state.get("is_authenticated", False):
