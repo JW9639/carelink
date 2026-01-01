@@ -18,9 +18,27 @@ def render_app_header(show_subtitle: bool = False, show_menu_toggle: bool = True
     if show_menu_toggle:
         menu_btn_html = '<div id="sidebar-toggle-btn" onclick="toggleSidebar()" role="button" tabindex="0"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>'
         js_html = """<script>
-function toggleSidebar(){var b=document.getElementById('sidebar-toggle-btn');var c=document.querySelector('[data-testid="collapsedControl"] button')||document.querySelector('[data-testid="stSidebarCollapseButton"] button')||document.querySelector('button[kind="header"]');if(b)b.classList.toggle('open');if(c)c.click();}
-var obs=new MutationObserver(function(m){var s=document.querySelector('[data-testid="stSidebar"]');var b=document.getElementById('sidebar-toggle-btn');if(s&&b){b.classList.toggle('open',s.getAttribute('aria-expanded')==='true');}});
-setTimeout(function(){var s=document.querySelector('[data-testid="stSidebar"]');if(s){obs.observe(s,{attributes:true,attributeFilter:['aria-expanded']});var b=document.getElementById('sidebar-toggle-btn');if(b&&s.getAttribute('aria-expanded')==='true')b.classList.add('open');}},300);
+function toggleSidebar(){
+  var sidebar=document.querySelector('[data-testid="stSidebar"]');
+  var btn=document.getElementById('sidebar-toggle-btn');
+  var expanded=sidebar&&sidebar.getAttribute('aria-expanded')==='true';
+  var collapseBtn=document.querySelector('[data-testid="collapsedControl"] button')||document.querySelector('[data-testid="stSidebarCollapseButton"] button')||document.querySelector('button[kind="header"]');
+  if(collapseBtn){collapseBtn.click();}
+  if(btn){btn.classList.toggle('open',!expanded);}
+}
+var sidebarObs=new MutationObserver(function(m){
+  var s=document.querySelector('[data-testid="stSidebar"]');
+  var b=document.getElementById('sidebar-toggle-btn');
+  if(s&&b){b.classList.toggle('open',s.getAttribute('aria-expanded')==='true');}
+});
+setTimeout(function(){
+  var s=document.querySelector('[data-testid="stSidebar"]');
+  if(s){
+    sidebarObs.observe(s,{attributes:true,attributeFilter:['aria-expanded']});
+    var b=document.getElementById('sidebar-toggle-btn');
+    if(b){b.classList.toggle('open',s.getAttribute('aria-expanded')==='true');}
+  }
+},500);
 </script>"""
     
     subtitle_html = ""

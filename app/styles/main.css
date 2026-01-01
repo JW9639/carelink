@@ -122,22 +122,21 @@ header {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Hide default Streamlit sidebar collapse button */
+/* Hide default Streamlit sidebar collapse button but keep it functional */
 [data-testid="collapsedControl"],
 [data-testid="stSidebarCollapseButton"] {
-  display: none !important;
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
 }
 
-/* Main content area - responsive to sidebar */
+/* Main content area - always full width since sidebar is overlay */
 .main .block-container {
-  transition: margin-left 0.3s ease, padding-left 0.3s ease;
-}
-
-/* When sidebar is collapsed, content takes full width */
-section[data-testid="stSidebar"][aria-expanded="false"]
-  ~ .main
-  .block-container {
   margin-left: 0 !important;
+  width: 100% !important;
 }
 
 /* Remove default padding from main container for login page */
