@@ -94,8 +94,8 @@ def main() -> None:
 
     init_session_state()
 
-    # Render header with subtitle
-    render_app_header(show_subtitle=True)
+    # Render header with subtitle (no menu toggle on login page)
+    render_app_header(show_subtitle=True, show_menu_toggle=False)
     
     # Create centered columns - wider middle column for larger screens
     col1, col2, col3 = st.columns([1.5, 1.5, 1.5])
