@@ -94,6 +94,8 @@ header {
   box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
   transition: all 0.3s ease;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1000;
 }
 
 #sidebar-toggle-btn:hover {
@@ -122,15 +124,41 @@ header {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Hide default Streamlit sidebar collapse button but keep it functional */
-[data-testid="collapsedControl"],
-[data-testid="stSidebarCollapseButton"] {
+/* Streamlit's collapsed control (expand button when sidebar is hidden) */
+[data-testid="collapsedControl"] {
+  position: fixed !important;
+  top: 16px !important;
+  left: 16px !important;
+  width: 44px !important;
+  height: 44px !important;
+  z-index: 999 !important;
+  opacity: 0.01 !important;
+  background: transparent !important;
+}
+
+[data-testid="collapsedControl"] button {
+  width: 44px !important;
+  height: 44px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* Keep the sidebar header but make its close button invisible but clickable */
+section[data-testid="stSidebar"] [data-testid="stSidebarHeader"] {
   position: absolute !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 50px !important;
+  height: 50px !important;
+  z-index: 100000 !important;
+  opacity: 0.01 !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stSidebarHeader"] button {
+  width: 50px !important;
+  height: 50px !important;
+  cursor: pointer !important;
 }
 
 /* Main content area - always full width since sidebar is overlay */
