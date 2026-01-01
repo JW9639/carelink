@@ -81,7 +81,4 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
     update_last_activity()
     render_sidebar(str(role_value))
     
-    # Add container div for content spacing below fixed header
-    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
-    
     return True

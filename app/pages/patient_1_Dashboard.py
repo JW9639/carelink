@@ -6,15 +6,40 @@ from datetime import datetime
 
 import streamlit as st
 
+from app.db.session import SessionLocal
+from app.services.patient_service import PatientService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
 
 
 if not apply_dashboard_layout("Patient Dashboard", ["patient"]):
     st.stop()
 
-# Get user's first name for greeting
+# Get user info from session
+user_id = st.session_state.get("user_id")
 user_email = st.session_state.get("user_name", "Patient")
 first_name = user_email.split("@")[0].replace(".", " ").title() if "@" in user_email else user_email
+
+# Initialize database session and load real data
+db = SessionLocal()
+try:
+    patient_service = PatientService(db)
+    
+    # Get patient profile
+    patient = patient_service.get_patient_by_user_id(user_id) if user_id else None
+    
+    if patient:
+        # Get real dashboard stats
+        stats = patient_service.get_dashboard_stats(patient.id)
+        next_appt_info = patient_service.get_next_appointment_info(patient.id)
+        
+        # Use real first name from patient's user record
+        first_name = patient.user.first_name if patient.user else first_name
+    else:
+        # Fallback to default stats if patient not found
+        stats = None
+        next_appt_info = None
+finally:
+    db.close()
 
 # Current time for greeting
 hour = datetime.now().hour
@@ -49,14 +74,20 @@ st.markdown(
 st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">Your Health Summary</p>', unsafe_allow_html=True)
 col1, col2, col3, col4 = st.columns(4)
 
+# Use real stats or fallback to defaults
+appt_count = stats.upcoming_appointments if stats else 0
+rx_count = stats.active_prescriptions if stats else 0
+pending_count = stats.pending_results if stats else 0
+notif_count = stats.unread_notifications if stats else 0
+
 with col1:
     st.markdown(
-        """
+        f"""
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, rgba(0, 102, 204, 0.15), rgba(0, 102, 204, 0.05)); color: #0066cc;">📅</div>
             <div class="stat-content">
-                <div class="stat-number">1</div>
-                <div class="stat-label">Appointment</div>
+                <div class="stat-number">{appt_count}</div>
+                <div class="stat-label">Appointment{'s' if appt_count != 1 else ''}</div>
             </div>
         </div>
         """,
@@ -65,12 +96,12 @@ with col1:
 
 with col2:
     st.markdown(
-        """
+        f"""
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, rgba(6, 214, 160, 0.15), rgba(6, 214, 160, 0.05)); color: #059669;">💊</div>
             <div class="stat-content">
-                <div class="stat-number">2</div>
-                <div class="stat-label">Prescriptions</div>
+                <div class="stat-number">{rx_count}</div>
+                <div class="stat-label">Prescription{'s' if rx_count != 1 else ''}</div>
             </div>
         </div>
         """,
@@ -79,12 +110,12 @@ with col2:
 
 with col3:
     st.markdown(
-        """
+        f"""
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706;">🔬</div>
             <div class="stat-content">
-                <div class="stat-number">1</div>
-                <div class="stat-label">Pending Results</div>
+                <div class="stat-number">{pending_count}</div>
+                <div class="stat-label">Pending Result{'s' if pending_count != 1 else ''}</div>
             </div>
         </div>
         """,
@@ -93,12 +124,12 @@ with col3:
 
 with col4:
     st.markdown(
-        """
+        f"""
         <div class="stat-card">
             <div class="stat-icon" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: #dc2626;">🔔</div>
             <div class="stat-content">
-                <div class="stat-number">3</div>
-                <div class="stat-label">Notifications</div>
+                <div class="stat-number">{notif_count}</div>
+                <div class="stat-label">Notification{'s' if notif_count != 1 else ''}</div>
             </div>
         </div>
         """,
@@ -113,31 +144,52 @@ left_col, right_col = st.columns([3, 2])
 with left_col:
     # Next Appointment Card
     st.markdown('<p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin-bottom: 16px;">📅 Your Next Appointment</p>', unsafe_allow_html=True)
-    st.markdown(
-        """
-        <div class="appointment-card">
-            <div class="appointment-header">
-                <div class="appointment-date">
-                    <span class="date-day">12</span>
-                    <span class="date-month">JAN</span>
+    
+    if next_appt_info:
+        # Format the appointment date/time
+        appt_dt = next_appt_info.scheduled_datetime
+        day_num = appt_dt.strftime("%d")
+        month_abbr = appt_dt.strftime("%b").upper()
+        time_str = appt_dt.strftime("%I:%M %p").lstrip("0")
+        reason = next_appt_info.reason or "Appointment"
+        
+        st.markdown(
+            f"""
+            <div class="appointment-card">
+                <div class="appointment-header">
+                    <div class="appointment-date">
+                        <span class="date-day">{day_num}</span>
+                        <span class="date-month">{month_abbr}</span>
+                    </div>
+                    <div class="appointment-details">
+                        <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 1.25rem; font-weight: 700;">{reason}</h4>
+                        <p style="margin: 0 0 6px 0; color: #475569; font-size: 15px;">
+                            <strong style="color: #1e293b;">{next_appt_info.doctor_name}</strong> • {next_appt_info.specialty}
+                        </p>
+                        <p style="margin: 0; color: #64748b; font-size: 14px;">
+                            🕐 {time_str}
+                        </p>
+                    </div>
                 </div>
-                <div class="appointment-details">
-                    <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 1.25rem; font-weight: 700;">General Health Checkup</h4>
-                    <p style="margin: 0 0 6px 0; color: #475569; font-size: 15px;">
-                        <strong style="color: #1e293b;">Dr. Sarah Johnson</strong> • General Practice
-                    </p>
-                    <p style="margin: 0; color: #64748b; font-size: 14px;">
-                        🕐 10:30 AM • 📍 CareLink Clinic, Belfast
-                    </p>
+                <div class="appointment-status" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                    <span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>
                 </div>
             </div>
-            <div class="appointment-status" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                <span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            """
+            <div class="appointment-card">
+                <div style="text-align: center; padding: 24px;">
+                    <p style="color: #64748b; font-size: 16px; margin: 0 0 12px 0;">No upcoming appointments</p>
+                    <p style="color: #94a3b8; font-size: 14px; margin: 0;">Book an appointment to see your next visit here</p>
+                </div>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            """,
+            unsafe_allow_html=True,
+        )
     
     col_a, col_b = st.columns(2)
     with col_a:
