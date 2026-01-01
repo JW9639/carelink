@@ -11,14 +11,7 @@ def render_sidebar_toggle() -> None:
     """Render a hamburger menu toggle button."""
     if "sidebar_open" not in st.session_state:
         st.session_state.sidebar_open = True
-
-    st.markdown('<div class="sidebar-toggle">', unsafe_allow_html=True)
-    if st.button("Menu", key="sidebar_toggle"):
-        st.session_state.sidebar_open = not st.session_state.sidebar_open
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    if st.session_state.sidebar_open:
-        st.markdown('<div class="sidebar-overlay"></div>', unsafe_allow_html=True)
+    # Sidebar toggle removed - using native Streamlit sidebar
 
 
 def _nav_button(label: str, page: str) -> None:

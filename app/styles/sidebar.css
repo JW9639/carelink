@@ -1,52 +1,59 @@
-.sidebar-toggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1001;
-}
-
-.sidebar-toggle button {
-  background: var(--primary-color) !important;
-  color: var(--white) !important;
-  border-radius: 10px !important;
-  border: none !important;
-  padding: 8px 12px !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1000;
-}
-
+/* Sidebar Styles */
 section[data-testid="stSidebar"] {
   background: var(--white);
   border-right: 1px solid var(--border-color);
+  padding-top: 1rem;
 }
 
-.sidebar-nav button {
+section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+  padding: 1rem;
+}
+
+/* Sidebar Navigation Buttons */
+section[data-testid="stSidebar"] button {
   width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: transparent;
-  font-weight: 600;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  font-weight: 500 !important;
+  color: var(--dark-color) !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 4px !important;
 }
 
-.sidebar-nav button:hover {
-  border-color: var(--primary-color);
-  transform: translateX(4px);
+section[data-testid="stSidebar"] button:hover {
+  background: var(--light-bg) !important;
+  border-color: var(--border-color) !important;
 }
 
+section[data-testid="stSidebar"] button[kind="primary"] {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Sidebar User Section */
 .sidebar-user {
-  padding: 12px;
+  padding: 12px 16px;
   background: var(--light-bg);
   border-radius: 10px;
+  margin-top: 8px;
+}
+
+.sidebar-user strong {
+  color: var(--dark-color);
+  font-size: 14px;
+}
+
+/* Sign Out Button */
+section[data-testid="stSidebar"] button:last-of-type {
+  background: rgba(239, 71, 111, 0.1) !important;
+  color: var(--error-color) !important;
+  margin-top: 1rem !important;
+}
+
+section[data-testid="stSidebar"] button:last-of-type:hover {
+  background: rgba(239, 71, 111, 0.2) !important;
 }

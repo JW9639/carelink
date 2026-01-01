@@ -13,7 +13,7 @@ from app.security.session_manager import (
     update_last_activity,
 )
 from app.ui.components.header import render_app_header
-from app.ui.components.sidebar import render_sidebar, render_sidebar_toggle
+from app.ui.components.sidebar import render_sidebar
 
 
 def load_css(filename: str) -> None:
@@ -33,19 +33,6 @@ def load_css(filename: str) -> None:
                 continue
 
 
-def render_page_header(title: str) -> None:
-    """Render a consistent page header."""
-    st.markdown(
-        f"""
-        <div class="dashboard-header">
-            <h1>{title}</h1>
-            <p>Logged in as: {st.session_state.get("user_name", "Unknown")}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
 def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
     """
     Apply dashboard layout with auth checks.
@@ -61,7 +48,7 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
         page_title=f"CareLink - {page_title}",
         page_icon="C",
         layout="wide",
-        initial_sidebar_state="collapsed",
+        initial_sidebar_state="expanded",
     )
 
     load_css("main.css")
@@ -70,10 +57,8 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
 
     init_session_state()
     
-    # Render header without subtitle
+    # Render header (without subtitle for dashboard pages)
     render_app_header(show_subtitle=False)
-    
-    render_sidebar_toggle()
 
     if not st.session_state.get("is_authenticated", False):
         st.warning("Please log in to access this page.")
@@ -95,5 +80,8 @@ def apply_dashboard_layout(page_title: str, allowed_roles: list[str]) -> bool:
 
     update_last_activity()
     render_sidebar(str(role_value))
-    render_page_header(page_title)
+    
+    # Add container div for content spacing below fixed header
+    st.markdown('<div class="dashboard-container">', unsafe_allow_html=True)
+    
     return True
