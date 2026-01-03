@@ -123,6 +123,23 @@ class AppointmentService:
             patient_id=patient_id, upcoming_only=True
         )
 
+    def get_patient_upcoming_appointments_paginated(
+        self,
+        patient_id: int,
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> list[Appointment]:
+        """Get upcoming appointments for a patient with pagination."""
+        return self.appointment_repo.get_patient_upcoming_appointments(
+            patient_id=patient_id,
+            limit=limit,
+            offset=offset,
+        )
+
+    def count_patient_upcoming_appointments(self, patient_id: int) -> int:
+        """Count upcoming appointments for a patient."""
+        return self.appointment_repo.count_upcoming_appointments(patient_id)
+
     def get_next_appointment(self, patient_id: int) -> Appointment | None:
         """Get the next upcoming appointment for a patient."""
         return self.appointment_repo.get_next_appointment(patient_id)

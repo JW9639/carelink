@@ -35,6 +35,8 @@ if "calendar_year" not in st.session_state:
     st.session_state.calendar_year = date.today().year
 if "history_page" not in st.session_state:
     st.session_state.history_page = 0
+if "upcoming_page" not in st.session_state:
+    st.session_state.upcoming_page = 0
 
 # Check for tab navigation from other pages
 default_tab_index = 0  # Default to "My Appointments" tab
@@ -92,13 +94,28 @@ try:
             unsafe_allow_html=True,
         )
 
-        upcoming_appointments = appointment_service.get_patient_upcoming_appointments(
+        # Pagination settings for upcoming
+        UPCOMING_PER_PAGE = 3
+        total_upcoming = appointment_service.count_patient_upcoming_appointments(
             patient.id
+        )
+        total_upcoming_pages = max(1, math.ceil(total_upcoming / UPCOMING_PER_PAGE))
+
+        # Ensure current page is valid
+        if st.session_state.upcoming_page >= total_upcoming_pages:
+            st.session_state.upcoming_page = max(0, total_upcoming_pages - 1)
+
+        # Get paginated upcoming appointments
+        upcoming_offset = st.session_state.upcoming_page * UPCOMING_PER_PAGE
+        upcoming_appointments = (
+            appointment_service.get_patient_upcoming_appointments_paginated(
+                patient.id, limit=UPCOMING_PER_PAGE, offset=upcoming_offset
+            )
         )
 
         if upcoming_appointments:
-            # Show max 2 upcoming
-            for appt in upcoming_appointments[:2]:
+            # Show paginated upcoming appointments
+            for appt in upcoming_appointments:
                 status_color = (
                     "#f59e0b" if appt.status == AppointmentStatus.PENDING else "#10b981"
                 )
@@ -144,10 +161,36 @@ try:
                     unsafe_allow_html=True,
                 )
 
-            if len(upcoming_appointments) > 2:
-                st.info(
-                    f"📌 You have {len(upcoming_appointments) - 2} more upcoming appointment(s)."
-                )
+            # Pagination controls for upcoming
+            if total_upcoming_pages > 1:
+                st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
+                col1, col2, col3 = st.columns([1, 2, 1])
+
+                with col1:
+                    if st.button(
+                        "◀ Previous",
+                        disabled=st.session_state.upcoming_page == 0,
+                        key="prev_upcoming",
+                    ):
+                        st.session_state.upcoming_page -= 1
+                        st.rerun()
+
+                with col2:
+                    st.markdown(
+                        f"<p style='text-align: center; color: #64748b; margin: 8px 0;'>Page {st.session_state.upcoming_page + 1} of {total_upcoming_pages}</p>",
+                        unsafe_allow_html=True,
+                    )
+
+                with col3:
+                    if st.button(
+                        "Next ▶",
+                        disabled=st.session_state.upcoming_page
+                        >= total_upcoming_pages - 1,
+                        key="next_upcoming",
+                    ):
+                        st.session_state.upcoming_page += 1
+                        st.rerun()
         else:
             st.markdown(
                 """

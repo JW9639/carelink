@@ -119,6 +119,36 @@ class AppointmentRepository:
             .scalar()
         )
 
+    def get_patient_upcoming_appointments(
+        self,
+        patient_id: int,
+        limit: int | None = None,
+        offset: int = 0,
+    ) -> list[Appointment]:
+        """Get upcoming appointments for a patient with pagination."""
+        from app.models.doctor import Doctor
+
+        query = (
+            self.db.query(Appointment)
+            .options(joinedload(Appointment.doctor).joinedload(Doctor.user))
+            .filter(
+                and_(
+                    Appointment.patient_id == patient_id,
+                    Appointment.scheduled_datetime >= datetime.now(timezone.utc),
+                    Appointment.status.in_(
+                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                    ),
+                )
+            )
+            .order_by(Appointment.scheduled_datetime.asc())
+            .offset(offset)
+        )
+
+        if limit:
+            query = query.limit(limit)
+
+        return query.all()
+
     def get_pending_appointments(self) -> list[Appointment]:
         """Get all pending appointments awaiting doctor assignment (for admin)."""
         from app.models.patient import Patient
