@@ -385,6 +385,84 @@ try:
                 color: #111827;
                 font-weight: 500;
             }
+            /* Thicker black tab slider/highlight */
+            [data-baseweb="tab-highlight"] {
+                background-color: #111827 !important;
+                height: 4px !important;
+            }
+            /* Month title styling */
+            .month-title {
+                text-align: center !important;
+                font-weight: 700 !important;
+                font-size: 28px !important;
+                color: #111827 !important;
+                margin: 0 !important;
+                line-height: 42px !important;
+            }
+            /* Section divider line */
+            [data-testid="stColumn"]:has(.calendar-marker) hr {
+                border: none !important;
+                height: 3px !important;
+                background-color: #111827 !important;
+                margin: 0 !important;
+            }
+            /* Section headers with underline */
+            .section-header {
+                color: #111827 !important;
+                font-size: 20px !important;
+                font-weight: 600 !important;
+                margin-bottom: 16px !important;
+                text-decoration: underline !important;
+                text-underline-offset: 6px !important;
+            }
+            /* Override ALL buttons in calendar section - reset blue gradient */
+            [data-testid="stColumn"]:has(.calendar-marker) [data-testid="stButton"] button,
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="primary"],
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"] {
+                background: none !important;
+                background-color: white !important;
+                background-image: none !important;
+                box-shadow: none !important;
+                border: 1px solid #d1d5db !important;
+                color: #374151 !important;
+                padding: 8px 16px !important;
+                border-radius: 8px !important;
+                transform: none !important;
+            }
+            /* Primary (selected) button - teal */
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="primary"] {
+                background: #0d9488 !important;
+                background-color: #0d9488 !important;
+                border-color: #0d9488 !important;
+                color: white !important;
+            }
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="primary"] p {
+                color: white !important;
+            }
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="primary"]:hover {
+                background: #0f766e !important;
+                background-color: #0f766e !important;
+                border-color: #0f766e !important;
+            }
+            /* Secondary (unselected) button - gray outline */
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"] {
+                background: white !important;
+                background-color: white !important;
+                border: 1px solid #d1d5db !important;
+                color: #374151 !important;
+            }
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"] p {
+                color: #374151 !important;
+            }
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"]:hover {
+                border-color: #0d9488 !important;
+                color: #0d9488 !important;
+                background: #f0fdfa !important;
+                background-color: #f0fdfa !important;
+            }
+            [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"]:hover p {
+                color: #0d9488 !important;
+            }
             </style>
             """,
             unsafe_allow_html=True,
@@ -399,7 +477,7 @@ try:
 
             # Calendar header
             st.markdown(
-                "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 16px;'>📅 Select a Date</h3>",
+                "<h3 class='section-header'>Select a Date</h3>",
                 unsafe_allow_html=True,
             )
 
@@ -420,7 +498,7 @@ try:
             with nav_col2:
                 month_name = calendar.month_name[st.session_state.calendar_month]
                 st.markdown(
-                    f"<p style='text-align: center; font-weight: 700; font-size: 20px; color: #111827; margin: 4px 0;'>{month_name} {st.session_state.calendar_year}</p>",
+                    f"<p class='month-title'>{month_name} {st.session_state.calendar_year}</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -507,7 +585,7 @@ try:
                     "%A, %B %d, %Y"
                 )
                 st.markdown(
-                    "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 4px;'>🕐 Select a Time</h3>",
+                    "<h3 class='section-header' style='margin-bottom: 4px !important;'>Select a Time</h3>",
                     unsafe_allow_html=True,
                 )
                 st.markdown(
@@ -522,28 +600,22 @@ try:
                 )
                 dur_col1, dur_col2, dur_col3 = st.columns([1, 1, 2])
                 with dur_col1:
+                    is_30_selected = st.session_state.selected_duration == 30
                     if st.button(
-                        "30 min",
+                        "✓ 30 min" if is_30_selected else "30 min",
                         key="dur_30",
-                        type=(
-                            "primary"
-                            if st.session_state.selected_duration == 30
-                            else "secondary"
-                        ),
+                        type="primary" if is_30_selected else "secondary",
                         use_container_width=True,
                     ):
                         st.session_state.selected_duration = 30
                         st.session_state.selected_time = None
                         st.rerun()
                 with dur_col2:
+                    is_60_selected = st.session_state.selected_duration == 60
                     if st.button(
-                        "60 min",
+                        "✓ 60 min" if is_60_selected else "60 min",
                         key="dur_60",
-                        type=(
-                            "primary"
-                            if st.session_state.selected_duration == 60
-                            else "secondary"
-                        ),
+                        type="primary" if is_60_selected else "secondary",
                         use_container_width=True,
                     ):
                         st.session_state.selected_duration = 60
@@ -566,10 +638,11 @@ try:
                     with am_cols[idx % 4]:
                         is_selected = st.session_state.selected_time == slot.time
                         if slot.is_available:
+                            btn_type = "primary" if is_selected else "secondary"
                             if st.button(
-                                slot.display,
+                                f"✓ {slot.display}" if is_selected else slot.display,
                                 key=f"am_{slot.time}",
-                                type="primary" if is_selected else "secondary",
+                                type=btn_type,
                                 use_container_width=True,
                             ):
                                 st.session_state.selected_time = slot.time
@@ -591,10 +664,11 @@ try:
                     with pm_cols[idx % 4]:
                         is_selected = st.session_state.selected_time == slot.time
                         if slot.is_available:
+                            btn_type = "primary" if is_selected else "secondary"
                             if st.button(
-                                slot.display,
+                                f"✓ {slot.display}" if is_selected else slot.display,
                                 key=f"pm_{slot.time}",
-                                type="primary" if is_selected else "secondary",
+                                type=btn_type,
                                 use_container_width=True,
                             ):
                                 st.session_state.selected_time = slot.time
@@ -605,8 +679,10 @@ try:
                                 unsafe_allow_html=True,
                             )
 
-            # Continue button
-            if st.session_state.selected_date and st.session_state.selected_time:
+        # Continue button - outside the calendar column so it gets default blue styling
+        if st.session_state.selected_date and st.session_state.selected_time:
+            spacer_l2, btn_col, spacer_r2 = st.columns([1, 4, 1])
+            with btn_col:
                 st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
                 if st.button(
                     "Continue to Confirm →", type="primary", use_container_width=True
