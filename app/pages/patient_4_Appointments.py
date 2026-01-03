@@ -64,7 +64,7 @@ try:
     # Page header
     st.markdown(
         """
-    <h2 style="color: #1e293b; margin-bottom: 8px;">📅 Appointments</h2>
+    <h2 style="color: #1e293b; margin-bottom: 8px;">Appointments</h2>
     <p style="color: #64748b; font-size: 16px; margin-bottom: 24px;">View your appointments or book a new visit.</p>
     """,
         unsafe_allow_html=True,
@@ -73,18 +73,12 @@ try:
     # Show success message if just booked
     if st.session_state.booking_success:
         st.success(
-            "✅ Your appointment has been booked successfully! It is now pending review by our staff who will assign a doctor."
+            "Your appointment has been booked successfully! It is now pending review by our staff who will assign a doctor."
         )
         st.session_state.booking_success = False
 
-    # Show hint if directed to book
-    if default_tab_index == 1:
-        st.info(
-            "👆 Click the **'➕ Book Appointment'** tab above to schedule a new appointment."
-        )
-
     # Create tabs
-    tab1, tab2 = st.tabs(["📋 My Appointments", "➕ Book Appointment"])
+    tab1, tab2 = st.tabs(["My Appointments", "Book Appointment"])
 
     # ========== TAB 1: MY APPOINTMENTS (History & Upcoming) ==========
     with tab1:
@@ -328,225 +322,294 @@ try:
 
     # ========== TAB 2: BOOK APPOINTMENT ==========
     with tab2:
+        # Professional styling - target parent containers using :has() selector
         st.markdown(
-            "<h4 style='color: #1e293b; font-weight: 600; margin-top: 16px; margin-bottom: 16px;'>Select a Date</h4>",
+            """
+            <style>
+            /* Calendar section card */
+            [data-testid="stColumn"]:has(.calendar-marker) {
+                background: white !important;
+                border-radius: 12px !important;
+                padding: 24px !important;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+                border: 1px solid #e5e7eb !important;
+            }
+            .calendar-marker { display: none; }
+            .time-marker { display: none; }
+            .confirm-marker { display: none; }
+
+            /* Time section card */
+            [data-testid="stVerticalBlock"]:has(.time-marker) > div {
+                background: white;
+                border-radius: 12px;
+                padding: 24px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border: 1px solid #e5e7eb;
+                margin-top: 16px;
+            }
+
+            /* Confirm section card */
+            [data-testid="stColumn"]:has(.confirm-marker) {
+                background: white !important;
+                border-radius: 12px !important;
+                padding: 24px !important;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+                border: 1px solid #e5e7eb !important;
+            }
+
+            .section-label {
+                font-size: 13px;
+                font-weight: 600;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 12px;
+            }
+            .selected-info {
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            .selected-info-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 4px 0;
+                font-size: 14px;
+            }
+            .selected-info-label {
+                color: #6b7280;
+            }
+            .selected-info-value {
+                color: #111827;
+                font-weight: 500;
+            }
+            </style>
+            """,
             unsafe_allow_html=True,
         )
 
-        # Calendar Navigation
-        col_prev, col_title, col_next = st.columns([1, 3, 1])
+        # Center the booking interface
+        spacer_l, main_col, spacer_r = st.columns([1, 4, 1])
 
-        with col_prev:
-            if st.button("◀ Prev", key="prev_month"):
-                if st.session_state.calendar_month == 1:
-                    st.session_state.calendar_month = 12
-                    st.session_state.calendar_year -= 1
-                else:
-                    st.session_state.calendar_month -= 1
-                st.session_state.selected_date = None
-                st.session_state.selected_time = None
-                st.rerun()
+        with main_col:
+            # Marker for CSS targeting
+            st.markdown('<div class="calendar-marker"></div>', unsafe_allow_html=True)
 
-        with col_title:
-            month_name = calendar.month_name[st.session_state.calendar_month]
+            # Calendar header
             st.markdown(
-                f"<h4 style='text-align: center; margin: 0; color: #1e293b; font-weight: 600;'>{month_name} {st.session_state.calendar_year}</h4>",
+                "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 16px;'>📅 Select a Date</h3>",
                 unsafe_allow_html=True,
             )
 
-        with col_next:
-            if st.button("Next ▶", key="next_month"):
-                if st.session_state.calendar_month == 12:
-                    st.session_state.calendar_month = 1
-                    st.session_state.calendar_year += 1
-                else:
-                    st.session_state.calendar_month += 1
-                st.session_state.selected_date = None
-                st.session_state.selected_time = None
-                st.rerun()
+            # Calendar navigation
+            nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
 
-        st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+            with nav_col1:
+                if st.button("← Prev", key="prev_month", use_container_width=True):
+                    if st.session_state.calendar_month == 1:
+                        st.session_state.calendar_month = 12
+                        st.session_state.calendar_year -= 1
+                    else:
+                        st.session_state.calendar_month -= 1
+                    st.session_state.selected_date = None
+                    st.session_state.selected_time = None
+                    st.rerun()
 
-        # Calendar Grid
-        cal = calendar.Calendar(firstweekday=6)  # Sunday first
-        month_days = cal.monthdayscalendar(
-            st.session_state.calendar_year, st.session_state.calendar_month
-        )
-
-        # Day headers
-        day_headers = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        header_cols = st.columns(7)
-        for i, day in enumerate(day_headers):
-            with header_cols[i]:
+            with nav_col2:
+                month_name = calendar.month_name[st.session_state.calendar_month]
                 st.markdown(
-                    f"<div style='text-align: center; font-weight: 600; color: #64748b; font-size: 12px; padding: 8px;'>{day}</div>",
+                    f"<p style='text-align: center; font-weight: 700; font-size: 20px; color: #111827; margin: 4px 0;'>{month_name} {st.session_state.calendar_year}</p>",
                     unsafe_allow_html=True,
                 )
 
-        # Calendar days
-        today = date.today()
-        for week in month_days:
-            cols = st.columns(7)
-            for i, day in enumerate(week):
-                with cols[i]:
-                    if day == 0:
-                        st.markdown(
-                            "<div style='height: 40px;'></div>", unsafe_allow_html=True
-                        )
+            with nav_col3:
+                if st.button("Next →", key="next_month", use_container_width=True):
+                    if st.session_state.calendar_month == 12:
+                        st.session_state.calendar_month = 1
+                        st.session_state.calendar_year += 1
                     else:
-                        current_date = date(
-                            st.session_state.calendar_year,
-                            st.session_state.calendar_month,
-                            day,
-                        )
-                        is_past = current_date < today
-                        is_weekend = i == 0 or i == 6  # Sunday or Saturday
-                        is_selected = st.session_state.selected_date == current_date
-                        is_today = current_date == today
+                        st.session_state.calendar_month += 1
+                    st.session_state.selected_date = None
+                    st.session_state.selected_time = None
+                    st.rerun()
 
-                        # Styling
-                        if is_selected:
-                            bg_color = "#0066cc"
-                            text_color = "white"
-                        elif is_past or is_weekend:
-                            bg_color = "#f1f5f9"
-                            text_color = "#94a3b8"
-                        elif is_today:
-                            bg_color = "#dbeafe"
-                            text_color = "#0066cc"
+            st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+
+            # Build calendar
+            cal = calendar.Calendar(firstweekday=6)
+            month_days = cal.monthdayscalendar(
+                st.session_state.calendar_year, st.session_state.calendar_month
+            )
+            today = date.today()
+
+            # Day headers
+            header_cols = st.columns(7)
+            for idx, day_name in enumerate(
+                ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            ):
+                with header_cols[idx]:
+                    st.markdown(
+                        f"<div style='text-align:center;font-size:12px;font-weight:600;color:#6b7280;padding:8px 0;border-bottom:1px solid #e5e7eb;'>{day_name}</div>",
+                        unsafe_allow_html=True,
+                    )
+
+            # Calendar days
+            for week in month_days:
+                cols = st.columns(7)
+                for i, day in enumerate(week):
+                    with cols[i]:
+                        if day == 0:
+                            st.markdown(
+                                "<div style='height: 38px;'></div>",
+                                unsafe_allow_html=True,
+                            )
                         else:
-                            bg_color = "white"
-                            text_color = "#1e293b"
+                            current_date = date(
+                                st.session_state.calendar_year,
+                                st.session_state.calendar_month,
+                                day,
+                            )
+                            is_past = current_date < today
+                            is_weekend = i == 0 or i == 6
+                            is_selected = (
+                                st.session_state.selected_date == current_date
+                            )
 
-                        # Only allow clicking on valid days
-                        if not is_past and not is_weekend:
+                            if is_selected:
+                                st.markdown(
+                                    f"<div style='text-align:center;padding:4px 0;'><span style='display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:#111827;color:white;border-radius:50%;font-size:14px;font-weight:500;'>{day}</span></div>",
+                                    unsafe_allow_html=True,
+                                )
+                            elif is_past or is_weekend:
+                                st.markdown(
+                                    f"<div style='text-align:center;color:#d1d5db;font-size:14px;padding:8px 0;'>{day}</div>",
+                                    unsafe_allow_html=True,
+                                )
+                            else:
+                                if st.button(
+                                    str(day),
+                                    key=f"day_{day}",
+                                    use_container_width=True,
+                                ):
+                                    st.session_state.selected_date = current_date
+                                    st.session_state.selected_time = None
+                                    st.rerun()
+
+            # Time Selection Card (only show if date selected)
+            if st.session_state.selected_date:
+                st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
+                st.markdown("---")
+                st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
+                selected_date_str = st.session_state.selected_date.strftime(
+                    "%A, %B %d, %Y"
+                )
+                st.markdown(
+                    "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 4px;'>🕐 Select a Time</h3>",
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    f"<p style='color: #6b7280; font-size: 14px; margin-bottom: 20px;'>{selected_date_str}</p>",
+                    unsafe_allow_html=True,
+                )
+
+                # Duration selector
+                st.markdown(
+                    "<p style='font-size:13px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;'>Appointment Duration</p>",
+                    unsafe_allow_html=True,
+                )
+                dur_col1, dur_col2, dur_col3 = st.columns([1, 1, 2])
+                with dur_col1:
+                    if st.button(
+                        "30 min",
+                        key="dur_30",
+                        type=(
+                            "primary"
+                            if st.session_state.selected_duration == 30
+                            else "secondary"
+                        ),
+                        use_container_width=True,
+                    ):
+                        st.session_state.selected_duration = 30
+                        st.session_state.selected_time = None
+                        st.rerun()
+                with dur_col2:
+                    if st.button(
+                        "60 min",
+                        key="dur_60",
+                        type=(
+                            "primary"
+                            if st.session_state.selected_duration == 60
+                            else "secondary"
+                        ),
+                        use_container_width=True,
+                    ):
+                        st.session_state.selected_duration = 60
+                        st.session_state.selected_time = None
+                        st.rerun()
+
+                st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+
+                # Get available slots
+                am_slots, pm_slots = appointment_service.get_available_slots(
+                    st.session_state.selected_date, st.session_state.selected_duration
+                )
+
+                # Morning slots
+                st.markdown(
+                    '<p class="section-label">Morning</p>', unsafe_allow_html=True
+                )
+                am_cols = st.columns(4)
+                for idx, slot in enumerate(am_slots):
+                    with am_cols[idx % 4]:
+                        is_selected = st.session_state.selected_time == slot.time
+                        if slot.is_available:
                             if st.button(
-                                str(day), key=f"day_{day}", use_container_width=True
+                                slot.display,
+                                key=f"am_{slot.time}",
+                                type="primary" if is_selected else "secondary",
+                                use_container_width=True,
                             ):
-                                st.session_state.selected_date = current_date
-                                st.session_state.selected_time = None
+                                st.session_state.selected_time = slot.time
                                 st.rerun()
                         else:
                             st.markdown(
-                                f"""
-                            <div style="
-                                text-align: center;
-                                padding: 8px;
-                                background: {bg_color};
-                                border-radius: 8px;
-                                color: {text_color};
-                                font-size: 14px;
-                            ">{day}</div>
-                            """,
+                                f"<div style='text-align:center;padding:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;color:#d1d5db;font-size:13px;text-decoration:line-through;margin-bottom:8px;'>{slot.display}</div>",
                                 unsafe_allow_html=True,
                             )
 
-        st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
-        # Time Slots Section (only show if date selected)
-        if st.session_state.selected_date:
-            st.markdown("---")
-            selected_date_str = st.session_state.selected_date.strftime("%A, %B %d, %Y")
-            st.markdown(
-                f"<h4 style='color: #1e293b; font-weight: 600; margin-bottom: 16px;'>Select a Time for {selected_date_str}</h4>",
-                unsafe_allow_html=True,
-            )
-
-            # Duration selector
-            duration_col1, duration_col2 = st.columns([2, 3])
-            with duration_col1:
-                duration = st.selectbox(
-                    "Appointment Duration",
-                    options=[30, 60],
-                    format_func=lambda x: f"{x} minutes",
-                    key="duration_select",
-                )
-                st.session_state.selected_duration = duration
-
-            st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
-
-            # Get available slots
-            am_slots, pm_slots = appointment_service.get_available_slots(
-                st.session_state.selected_date, st.session_state.selected_duration
-            )
-
-            # Time slots in AM/PM columns
-            am_col, pm_col = st.columns(2)
-
-            with am_col:
+                # Afternoon slots
                 st.markdown(
-                    "<div style='font-weight: 600; color: #1e293b; margin-bottom: 12px; font-size: 15px;'>Morning</div>",
-                    unsafe_allow_html=True,
+                    '<p class="section-label">Afternoon</p>', unsafe_allow_html=True
                 )
-                for slot in am_slots:
-                    is_selected = st.session_state.selected_time == slot.time
-                    if slot.is_available:
-                        btn_type = "primary" if is_selected else "secondary"
-                        if st.button(
-                            slot.display,
-                            key=f"am_{slot.time}",
-                            use_container_width=True,
-                            type=btn_type,
-                        ):
-                            st.session_state.selected_time = slot.time
-                            st.rerun()
-                    else:
-                        st.markdown(
-                            f"""
-                        <div style="
-                            text-align: center;
-                            padding: 8px 16px;
-                            background: #f1f5f9;
-                            border-radius: 6px;
-                            color: #94a3b8;
-                            font-size: 14px;
-                            margin-bottom: 8px;
-                            text-decoration: line-through;
-                        ">{slot.display}</div>
-                        """,
-                            unsafe_allow_html=True,
-                        )
+                pm_cols = st.columns(4)
+                for idx, slot in enumerate(pm_slots):
+                    with pm_cols[idx % 4]:
+                        is_selected = st.session_state.selected_time == slot.time
+                        if slot.is_available:
+                            if st.button(
+                                slot.display,
+                                key=f"pm_{slot.time}",
+                                type="primary" if is_selected else "secondary",
+                                use_container_width=True,
+                            ):
+                                st.session_state.selected_time = slot.time
+                                st.rerun()
+                        else:
+                            st.markdown(
+                                f"<div style='text-align:center;padding:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;color:#d1d5db;font-size:13px;text-decoration:line-through;margin-bottom:8px;'>{slot.display}</div>",
+                                unsafe_allow_html=True,
+                            )
 
-            with pm_col:
-                st.markdown(
-                    "<div style='font-weight: 600; color: #1e293b; margin-bottom: 12px; font-size: 15px;'>Afternoon</div>",
-                    unsafe_allow_html=True,
-                )
-                for slot in pm_slots:
-                    is_selected = st.session_state.selected_time == slot.time
-                    if slot.is_available:
-                        btn_type = "primary" if is_selected else "secondary"
-                        if st.button(
-                            slot.display,
-                            key=f"pm_{slot.time}",
-                            use_container_width=True,
-                            type=btn_type,
-                        ):
-                            st.session_state.selected_time = slot.time
-                            st.rerun()
-                    else:
-                        st.markdown(
-                            f"""
-                        <div style="
-                            text-align: center;
-                            padding: 8px 16px;
-                            background: #f1f5f9;
-                            border-radius: 6px;
-                            color: #94a3b8;
-                            font-size: 14px;
-                            margin-bottom: 8px;
-                            text-decoration: line-through;
-                        ">{slot.display}</div>
-                        """,
-                            unsafe_allow_html=True,
-                        )
-
-            st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
-
-            # Continue button (only if time selected)
-            if st.session_state.selected_time:
+            # Continue button
+            if st.session_state.selected_date and st.session_state.selected_time:
+                st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
                 if st.button(
-                    "Continue to Book →", type="primary", use_container_width=True
+                    "Continue to Confirm →", type="primary", use_container_width=True
                 ):
                     st.session_state.show_booking_modal = True
                     st.rerun()
@@ -559,26 +622,13 @@ try:
         ):
             st.markdown("---")
 
-            # Center the form using columns
-            spacer_left, form_col, spacer_right = st.columns([1, 2, 1])
+            # Center the form
+            spacer_left, form_col, spacer_right = st.columns([1, 3, 1])
 
             with form_col:
-                # Confirmation box
+                st.markdown('<div class="confirm-marker"></div>', unsafe_allow_html=True)
                 st.markdown(
-                    """
-                <div style="
-                    background: white;
-                    border-radius: 16px;
-                    padding: 24px;
-                    border: 2px solid #0066cc;
-                    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
-                ">
-                """,
-                    unsafe_allow_html=True,
-                )
-
-                st.markdown(
-                    "<h4 style='color: #1e293b; font-weight: 600; margin-bottom: 16px;'>✅ Confirm Your Appointment</h4>",
+                    "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 16px;'>✓ Confirm Your Appointment</h3>",
                     unsafe_allow_html=True,
                 )
 
@@ -591,29 +641,32 @@ try:
 
                 st.markdown(
                     f"""
-                <div style="
-                    background: #f0f9ff;
-                    border-radius: 8px;
-                    padding: 16px;
-                    margin-bottom: 20px;
-                    border: 1px solid #bae6fd;
-                ">
-                    <div style="font-weight: 600; color: #0369a1;">📅 {formatted_date}</div>
-                    <div style="color: #0369a1; margin-top: 4px;">🕐 {formatted_time} • {st.session_state.selected_duration} minutes</div>
-                </div>
-                """,
+                    <div class="selected-info">
+                        <div class="selected-info-row">
+                            <span class="selected-info-label">Date</span>
+                            <span class="selected-info-value">{formatted_date}</span>
+                        </div>
+                        <div class="selected-info-row">
+                            <span class="selected-info-label">Time</span>
+                            <span class="selected-info-value">{formatted_time}</span>
+                        </div>
+                        <div class="selected-info-row">
+                            <span class="selected-info-label">Duration</span>
+                            <span class="selected-info-value">{st.session_state.selected_duration} minutes</span>
+                        </div>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
 
-                # Patient info (pre-filled, just name)
+                # Patient info
                 patient_name = f"{patient.first_name} {patient.last_name}"
-
-                st.markdown("**Patient Details**")
                 st.text_input(
-                    "Name", value=patient_name, disabled=True, key="confirm_name"
+                    "Patient Name",
+                    value=patient_name,
+                    disabled=True,
+                    key="confirm_name",
                 )
-
-                st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
                 # Reason for visit
                 reason = st.text_area(
@@ -623,7 +676,9 @@ try:
                     height=100,
                 )
 
-                st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='height: 16px;'></div>", unsafe_allow_html=True
+                )
 
                 # Action buttons
                 btn_col1, btn_col2 = st.columns(2)
@@ -640,7 +695,6 @@ try:
                         if not reason:
                             st.error("Please enter a reason for your visit.")
                         else:
-                            # Create the appointment
                             scheduled_dt = datetime.combine(
                                 st.session_state.selected_date,
                                 st.session_state.selected_time,
@@ -656,7 +710,6 @@ try:
                                     created_by_user_id=user_id,
                                 )
 
-                                # Reset state and show success
                                 st.session_state.show_booking_modal = False
                                 st.session_state.selected_date = None
                                 st.session_state.selected_time = None
@@ -664,8 +717,6 @@ try:
                                 st.rerun()
                             except Exception as e:
                                 st.error(f"Failed to book appointment: {str(e)}")
-
-                st.markdown("</div>", unsafe_allow_html=True)
 
 finally:
     db.close()
