@@ -510,6 +510,113 @@ try:
             [data-testid="stColumn"]:has(.confirm-marker) button p {
                 color: #ffffff !important;
             }
+            
+            /* ========== MODAL DIALOG STYLING ========== */
+            /* Modal dialog container - white background */
+            div[role="dialog"] {
+                background: white !important;
+                border-radius: 16px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            }
+            /* Modal header */
+            div[role="dialog"] > div:first-child {
+                background: white !important;
+                border-bottom: 1px solid #e5e7eb !important;
+                padding-bottom: 16px !important;
+            }
+            /* Modal title */
+            div[role="dialog"] > div:first-child p {
+                color: #111827 !important;
+                font-weight: 600 !important;
+            }
+            /* Modal body/content area */
+            div[role="dialog"] > div:nth-child(2) {
+                background: white !important;
+                color: #111827 !important;
+            }
+            /* All text in modal */
+            div[role="dialog"] p,
+            div[role="dialog"] span,
+            div[role="dialog"] label {
+                color: #111827 !important;
+            }
+            /* Input fields in modal */
+            div[role="dialog"] input,
+            div[role="dialog"] textarea {
+                background-color: #f9fafb !important;
+                color: #111827 !important;
+                -webkit-text-fill-color: #111827 !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 8px !important;
+            }
+            div[role="dialog"] input:disabled {
+                background-color: #f3f4f6 !important;
+                color: #111827 !important;
+                -webkit-text-fill-color: #111827 !important;
+                opacity: 1 !important;
+            }
+            div[role="dialog"] input::placeholder,
+            div[role="dialog"] textarea::placeholder {
+                color: #9ca3af !important;
+                -webkit-text-fill-color: #9ca3af !important;
+            }
+            /* Input wrapper styling */
+            div[role="dialog"] [data-baseweb="input"],
+            div[role="dialog"] [data-baseweb="textarea"],
+            div[role="dialog"] [data-baseweb="base-input"] {
+                background-color: #f9fafb !important;
+                border-color: #d1d5db !important;
+            }
+            /* Primary button in modal - Blue gradient */
+            div[role="dialog"] button[kind="primary"] {
+                background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 10px !important;
+                font-weight: 600 !important;
+                box-shadow: 0 4px 12px rgba(0, 102, 204, 0.25) !important;
+            }
+            div[role="dialog"] button[kind="primary"] p {
+                color: white !important;
+            }
+            div[role="dialog"] button[kind="primary"]:hover {
+                background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%) !important;
+                transform: translateY(-1px) !important;
+            }
+            /* Secondary button in modal - Gray outline */
+            div[role="dialog"] button[kind="secondary"] {
+                background: white !important;
+                color: #374151 !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 10px !important;
+                font-weight: 500 !important;
+            }
+            div[role="dialog"] button[kind="secondary"] p {
+                color: #374151 !important;
+            }
+            div[role="dialog"] button[kind="secondary"]:hover {
+                background: #f3f4f6 !important;
+                border-color: #9ca3af !important;
+            }
+            /* Close button styling */
+            div[role="dialog"] button[aria-label="Close"] {
+                background: transparent !important;
+                border: none !important;
+                color: #6b7280 !important;
+                box-shadow: none !important;
+            }
+            div[role="dialog"] button[aria-label="Close"]:hover {
+                color: #111827 !important;
+                background: #f3f4f6 !important;
+            }
+            div[role="dialog"] button[aria-label="Close"] svg {
+                stroke: #6b7280 !important;
+            }
+            /* Label styling in modal */
+            div[role="dialog"] label p {
+                color: #374151 !important;
+                font-weight: 500 !important;
+            }
             </style>
             """,
             unsafe_allow_html=True,
@@ -737,23 +844,16 @@ try:
                     st.session_state.show_booking_modal = True
                     st.rerun()
 
-        # Booking Confirmation Form
+        # Booking Confirmation Modal
         if (
             st.session_state.show_booking_modal
             and st.session_state.selected_date
             and st.session_state.selected_time
         ):
-            st.markdown("---")
-
-            # Center the form
-            spacer_left, form_col, spacer_right = st.columns([1, 3, 1])
-
-            with form_col:
+            # Modal using st.dialog (Streamlit 1.33+)
+            @st.dialog("Confirm Your Appointment", width="large")
+            def show_confirmation_modal():
                 st.markdown('<div class="confirm-marker"></div>', unsafe_allow_html=True)
-                st.markdown(
-                    "<h3 style='color: #111827; font-size: 20px; font-weight: 600; margin-bottom: 16px;'>✓ Confirm Your Appointment</h3>",
-                    unsafe_allow_html=True,
-                )
 
                 # Display selected date/time
                 appt_datetime = datetime.combine(
@@ -764,18 +864,18 @@ try:
 
                 st.markdown(
                     f"""
-                    <div class="selected-info">
-                        <div class="selected-info-row">
-                            <span class="selected-info-label">Date</span>
-                            <span class="selected-info-value">{formatted_date}</span>
+                    <div style="background: #f9fafb; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                            <span style="color: #6b7280; font-size: 14px;">Date</span>
+                            <span style="color: #111827; font-weight: 500;">{formatted_date}</span>
                         </div>
-                        <div class="selected-info-row">
-                            <span class="selected-info-label">Time</span>
-                            <span class="selected-info-value">{formatted_time}</span>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                            <span style="color: #6b7280; font-size: 14px;">Time</span>
+                            <span style="color: #111827; font-weight: 500;">{formatted_time}</span>
                         </div>
-                        <div class="selected-info-row">
-                            <span class="selected-info-label">Duration</span>
-                            <span class="selected-info-value">{st.session_state.selected_duration} minutes</span>
+                        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                            <span style="color: #6b7280; font-size: 14px;">Duration</span>
+                            <span style="color: #111827; font-weight: 500;">{st.session_state.selected_duration} minutes</span>
                         </div>
                     </div>
                     """,
@@ -788,7 +888,7 @@ try:
                     "Patient Name",
                     value=patient_name,
                     disabled=True,
-                    key="confirm_name",
+                    key="modal_confirm_name",
                 )
 
                 # Reason for visit
@@ -799,7 +899,7 @@ try:
                 reason = st.text_area(
                     "Reason for Visit",
                     placeholder="Please describe the reason for your appointment...",
-                    key="visit_reason",
+                    key="modal_visit_reason",
                     height=100,
                     label_visibility="collapsed",
                 )
@@ -812,13 +912,13 @@ try:
                 btn_col1, btn_col2 = st.columns(2)
 
                 with btn_col1:
-                    if st.button("← Back", use_container_width=True):
+                    if st.button("← Back", use_container_width=True, key="modal_back"):
                         st.session_state.show_booking_modal = False
                         st.rerun()
 
                 with btn_col2:
                     if st.button(
-                        "Confirm Booking", type="primary", use_container_width=True
+                        "Confirm Booking", type="primary", use_container_width=True, key="modal_confirm"
                     ):
                         if not reason:
                             st.error("Please enter a reason for your visit.")
@@ -845,6 +945,9 @@ try:
                                 st.rerun()
                             except Exception as e:
                                 st.error(f"Failed to book appointment: {str(e)}")
+
+            # Call the modal function to display it
+            show_confirmation_modal()
 
 finally:
     db.close()
