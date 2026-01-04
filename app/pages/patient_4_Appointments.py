@@ -463,6 +463,53 @@ try:
             [data-testid="stColumn"]:has(.calendar-marker) button[kind="secondary"]:hover p {
                 color: #0d9488 !important;
             }
+            /* Input and textarea styling for confirm form */
+            [data-testid="stColumn"]:has(.confirm-marker) input,
+            [data-testid="stColumn"]:has(.confirm-marker) textarea,
+            [data-testid="stColumn"]:has(.confirm-marker) input[type="text"],
+            [data-testid="stColumn"]:has(.confirm-marker) [data-testid="stTextInput"] input {
+                background-color: white !important;
+                color: #111827 !important;
+                -webkit-text-fill-color: #111827 !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 8px !important;
+                padding: 12px !important;
+                opacity: 1 !important;
+            }
+            /* Disabled inputs should still show dark text */
+            [data-testid="stColumn"]:has(.confirm-marker) input:disabled,
+            [data-testid="stColumn"]:has(.confirm-marker) input[disabled] {
+                color: #111827 !important;
+                -webkit-text-fill-color: #111827 !important;
+                opacity: 1 !important;
+            }
+            [data-testid="stColumn"]:has(.confirm-marker) input::placeholder,
+            [data-testid="stColumn"]:has(.confirm-marker) textarea::placeholder {
+                color: #9ca3af !important;
+            }
+            /* Input wrapper/container styling */
+            [data-testid="stColumn"]:has(.confirm-marker) [data-baseweb="input"],
+            [data-testid="stColumn"]:has(.confirm-marker) [data-baseweb="textarea"] {
+                background-color: white !important;
+            }
+            /* Labels and text in confirm form - make dark */
+            [data-testid="stColumn"]:has(.confirm-marker) label,
+            [data-testid="stColumn"]:has(.confirm-marker) label p,
+            [data-testid="stColumn"]:has(.confirm-marker) [data-testid="stMarkdownContainer"]:not([data-testid="stButton"] *) p,
+            [data-testid="stColumn"]:has(.confirm-marker) [data-testid="stTextInput"] label p,
+            [data-testid="stColumn"]:has(.confirm-marker) [data-testid="stTextArea"] label p {
+                color: #111827 !important;
+            }
+            /* Required field asterisk - make red */
+            [data-testid="stColumn"]:has(.confirm-marker) label span[data-testid="stMarkdownContainer"] span,
+            [data-testid="stColumn"]:has(.confirm-marker) label [data-testid="stMarkdownContainer"] p span {
+                color: #ef4444 !important;
+            }
+            /* Keep button text white in confirm form */
+            [data-testid="stColumn"]:has(.confirm-marker) [data-testid="stButton"] button p,
+            [data-testid="stColumn"]:has(.confirm-marker) button p {
+                color: #ffffff !important;
+            }
             </style>
             """,
             unsafe_allow_html=True,
@@ -557,7 +604,7 @@ try:
 
                             if is_selected:
                                 st.markdown(
-                                    f"<div style='text-align:center;padding:4px 0;'><span style='display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:#111827;color:white;border-radius:50%;font-size:14px;font-weight:500;'>{day}</span></div>",
+                                    f"<div style='text-align:center;padding:2px;'><div style='display:flex;align-items:center;justify-content:center;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:600;padding:8px 4px;box-shadow:0 2px 4px rgba(16,185,129,0.3);'>✓ {day}</div></div>",
                                     unsafe_allow_html=True,
                                 )
                             elif is_past or is_weekend:
@@ -745,11 +792,16 @@ try:
                 )
 
                 # Reason for visit
+                st.markdown(
+                    '<p style="font-size: 14px; margin-bottom: 4px; color: #111827;">Reason for Visit <span style="color: #ef4444;">*</span></p>',
+                    unsafe_allow_html=True,
+                )
                 reason = st.text_area(
-                    "Reason for Visit *",
+                    "Reason for Visit",
                     placeholder="Please describe the reason for your appointment...",
                     key="visit_reason",
                     height=100,
+                    label_visibility="collapsed",
                 )
 
                 st.markdown(

@@ -386,7 +386,9 @@ a {
 /* Regular buttons for Streamlit - Dashboard action buttons only */
 /* These styles apply to main content area buttons, not sidebar or login */
 /* Exclude buttons in calendar booking section */
-.main [data-testid="stButton"]:not(:has(.booking-btn)) button:not([data-booking]) {
+.main
+  [data-testid="stButton"]:not(:has(.booking-btn))
+  button:not([data-booking]) {
   background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%) !important;
   color: #ffffff !important;
   border: none !important;
@@ -407,17 +409,24 @@ a {
   box-shadow: none !important;
 }
 
-.main [data-testid="stButton"]:not(:has(.booking-btn)) button:not([data-booking]):hover {
+.main
+  [data-testid="stButton"]:not(:has(.booking-btn))
+  button:not([data-booking]):hover {
   background: linear-gradient(135deg, #0052a3 0%, #003d7a 100%) !important;
   transform: translateY(-3px) !important;
   box-shadow: 0 8px 20px rgba(0, 102, 204, 0.4) !important;
 }
 
-.main [data-testid="stButton"]:not(:has(.booking-btn)) button:not([data-booking]):active {
+.main
+  [data-testid="stButton"]:not(:has(.booking-btn))
+  button:not([data-booking]):active {
   transform: translateY(-1px) !important;
 }
 
-.main [data-testid="stButton"]:not(:has(.booking-btn)) button:not([data-booking]) p {
+.main
+  [data-testid="stButton"]:not(:has(.booking-btn))
+  button:not([data-booking])
+  p {
   color: #ffffff !important;
   font-weight: 600 !important;
 }
