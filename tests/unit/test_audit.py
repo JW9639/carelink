@@ -14,6 +14,8 @@ def test_log_action_creates_entry(test_db: Session, test_user):
     st.session_state.clear()
     st.session_state.ip_address = "127.0.0.1"
     st.session_state.user_agent = "pytest"
+    test_db.query(AuditLog).delete()
+    test_db.commit()
 
     log_action(
         db=test_db,

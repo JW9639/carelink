@@ -204,7 +204,10 @@ class AppointmentService:
         return self.appointment_repo.get_pending_appointments()
 
     def assign_doctor_to_appointment(
-        self, appointment_id: int, doctor_id: int
+        self,
+        appointment_id: int,
+        doctor_id: int,
+        assigned_by_user_id: int | None = None,
     ) -> Appointment | None:
         """Assign a doctor to a pending appointment."""
         appointment = self.appointment_repo.get_by_id(appointment_id)
@@ -217,7 +220,18 @@ class AppointmentService:
             exclude_appointment_id=appointment_id,
         ):
             raise ValueError("Selected doctor is not available for this time.")
-        return self.appointment_repo.assign_doctor(appointment_id, doctor_id)
+        appointment = self.appointment_repo.assign_doctor(appointment_id, doctor_id)
+        if appointment and assigned_by_user_id:
+            log_action(
+                db=self.db,
+                user_id=assigned_by_user_id,
+                action=AuditAction.UPDATE_RECORD,
+                resource_type="appointment",
+                resource_id=appointment.id,
+                details={"action": "assign_doctor", "doctor_id": doctor_id},
+            )
+            self.db.commit()
+        return appointment
 
     def get_patient_past_appointments(
         self,

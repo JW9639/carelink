@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from html import escape
+
 import streamlit as st
 
 from app.db.session import SessionLocal
@@ -30,17 +32,17 @@ try:
     }
 
     # Page header
-    st.markdown("### 📋 Appointment Management")
+    st.markdown("### Appointment Management")
     st.markdown("Review pending appointments and assign doctors.")
     st.markdown("---")
 
     # Show success message
     if st.session_state.assignment_success:
-        st.success("✅ Doctor assigned successfully! The appointment is now confirmed.")
+        st.success("Doctor assigned successfully! The appointment is now confirmed.")
         st.session_state.assignment_success = False
 
     # Tabs for different views
-    tab1, tab2 = st.tabs(["🔔 Pending Appointments", "📅 All Appointments"])
+    tab1, tab2 = st.tabs(["Pending Appointments", "All Appointments"])
 
     with tab1:
         # Get pending appointments
@@ -54,6 +56,9 @@ try:
             )
             st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
+            if not doctor_options:
+                st.warning("No approved doctors available for assignment.")
+
             for appt in pending_appointments:
                 appt_date = appt.scheduled_datetime.strftime("%A, %B %d, %Y")
                 appt_time = appt.scheduled_datetime.strftime("%I:%M %p")
@@ -62,7 +67,8 @@ try:
                     if appt.patient
                     else "Unknown"
                 )
-                reason = appt.reason or "No reason provided"
+                patient_name = escape(patient_name)
+                reason = escape(appt.reason) if appt.reason else "No reason provided"
 
                 with st.container():
                     st.markdown(
@@ -79,7 +85,7 @@ try:
                             <div>
                                 <div style="font-weight: 700; color: #1e293b; font-size: 16px;">{patient_name}</div>
                                 <div style="color: #64748b; font-size: 14px; margin-top: 4px;">
-                                    📅 {appt_date} at {appt_time} • {appt.duration_minutes} min
+                                    {appt_date} at {appt_time} - {appt.duration_minutes} min
                                 </div>
                             </div>
                             <div style="
@@ -105,32 +111,41 @@ try:
                         unsafe_allow_html=True,
                     )
 
-                    # Assignment form
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        selected_doctor = st.selectbox(
-                            "Assign Doctor",
-                            options=list(doctor_options.keys()),
-                            key=f"doctor_select_{appt.id}",
-                            label_visibility="collapsed",
-                            placeholder="Select a doctor...",
-                        )
-                    with col2:
-                        if st.button(
-                            "Assign",
-                            key=f"assign_{appt.id}",
-                            type="primary",
-                            use_container_width=True,
-                        ):
-                            if selected_doctor:
-                                doctor_id = doctor_options[selected_doctor]
-                                appointment_service.assign_doctor_to_appointment(
-                                    appt.id, doctor_id
-                                )
-                                st.session_state.assignment_success = True
-                                st.rerun()
-                            else:
-                                st.error("Please select a doctor.")
+                    if doctor_options:
+                        # Assignment form
+                        col1, col2 = st.columns([3, 1])
+                        with col1:
+                            selected_doctor = st.selectbox(
+                                "Assign Doctor",
+                                options=list(doctor_options.keys()),
+                                key=f"doctor_select_{appt.id}",
+                                label_visibility="collapsed",
+                                placeholder="Select a doctor...",
+                            )
+                        with col2:
+                            if st.button(
+                                "Assign",
+                                key=f"assign_{appt.id}",
+                                type="primary",
+                                use_container_width=True,
+                            ):
+                                if selected_doctor:
+                                    doctor_id = doctor_options[selected_doctor]
+                                    try:
+                                        appointment_service.assign_doctor_to_appointment(
+                                            appt.id,
+                                            doctor_id,
+                                            assigned_by_user_id=st.session_state.get(
+                                                "user_id"
+                                            ),
+                                        )
+                                    except ValueError as exc:
+                                        st.error(str(exc))
+                                    else:
+                                        st.session_state.assignment_success = True
+                                        st.rerun()
+                                else:
+                                    st.error("Please select a doctor.")
 
                     st.markdown(
                         "<div style='height: 8px;'></div>", unsafe_allow_html=True

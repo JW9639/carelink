@@ -15,6 +15,8 @@ def test_module_imports():
     import app.services.patient_service  # noqa: F401
     import app.services.doctor_service  # noqa: F401
     import app.services.appointment_service  # noqa: F401
+    import app.services.bloodwork_service  # noqa: F401
+    import app.services.prescription_service  # noqa: F401
     import app.services.notification_service  # noqa: F401
     import app.services.admin_service  # noqa: F401
     import app.pages  # noqa: F401

@@ -129,7 +129,7 @@ def seed_appointments(db, patient: Patient, doctor: Doctor, admin: User) -> None
             patient_id=patient.id,
             doctor_id=doctor.id,
             scheduled_datetime=datetime.now(timezone.utc) + timedelta(days=3),
-            duration_minutes=15,
+            duration_minutes=30,
             status=AppointmentStatus.SCHEDULED,
             booking_source=BookingSource.ONLINE,
             reason="Annual checkup",
@@ -146,6 +146,16 @@ def seed_appointments(db, patient: Patient, doctor: Doctor, admin: User) -> None
             notes="Reviewed treatment plan",
             created_by=admin.id,
         ),
+        Appointment(
+            patient_id=patient.id,
+            doctor_id=None,
+            scheduled_datetime=datetime.now(timezone.utc) + timedelta(days=7),
+            duration_minutes=60,
+            status=AppointmentStatus.PENDING,
+            booking_source=BookingSource.ONLINE,
+            reason="New symptoms discussion",
+            created_by=admin.id,
+        ),
     ]
     db.add_all(appointments)
     db.commit()
@@ -154,37 +164,207 @@ def seed_appointments(db, patient: Patient, doctor: Doctor, admin: User) -> None
 def seed_bloodwork(db, patient: Patient, doctor: Doctor) -> None:
     """Create sample lab results."""
     print("Creating bloodwork results...")
-    bloodwork = Bloodwork(
-        patient_id=patient.id,
-        test_type="Full Blood Count",
-        test_date=date.today() - timedelta(days=2),
-        results={"Hb": 14.1, "WBC": 6.2},
-        reference_ranges={"Hb": "13.0-17.5", "WBC": "4.0-11.0"},
-        notes="Within normal range.",
-        is_published=True,
-        published_at=datetime.now(timezone.utc) - timedelta(days=1),
-        approved_by=doctor.id,
-        approved_at=datetime.now(timezone.utc) - timedelta(days=1),
-    )
-    db.add(bloodwork)
+    results_primary = {
+        "test_name": "Full Blood Count & Metabolic Panel",
+        "categories": [
+            {
+                "name": "Complete Blood Count (CBC)",
+                "markers": [
+                    {
+                        "name": "White Blood Cell Count",
+                        "abbreviation": "WBC",
+                        "value": 7.2,
+                        "unit": "x10^9/L",
+                        "reference_range": {
+                            "low": 4.0,
+                            "optimal_low": 4.5,
+                            "optimal_high": 11.0,
+                            "high": 11.5,
+                        },
+                    },
+                    {
+                        "name": "Hemoglobin",
+                        "abbreviation": "Hgb",
+                        "value": 118,
+                        "unit": "g/L",
+                        "reference_range": {
+                            "low": 130,
+                            "optimal_low": 135,
+                            "optimal_high": 170,
+                            "high": 175,
+                        },
+                    },
+                    {
+                        "name": "Platelet Count",
+                        "abbreviation": "PLT",
+                        "value": 410,
+                        "unit": "x10^9/L",
+                        "reference_range": {
+                            "low": 150,
+                            "optimal_low": 170,
+                            "optimal_high": 350,
+                            "high": 400,
+                        },
+                    },
+                ],
+            },
+            {
+                "name": "Lipid Panel",
+                "markers": [
+                    {
+                        "name": "Total Cholesterol",
+                        "abbreviation": "TC",
+                        "value": 5.8,
+                        "unit": "mmol/L",
+                        "reference_range": {
+                            "low": 0.0,
+                            "optimal_low": 0.0,
+                            "optimal_high": 5.0,
+                            "high": 6.2,
+                        },
+                    },
+                    {
+                        "name": "LDL Cholesterol",
+                        "abbreviation": "LDL-C",
+                        "value": 3.5,
+                        "unit": "mmol/L",
+                        "reference_range": {
+                            "low": 0.0,
+                            "optimal_low": 0.0,
+                            "optimal_high": 3.0,
+                            "high": 4.0,
+                        },
+                    },
+                    {
+                        "name": "HDL Cholesterol",
+                        "abbreviation": "HDL-C",
+                        "value": 0.9,
+                        "unit": "mmol/L",
+                        "reference_range": {
+                            "low": 0.8,
+                            "optimal_low": 1.0,
+                            "optimal_high": 2.0,
+                            "high": 2.4,
+                        },
+                    },
+                ],
+            },
+        ],
+    }
+
+    results_secondary = {
+        "test_name": "Kidney & Liver Function",
+        "categories": [
+            {
+                "name": "Liver Function",
+                "markers": [
+                    {
+                        "name": "Alanine Aminotransferase",
+                        "abbreviation": "ALT",
+                        "value": 48,
+                        "unit": "U/L",
+                        "reference_range": {
+                            "low": 7,
+                            "optimal_low": 10,
+                            "optimal_high": 40,
+                            "high": 56,
+                        },
+                    },
+                    {
+                        "name": "Alkaline Phosphatase",
+                        "abbreviation": "ALP",
+                        "value": 90,
+                        "unit": "U/L",
+                        "reference_range": {
+                            "low": 30,
+                            "optimal_low": 40,
+                            "optimal_high": 120,
+                            "high": 130,
+                        },
+                    },
+                ],
+            },
+            {
+                "name": "Kidney Function",
+                "markers": [
+                    {
+                        "name": "Creatinine",
+                        "abbreviation": "Cr",
+                        "value": 108,
+                        "unit": "umol/L",
+                        "reference_range": {
+                            "low": 59,
+                            "optimal_low": 65,
+                            "optimal_high": 100,
+                            "high": 104,
+                        },
+                    }
+                ],
+            },
+        ],
+    }
+
+    bloodwork_entries = [
+        Bloodwork(
+            patient_id=patient.id,
+            test_type="Full Blood Count & Metabolic Panel",
+            test_date=date.today() - timedelta(days=2),
+            results=results_primary,
+            reference_ranges={},
+            notes="Discussed during follow-up.",
+            is_published=True,
+            published_at=datetime.now(timezone.utc) - timedelta(days=1),
+            approved_by=doctor.id,
+            approved_at=datetime.now(timezone.utc) - timedelta(days=1),
+        ),
+        Bloodwork(
+            patient_id=patient.id,
+            test_type="Kidney & Liver Function",
+            test_date=date.today() - timedelta(days=14),
+            results=results_secondary,
+            reference_ranges={},
+            notes="Monitor ALT and creatinine trends.",
+            is_published=True,
+            published_at=datetime.now(timezone.utc) - timedelta(days=13),
+            approved_by=doctor.id,
+            approved_at=datetime.now(timezone.utc) - timedelta(days=13),
+        ),
+    ]
+    db.add_all(bloodwork_entries)
     db.commit()
 
 
 def seed_prescriptions(db, patient: Patient, doctor: Doctor) -> None:
     """Create sample prescriptions."""
     print("Creating prescriptions...")
-    prescription = Prescription(
-        patient_id=patient.id,
-        medication_name="Atorvastatin",
-        dosage="10mg",
-        frequency="Once daily",
-        start_date=date.today() - timedelta(days=30),
-        end_date=None,
-        notes="Monitor cholesterol levels.",
-        is_active=True,
-        prescribed_by=doctor.id,
-    )
-    db.add(prescription)
+    prescriptions = [
+        Prescription(
+            patient_id=patient.id,
+            medication_name="Atorvastatin",
+            dosage="10mg",
+            frequency="Once daily",
+            start_date=date.today() - timedelta(days=30),
+            end_date=None,
+            notes="Monitor cholesterol levels.",
+            is_active=True,
+            prescribed_by=doctor.id,
+        ),
+        Prescription(
+            patient_id=patient.id,
+            medication_name="Metformin",
+            dosage="500mg",
+            frequency="Twice daily",
+            start_date=date.today() - timedelta(days=180),
+            end_date=date.today() - timedelta(days=60),
+            notes="Course completed.",
+            is_active=False,
+            prescribed_by=doctor.id,
+            discontinued_by=doctor.id,
+            discontinued_at=datetime.now(timezone.utc) - timedelta(days=60),
+            discontinuation_reason="Course completed",
+        ),
+    ]
+    db.add_all(prescriptions)
     db.commit()
 
 
@@ -206,6 +386,15 @@ def seed_notifications(db, patient: Patient, admin: User) -> None:
             title="Lab Results Ready",
             message="Your recent bloodwork results are ready to view.",
             is_read=False,
+            triggered_by=admin.id,
+        ),
+        Notification(
+            patient_id=patient.id,
+            type=NotificationType.PRESCRIPTION_UPDATE,
+            title="Prescription Updated",
+            message="Your prescription has been updated by your clinician.",
+            is_read=True,
+            read_at=datetime.now(timezone.utc) - timedelta(days=2),
             triggered_by=admin.id,
         ),
     ]

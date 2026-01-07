@@ -11,15 +11,20 @@ SQLAlchemy 2.0, and Pydantic.
 - Auditable actions and RBAC enforcement
 - PostgreSQL persistence with Alembic migrations
 - Streamlit UI with NHS-inspired theming
+- Appointment booking with calendar flow and admin assignment
+- Bloodwork results viewer with category drill-down
+- Prescription list with active/history views
+- Notifications centre with read/unread tracking
 
 ## Tech Stack
 
 - Python 3.11+
-- Streamlit + streamlit-authenticator
+- Streamlit
 - SQLAlchemy 2.0, Alembic
 - PostgreSQL
 - Pydantic v2, pydantic-settings
 - Docker & Docker Compose
+- bcrypt
 
 ## Prerequisites
 
@@ -61,10 +66,11 @@ SQLAlchemy 2.0, and Pydantic.
 See the `app/` package for application code, `migrations/` for Alembic scripts,
 `tests/` for automated tests, and `docs/` for project documentation.
 
-## Contributing
+## Status & Limitations
 
-Contributions welcome. Please open an issue or merge request before major
-changes.
+- Doctor and admin dashboards use placeholder data pending full data connections.
+- Bloodwork, prescriptions, and notifications are implemented for demo use and will be expanded for production.
+- Integration testing is in progress; additional coverage will be added for full workflows.
 
 ## License
 
