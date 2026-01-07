@@ -30,7 +30,9 @@ class AppointmentRepository:
             self.db.query(Appointment).filter(Appointment.id == appointment_id).first()
         )
 
-    def get_booked_slots_for_date(self, target_date: date) -> list[Appointment]:
+    def get_booked_slots_for_date(
+        self, target_date: date, doctor_id: int | None = None
+    ) -> list[Appointment]:
         """Get all booked appointment slots for a specific date."""
         start_of_day = datetime.combine(target_date, datetime.min.time()).replace(
             tzinfo=timezone.utc
@@ -38,20 +40,18 @@ class AppointmentRepository:
         end_of_day = datetime.combine(target_date, datetime.max.time()).replace(
             tzinfo=timezone.utc
         )
-
-        return (
-            self.db.query(Appointment)
-            .filter(
-                and_(
-                    Appointment.scheduled_datetime >= start_of_day,
-                    Appointment.scheduled_datetime <= end_of_day,
-                    Appointment.status.in_(
-                        [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
-                    ),
-                )
+        query = self.db.query(Appointment).filter(
+            and_(
+                Appointment.scheduled_datetime >= start_of_day,
+                Appointment.scheduled_datetime <= end_of_day,
+                Appointment.status.in_(
+                    [AppointmentStatus.PENDING, AppointmentStatus.SCHEDULED]
+                ),
             )
-            .all()
         )
+        if doctor_id is not None:
+            query = query.filter(Appointment.doctor_id == doctor_id)
+        return query.all()
 
     def get_patient_appointments(
         self,

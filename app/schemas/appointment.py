@@ -21,8 +21,8 @@ class AppointmentCreate(AppointmentBase):
     """Payload for creating an appointment."""
 
     patient_id: int
-    doctor_id: int
-    booking_source: BookingSource
+    doctor_id: int | None = None
+    booking_source: BookingSource = BookingSource.ONLINE
 
 
 class AppointmentResponse(AppointmentBase):
@@ -30,7 +30,7 @@ class AppointmentResponse(AppointmentBase):
 
     id: int
     patient_id: int
-    doctor_id: int
+    doctor_id: int | None
     status: AppointmentStatus
     booking_source: BookingSource
     notes: str | None = None

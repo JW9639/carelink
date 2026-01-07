@@ -54,7 +54,14 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, 
+            target_metadata=target_metadata,
+            include_object=lambda obj, name, type_, reflected, compare_to: (
+                # Don't create enum types - they'll be handled in migration file
+                not (type_ == "type" and hasattr(obj, 'enum_name'))
+            )
+        )
 
         with context.begin_transaction():
             context.run_migrations()

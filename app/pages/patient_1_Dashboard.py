@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from html import escape
 
 import streamlit as st
 
@@ -45,6 +46,8 @@ try:
 finally:
     db.close()
 
+safe_first_name = escape(first_name)
+
 # Current time for greeting
 hour = datetime.now().hour
 if hour < 12:
@@ -67,7 +70,7 @@ st.markdown(
         margin-bottom: 2rem;
         border: 1px solid rgba(0, 102, 204, 0.1);
     ">
-        <h1 style="color: #1e293b; margin: 0 0 8px 0; font-weight: 700; font-size: 2rem;">{greeting}, {first_name}!</h1>
+        <h1 style="color: #1e293b; margin: 0 0 8px 0; font-weight: 700; font-size: 2rem;">{greeting}, {safe_first_name}!</h1>
         <p style="color: #64748b; margin: 0; font-size: 1.1rem;">Welcome back to your health dashboard. Here's what's happening today.</p>
     </div>
     """,
@@ -162,6 +165,9 @@ with left_col:
         month_abbr = appt_dt.strftime("%b").upper()
         time_str = appt_dt.strftime("%I:%M %p").lstrip("0")
         reason = next_appt_info.reason or "Appointment"
+        safe_reason = escape(reason)
+        safe_doctor_name = escape(next_appt_info.doctor_name)
+        safe_specialty = escape(next_appt_info.specialty)
 
         # Status display based on pending or confirmed
         if next_appt_info.is_pending:
@@ -178,9 +184,9 @@ with left_col:
                         <span class="date-month">{month_abbr}</span>
                     </div>
                     <div class="appointment-details">
-                        <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 1.25rem; font-weight: 700;">{reason}</h4>
+                        <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 1.25rem; font-weight: 700;">{safe_reason}</h4>
                         <p style="margin: 0 0 6px 0; color: #475569; font-size: 15px;">
-                            <strong style="color: #1e293b;">{next_appt_info.doctor_name}</strong> • {next_appt_info.specialty}
+                            <strong style="color: #1e293b;">{safe_doctor_name}</strong> • {safe_specialty}
                         </p>
                         <p style="margin: 0; color: #64748b; font-size: 14px;">
                             🕐 {time_str}

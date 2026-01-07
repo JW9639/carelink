@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.exc import ProgrammingError
 
 
 revision = "001_initial_schema"
@@ -19,34 +21,33 @@ depends_on = None
 
 def upgrade() -> None:
     """Apply migration."""
-    user_role_enum = sa.Enum(
-        "patient", "doctor", "admin", name="userrole"
-    )
-    appointment_status_enum = sa.Enum(
-        "scheduled", "completed", "cancelled", "no_show", name="appointmentstatus"
-    )
-    booking_source_enum = sa.Enum("online", "phone", name="bookingsource")
-    notification_type_enum = sa.Enum(
-        "appointment_reminder",
-        "results_ready",
-        "follow_up",
-        "prescription_update",
-        "general",
-        name="notificationtype",
-    )
-
-    bind = op.get_bind()
-    user_role_enum.create(bind, checkfirst=True)
-    appointment_status_enum.create(bind, checkfirst=True)
-    booking_source_enum.create(bind, checkfirst=True)
-    notification_type_enum.create(bind, checkfirst=True)
+    conn = op.get_bind()
+    
+    # Create enum types using conditional logic
+    enum_types = [
+        ("userrole", ['patient', 'doctor', 'admin']),
+        ("appointmentstatus", ['scheduled', 'completed', 'cancelled', 'no_show']),
+        ("bookingsource", ['online', 'phone']),
+        ("notificationtype", ['appointment_reminder', 'results_ready', 'follow_up', 'prescription_update', 'general'])
+    ]
+    
+    for enum_name, enum_values in enum_types:
+        # Check if enum type exists
+        result = conn.execute(sa.text(
+            "SELECT 1 FROM pg_type WHERE typname = :name"
+        ), {"name": enum_name})
+        
+        if not result.fetchone():
+            # Create the enum type
+            values_str = "', '".join(enum_values)
+            conn.execute(sa.text(f"CREATE TYPE {enum_name} AS ENUM ('{values_str}')"))
 
     op.create_table(
         "users",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("email", sa.String(length=255), nullable=False, unique=True),
         sa.Column("hashed_password", sa.String(length=255), nullable=False),
-        sa.Column("role", user_role_enum, nullable=False),
+        sa.Column("role", postgresql.ENUM('patient', 'doctor', 'admin', name='userrole', create_type=False), nullable=False),
         sa.Column("is_active", sa.Boolean(), nullable=False, server_default=sa.text("true")),
         sa.Column("last_login", sa.DateTime(timezone=True), nullable=True),
         sa.Column(
@@ -156,13 +157,13 @@ def upgrade() -> None:
         sa.Column("duration_minutes", sa.Integer(), nullable=False, server_default="15"),
         sa.Column(
             "status",
-            appointment_status_enum,
+            postgresql.ENUM('scheduled', 'completed', 'cancelled', 'no_show', name='appointmentstatus', create_type=False),
             nullable=False,
             server_default="scheduled",
         ),
         sa.Column(
             "booking_source",
-            booking_source_enum,
+            postgresql.ENUM('online', 'phone', name='bookingsource', create_type=False),
             nullable=False,
             server_default="online",
         ),
@@ -246,7 +247,7 @@ def upgrade() -> None:
         "notifications",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("patient_id", sa.Integer(), sa.ForeignKey("patients.id"), nullable=False),
-        sa.Column("type", notification_type_enum, nullable=False),
+        sa.Column("type", postgresql.ENUM('appointment_reminder', 'results_ready', 'follow_up', 'prescription_update', 'general', name='notificationtype', create_type=False), nullable=False),
         sa.Column("title", sa.String(length=255), nullable=False),
         sa.Column("message", sa.Text(), nullable=False),
         sa.Column("is_read", sa.Boolean(), nullable=False, server_default=sa.text("false")),

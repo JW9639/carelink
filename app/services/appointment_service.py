@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
 from app.db.repositories.appointment_repository import AppointmentRepository
 from app.models.appointment import Appointment
+from app.security.audit import AuditAction, log_action
 from app.utils.constants import AppointmentStatus, BookingSource
 
 
@@ -32,6 +33,39 @@ class AppointmentService:
         self.db = db
         self.appointment_repo = AppointmentRepository(db)
 
+    @staticmethod
+    def _normalize_datetime(value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
+
+    @staticmethod
+    def _overlaps(
+        start_a: datetime, end_a: datetime, start_b: datetime, end_b: datetime
+    ) -> bool:
+        return start_a < end_b and end_a > start_b
+
+    def _has_conflict(
+        self,
+        start: datetime,
+        duration_minutes: int,
+        doctor_id: int | None = None,
+        exclude_appointment_id: int | None = None,
+    ) -> bool:
+        normalized_start = self._normalize_datetime(start)
+        normalized_end = normalized_start + timedelta(minutes=duration_minutes)
+        booked = self.appointment_repo.get_booked_slots_for_date(
+            normalized_start.date(), doctor_id=doctor_id
+        )
+        for appt in booked:
+            if exclude_appointment_id is not None and appt.id == exclude_appointment_id:
+                continue
+            appt_start = self._normalize_datetime(appt.scheduled_datetime)
+            appt_end = appt_start + timedelta(minutes=appt.duration_minutes)
+            if self._overlaps(normalized_start, normalized_end, appt_start, appt_end):
+                return True
+        return False
+
     def get_available_slots(
         self, target_date: date, duration_minutes: int = 30
     ) -> tuple[list[TimeSlot], list[TimeSlot]]:
@@ -45,15 +79,16 @@ class AppointmentService:
         booked_appointments = self.appointment_repo.get_booked_slots_for_date(
             target_date
         )
-        booked_times = set()
-
+        booked_ranges: list[tuple[datetime, datetime]] = []
         for appt in booked_appointments:
-            # Mark the appointment time as booked
-            booked_times.add(appt.scheduled_datetime.time())
+            appt_start = self._normalize_datetime(appt.scheduled_datetime)
+            appt_end = appt_start + timedelta(minutes=appt.duration_minutes)
+            booked_ranges.append((appt_start, appt_end))
 
         am_slots = []
         pm_slots = []
 
+        now = datetime.now(timezone.utc)
         # Generate slots from clinic start to end
         current_hour = self.CLINIC_START_HOUR
         current_minute = 0
@@ -65,13 +100,17 @@ class AppointmentService:
 
             # Check if this slot is in the past for today
             is_past = False
-            if target_date == date.today():
-                now = datetime.now()
-                slot_datetime = datetime.combine(target_date, slot_time)
+            slot_datetime = datetime.combine(
+                target_date, slot_time, tzinfo=timezone.utc
+            )
+            if target_date == now.date():
                 is_past = slot_datetime <= now
 
-            # Check if slot is booked
-            is_booked = slot_time in booked_times
+            slot_end = slot_datetime + timedelta(minutes=duration_minutes)
+            is_booked = any(
+                self._overlaps(slot_datetime, slot_end, appt_start, appt_end)
+                for appt_start, appt_end in booked_ranges
+            )
             is_available = not is_booked and not is_past
 
             # Format display time
@@ -105,17 +144,33 @@ class AppointmentService:
         created_by_user_id: int,
     ) -> Appointment:
         """Create a new pending appointment."""
+        normalized_datetime = self._normalize_datetime(scheduled_datetime)
+        if self._has_conflict(normalized_datetime, duration_minutes):
+            raise ValueError("Selected time is no longer available.")
         appointment = Appointment(
             patient_id=patient_id,
             doctor_id=None,  # Will be assigned by admin
-            scheduled_datetime=scheduled_datetime,
+            scheduled_datetime=normalized_datetime,
             duration_minutes=duration_minutes,
             status=AppointmentStatus.PENDING,
             booking_source=BookingSource.ONLINE,
             reason=reason,
             created_by=created_by_user_id,
         )
-        return self.appointment_repo.create(appointment)
+        appointment = self.appointment_repo.create(appointment)
+        log_action(
+            db=self.db,
+            user_id=created_by_user_id,
+            action=AuditAction.BOOK_APPOINTMENT,
+            resource_type="appointment",
+            resource_id=appointment.id,
+            details={
+                "scheduled_datetime": appointment.scheduled_datetime.isoformat(),
+                "duration_minutes": appointment.duration_minutes,
+            },
+        )
+        self.db.commit()
+        return appointment
 
     def get_patient_upcoming_appointments(self, patient_id: int) -> list[Appointment]:
         """Get upcoming appointments for a patient."""
@@ -152,6 +207,16 @@ class AppointmentService:
         self, appointment_id: int, doctor_id: int
     ) -> Appointment | None:
         """Assign a doctor to a pending appointment."""
+        appointment = self.appointment_repo.get_by_id(appointment_id)
+        if appointment is None:
+            return None
+        if self._has_conflict(
+            appointment.scheduled_datetime,
+            appointment.duration_minutes,
+            doctor_id=doctor_id,
+            exclude_appointment_id=appointment_id,
+        ):
+            raise ValueError("Selected doctor is not available for this time.")
         return self.appointment_repo.assign_doctor(appointment_id, doctor_id)
 
     def get_patient_past_appointments(

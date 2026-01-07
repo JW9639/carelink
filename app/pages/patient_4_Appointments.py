@@ -5,6 +5,7 @@ from __future__ import annotations
 import calendar
 import math
 from datetime import datetime, date, timezone
+from html import escape
 
 import streamlit as st
 
@@ -121,6 +122,8 @@ try:
                 doctor_info = (
                     f"Dr. {appt.doctor.last_name}" if appt.doctor else "Doctor TBD"
                 )
+                doctor_info = escape(doctor_info)
+                reason_text = escape(appt.reason) if appt.reason else ""
 
                 appt_date = appt.scheduled_datetime.strftime("%A, %B %d, %Y")
                 appt_time = appt.scheduled_datetime.strftime("%I:%M %p")
@@ -139,7 +142,7 @@ try:
                         <div>
                             <div style="font-weight: 600; color: #1e293b; font-size: 15px;">{appt_date}</div>
                             <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} • {appt.duration_minutes} min • {doctor_info}</div>
-                            {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {appt.reason}</div>' if appt.reason else ''}
+                            {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {reason_text}</div>' if reason_text else ''}
                         </div>
                         <div style="
                             background: {status_color}15;
@@ -243,6 +246,8 @@ try:
                     status_text = "Past"
 
                 doctor_info = f"Dr. {appt.doctor.last_name}" if appt.doctor else "N/A"
+                doctor_info = escape(doctor_info)
+                reason_text = escape(appt.reason) if appt.reason else ""
                 appt_date = appt.scheduled_datetime.strftime("%A, %B %d, %Y")
                 appt_time = appt.scheduled_datetime.strftime("%I:%M %p")
 
@@ -259,7 +264,7 @@ try:
                         <div>
                             <div style="font-weight: 600; color: #475569; font-size: 15px;">{appt_date}</div>
                             <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} • {appt.duration_minutes} min • {doctor_info}</div>
-                            {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {appt.reason}</div>' if appt.reason else ''}
+                            {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {reason_text}</div>' if reason_text else ''}
                         </div>
                         <div style="
                             background: {status_color}15;
@@ -355,6 +360,7 @@ try:
                 padding: 24px !important;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
                 border: 1px solid #e5e7eb !important;
+                max-width: 400px !important;
             }
 
             .section-label {
@@ -517,6 +523,7 @@ try:
                 background: white !important;
                 border-radius: 16px !important;
                 box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+                max-width: 800px !important;
             }
             /* Modal header */
             div[role="dialog"] > div:first-child {
