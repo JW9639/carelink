@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import date, datetime
+
 from sqlalchemy.orm import Session, joinedload
 
 from app.models.bloodwork import Bloodwork
@@ -34,3 +36,41 @@ class BloodworkRepository:
             .filter(Bloodwork.id == bloodwork_id)
             .first()
         )
+
+    def create(
+        self,
+        patient_id: int,
+        test_type: str,
+        test_date: date,
+        results: dict,
+        reference_ranges: dict,
+        notes: str | None = None,
+        is_published: bool = False,
+        approved_by: int | None = None,
+        approved_at: datetime | None = None,
+        published_at: datetime | None = None,
+    ) -> Bloodwork:
+        """Create a bloodwork result."""
+        bloodwork = Bloodwork(
+            patient_id=patient_id,
+            test_type=test_type,
+            test_date=test_date,
+            results=results,
+            reference_ranges=reference_ranges,
+            notes=notes,
+            is_published=is_published,
+            approved_by=approved_by,
+            approved_at=approved_at,
+            published_at=published_at,
+        )
+        self.db.add(bloodwork)
+        self.db.commit()
+        self.db.refresh(bloodwork)
+        return bloodwork
+
+    def save(self, bloodwork: Bloodwork) -> Bloodwork:
+        """Persist changes to a bloodwork result."""
+        self.db.add(bloodwork)
+        self.db.commit()
+        self.db.refresh(bloodwork)
+        return bloodwork

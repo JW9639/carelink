@@ -30,6 +30,16 @@ class PatientRepository:
             .first()
         )
 
+    def get_by_doctor_id(self, doctor_id: int) -> list[Patient]:
+        """Get patients assigned to a doctor."""
+        return (
+            self.db.query(Patient)
+            .options(joinedload(Patient.user))
+            .filter(Patient.doctor_id == doctor_id)
+            .order_by(Patient.last_name.asc(), Patient.first_name.asc())
+            .all()
+        )
+
     def get_active_prescriptions_count(self, patient_id: int) -> int:
         """Count active prescriptions for a patient."""
         return (

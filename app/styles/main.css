@@ -207,6 +207,44 @@ button {
   line-height: 1.6;
 }
 
+/* Default text color across the app */
+.stApp,
+.stApp p,
+.stApp span,
+.stApp li,
+.stApp td,
+.stApp th,
+.stApp label,
+.stApp input,
+.stApp textarea,
+.stApp select,
+.stApp [data-testid="stMarkdownContainer"],
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stMarkdownContainer"] span,
+.stApp [data-testid="stMarkdownContainer"] li,
+.stApp [data-testid="stText"] p,
+.stApp [data-testid="stText"] span,
+.stApp [data-testid="stCaptionContainer"] p,
+.stApp [data-testid="stCaptionContainer"] span {
+  color: var(--dark-color);
+}
+
+/* Keep button text white */
+.stApp button,
+.stApp button p,
+.stApp button span {
+  color: #ffffff !important;
+}
+
+/* Ensure default text is dark on light backgrounds in dashboards */
+.main [data-testid="stMarkdownContainer"],
+.main [data-testid="stMarkdownContainer"] p,
+.main [data-testid="stMarkdownContainer"] span,
+.main [data-testid="stMarkdownContainer"] li,
+.main [data-testid="stMarkdownContainer"] label {
+  color: var(--dark-color);
+}
+
 h1,
 h2,
 h3,

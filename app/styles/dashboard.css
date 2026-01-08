@@ -354,3 +354,26 @@ section[data-testid="stSidebar"][aria-expanded="false"] ~ .main {
 section[data-testid="stSidebar"][aria-expanded="true"] ~ .main {
   margin-left: 0 !important;
 }
+
+/* Ensure readable text on light backgrounds for dashboards */
+.stApp .main,
+.stApp .main h1,
+.stApp .main h2,
+.stApp .main h3,
+.stApp .main h4,
+.stApp .main h5,
+.stApp .main h6,
+.stApp .main [data-testid="stMarkdownContainer"],
+.stApp .main [data-testid="stMarkdownContainer"] p,
+.stApp .main [data-testid="stMarkdownContainer"] span,
+.stApp .main [data-testid="stMarkdownContainer"] li,
+.stApp .main [data-testid="stText"] p,
+.stApp .main [data-testid="stText"] span,
+.stApp .main [data-testid="stCaptionContainer"] p,
+.stApp .main [data-testid="stCaptionContainer"] span,
+.stApp .main label,
+.stApp .main input,
+.stApp .main textarea,
+.stApp .main select {
+  color: var(--dark-color);
+}

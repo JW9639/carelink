@@ -52,13 +52,13 @@ safe_first_name = escape(first_name)
 hour = datetime.now().hour
 if hour < 12:
     greeting = "Good morning"
-    emoji = "☀️"
+  
 elif hour < 18:
     greeting = "Good afternoon"
-    emoji = "🌤️"
+  
 else:
     greeting = "Good evening"
-    emoji = "🌙"
+   
 
 # Welcome Section with gradient background
 st.markdown(
