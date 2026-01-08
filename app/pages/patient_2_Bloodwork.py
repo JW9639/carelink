@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from html import escape
+import math
 import re
 
 import streamlit as st
@@ -19,13 +20,29 @@ if not apply_dashboard_layout("Bloodwork", ["patient"]):
 st.markdown(
     """
     <style>
+    .bloodwork-panels-anchor {
+        height: 0;
+        margin: 0;
+    }
+    div[data-testid="stVerticalBlock"]:has(> div[data-testid="stElementContainer"] .bloodwork-panels-anchor) {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin: 0 auto 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        max-width: 1100px;
+        width: 100%;
+    }
     [data-testid="stHorizontalBlock"]:has(.bloodwork-card-marker) {
         background: white;
         border-radius: 16px;
         padding: 20px;
-        margin-bottom: 16px;
+        margin: 0 auto 16px;
         border: 1px solid #e2e8f0;
         box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        max-width: 900px;
+        width: 100%;
     }
     .bloodwork-card-marker { display: none; }
     </style>
@@ -102,6 +119,8 @@ if "selected_bloodwork_id" not in st.session_state:
     st.session_state.selected_bloodwork_id = None
 if "selected_category_index" not in st.session_state:
     st.session_state.selected_category_index = None
+if "bloodwork_panel_page" not in st.session_state:
+    st.session_state.bloodwork_panel_page = 1
 if st.session_state.bloodwork_view not in {"panels", "markers"}:
     st.session_state.bloodwork_view = "panels"
 
@@ -157,46 +176,84 @@ if not panel_cards:
     st.stop()
 
 if st.session_state.bloodwork_view == "panels":
-    for panel in panel_cards:
-        bw = panel["bloodwork"]
-        category = panel["category"]
-        cat_summary = bloodwork_service.summarize_category(category)
-        doctor = bw.approved_by_doctor
-        doctor_name = (
-            f"Dr. {doctor.first_name} {doctor.last_name}" if doctor else "Assigned Clinician"
+    with st.container():
+        st.markdown('<div class="bloodwork-panels-anchor"></div>', unsafe_allow_html=True)
+        panels_per_page = 6
+        total_panels = len(panel_cards)
+        total_pages = max(1, math.ceil(total_panels / panels_per_page))
+        current_page = min(
+            max(st.session_state.bloodwork_panel_page, 1), total_pages
         )
-        panel_name = escape(category.get("name") or panel["test_name"] or "Panel")
-        status_text = (
-            "All within range"
-            if cat_summary.out_of_range == 0
-            else f"{cat_summary.out_of_range} outside range"
-        )
-        col_left, col_right = st.columns([5, 1])
-        with col_left:
-            panel_html = "\n".join(
-                [
-                    '<div class="bloodwork-card-marker"></div>',
-                    f'<div style="font-size: 18px; font-weight: 700; color: #1e293b;">{panel_name}</div>',
-                    '<div style="font-size: 16px; color: #0f172a; margin-top: 4px;">',
-                    f'{bw.test_date.strftime("%B %d, %Y")} - {escape(doctor_name)}',
-                    "</div>",
-                    '<div style="margin-top: 12px; font-size: 16px; color: #0f172a;">',
-                    f"{cat_summary.total} markers - {status_text}",
-                    "</div>",
-                ]
-            )
-            st.markdown(panel_html, unsafe_allow_html=True)
-        with col_right:
+        st.session_state.bloodwork_panel_page = current_page
+
+        if total_pages > 1:
+            col_prev, col_page, col_next = st.columns([1, 2, 1], gap="small")
+            with col_prev:
+                if st.button("Previous", use_container_width=True, disabled=current_page == 1):
+                    st.session_state.bloodwork_panel_page = current_page - 1
+                    st.rerun()
+            with col_page:
+                start_idx = (current_page - 1) * panels_per_page + 1
+                end_idx = min(current_page * panels_per_page, total_panels)
+                st.markdown(
+                    f"<div style='text-align: center; color: #0f172a; font-size: 16px;'>"
+                    f"Showing {start_idx}–{end_idx} of {total_panels} panels</div>",
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    f"<div style='text-align: center; color: #64748b; font-size: 14px;'>"
+                    f"Page {current_page} of {total_pages}</div>",
+                    unsafe_allow_html=True,
+                )
+            with col_next:
+                if st.button("Next", use_container_width=True, disabled=current_page == total_pages):
+                    st.session_state.bloodwork_panel_page = current_page + 1
+                    st.rerun()
+
             st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-            if st.button(
-                "View",
-                key=f"view_panel_{bw.id}_{panel['category_index']}",
-                use_container_width=True,
-            ):
-                st.session_state.bloodwork_view = "markers"
-                st.session_state.selected_bloodwork_id = bw.id
-                st.session_state.selected_category_index = panel["category_index"]
-                st.rerun()
+
+        start = (current_page - 1) * panels_per_page
+        end = start + panels_per_page
+        for panel in panel_cards[start:end]:
+            bw = panel["bloodwork"]
+            category = panel["category"]
+            cat_summary = bloodwork_service.summarize_category(category)
+            doctor = bw.approved_by_doctor
+            doctor_name = (
+                f"Dr. {doctor.first_name} {doctor.last_name}" if doctor else "Assigned Clinician"
+            )
+            panel_name = escape(category.get("name") or panel["test_name"] or "Panel")
+            status_text = (
+                "All within range"
+                if cat_summary.out_of_range == 0
+                else f"{cat_summary.out_of_range} outside range"
+            )
+            col_left, col_right = st.columns([5, 1])
+            with col_left:
+                panel_html = "\n".join(
+                    [
+                        '<div class="bloodwork-card-marker"></div>',
+                        f'<div style="font-size: 18px; font-weight: 700; color: #1e293b;">{panel_name}</div>',
+                        '<div style="font-size: 16px; color: #0f172a; margin-top: 4px;">',
+                        f'{bw.test_date.strftime("%B %d, %Y")} - {escape(doctor_name)}',
+                        "</div>",
+                        '<div style="margin-top: 12px; font-size: 16px; color: #0f172a;">',
+                        f"{cat_summary.total} markers - {status_text}",
+                        "</div>",
+                    ]
+                )
+                st.markdown(panel_html, unsafe_allow_html=True)
+            with col_right:
+                st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+                if st.button(
+                    "View",
+                    key=f"view_panel_{bw.id}_{panel['category_index']}",
+                    use_container_width=True,
+                ):
+                    st.session_state.bloodwork_view = "markers"
+                    st.session_state.selected_bloodwork_id = bw.id
+                    st.session_state.selected_category_index = panel["category_index"]
+                    st.rerun()
 
 elif st.session_state.bloodwork_view == "markers":
     selected_id = st.session_state.selected_bloodwork_id
