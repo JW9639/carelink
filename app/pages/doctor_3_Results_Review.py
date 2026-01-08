@@ -68,7 +68,8 @@ st.markdown(
   height: 0;
   margin: 0;
 }
-div[data-testid="stForm"]:has(.entry-card-anchor) {
+div[data-testid="stForm"]:has(.entry-card-anchor),
+div[data-testid="stForm"]:has(.review-card-anchor) {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
@@ -81,12 +82,19 @@ div[data-testid="stForm"]:has(.entry-card-anchor) {
 .entry-actions-anchor {
   height: 0;
 }
-.entry-actions-anchor + div[data-testid="stHorizontalBlock"] {
+.entry-actions-anchor + div[data-testid="stHorizontalBlock"],
+.review-actions-anchor + div[data-testid="stHorizontalBlock"] {
   align-items: center;
 }
-.entry-actions-anchor + div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
+.entry-actions-anchor + div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child,
+.review-actions-anchor + div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
   display: flex;
   justify-content: flex-end;
+}
+.review-card-anchor,
+.review-actions-anchor {
+  height: 0;
+  margin: 0;
 }
 .entry-card h3 {
   margin: 0;
@@ -202,12 +210,37 @@ div[data-testid="stForm"] [data-testid="stDateInput"] input::placeholder {
 .stApp .main textarea::placeholder {
   color: #94a3b8 !important;
 }
+
+/* Dialog styling */
+[data-testid="stDialog"] div[role="dialog"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+[data-testid="stDialog"] [data-testid="stMarkdownContainer"],
+[data-testid="stDialog"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stDialog"] [data-testid="stMarkdownContainer"] span,
+[data-testid="stDialog"] h1,
+[data-testid="stDialog"] h2,
+[data-testid="stDialog"] h3,
+[data-testid="stDialog"] h4,
+[data-testid="stDialog"] h5,
+[data-testid="stDialog"] h6 {
+  color: #0f172a !important;
+}
+[data-testid="stDialog"] [data-testid="stButton"] button {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5f5 !important;
+  box-shadow: none !important;
+}
 </style>
 """,
     unsafe_allow_html=True,
 )
 
 if st.session_state.get("bloodwork_reset_pending"):
+    publish_success = st.session_state.get("bloodwork_publish_success", False)
+    publish_summary = st.session_state.get("bloodwork_publish_summary")
     for key in list(st.session_state.keys()):
         if key.startswith("bloodwork_value_"):
             st.session_state.pop(key, None)
@@ -219,6 +252,12 @@ if st.session_state.get("bloodwork_reset_pending"):
     st.session_state.bloodwork_test_date = date.today()
     st.session_state.bloodwork_draft_id = None
     st.session_state.bloodwork_reset_pending = False
+    if publish_success:
+        st.session_state.bloodwork_publish_success = True
+        st.session_state.bloodwork_publish_summary = publish_summary
+    else:
+        st.session_state.bloodwork_publish_success = False
+        st.session_state.bloodwork_publish_summary = None
 
 if "bloodwork_step" not in st.session_state:
     st.session_state.bloodwork_step = "select"
@@ -234,10 +273,30 @@ if "bloodwork_signature" not in st.session_state:
     st.session_state.bloodwork_signature = ""
 if "bloodwork_notes" not in st.session_state:
     st.session_state.bloodwork_notes = ""
+if "bloodwork_publish_success" not in st.session_state:
+    st.session_state.bloodwork_publish_success = False
+if "bloodwork_publish_summary" not in st.session_state:
+    st.session_state.bloodwork_publish_summary = None
 
 
 def _reset_flow() -> None:
     st.session_state.bloodwork_reset_pending = True
+
+
+@st.dialog("Results sent to patient", width="small")
+def _show_publish_dialog() -> None:
+    summary = st.session_state.get("bloodwork_publish_summary") or {}
+    patient_name = summary.get("patient_name")
+    panel_name = summary.get("panel_name")
+    st.markdown("Results have been sent to the patient portal.")
+    if patient_name:
+        st.markdown(f"**Patient:** {patient_name}")
+    if panel_name:
+        st.markdown(f"**Panel:** {panel_name}")
+    if st.button("Back to Select"):
+        st.session_state.bloodwork_publish_success = False
+        st.session_state.bloodwork_publish_summary = None
+        st.rerun()
 
 
 db = SessionLocal()
@@ -264,6 +323,9 @@ try:
         ]
     )
     st.markdown(hero_html, unsafe_allow_html=True)
+
+    if st.session_state.bloodwork_publish_success:
+        _show_publish_dialog()
 
     if not patients:
         st.info("No patients are assigned to your care yet.")
@@ -483,58 +545,85 @@ try:
                 "</div>",
             ]
         )
-        st.markdown(review_summary, unsafe_allow_html=True)
-        st.markdown('<div class="results-section">Review captured values</div>', unsafe_allow_html=True)
-
-        for marker in category.get("markers", []):
-            marker_name = escape(marker.get("name", "Marker"))
-            unit = marker.get("unit", "")
-            unit_text = f" {escape(unit)}" if unit else ""
-            value = marker.get("value")
-            if not bloodwork_service._has_value(value):
-                continue
-            reference = marker.get("reference_range") or {}
-            ref_text = ""
-            if reference.get("low") is not None and reference.get("high") is not None:
-                ref_text = f"{reference.get('low')} - {reference.get('high')}"
-            reference_note = marker.get("reference_note") or ""
-            if not ref_text and reference_note:
-                ref_text = reference_note
+        with st.form("review_form", enter_to_submit=False):
+            st.markdown('<div class="review-card-anchor"></div>', unsafe_allow_html=True)
+            st.markdown(review_summary, unsafe_allow_html=True)
             st.markdown(
-                f"- {marker_name}: {value}{unit_text} (Ref {ref_text or 'N/A'})"
+                '<div class="results-section">Review captured values</div>',
+                unsafe_allow_html=True,
             )
 
-        st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
-        st.text_input(
-            "Doctor signature",
-            key="bloodwork_signature",
-            placeholder="Type your name",
-        )
-        st.text_area(
-            "Notes (optional)",
-            key="bloodwork_notes",
-            placeholder="Add any clinical notes for the patient",
-        )
+            for marker in category.get("markers", []):
+                marker_name = escape(marker.get("name", "Marker"))
+                unit = marker.get("unit", "")
+                unit_text = f" {escape(unit)}" if unit else ""
+                value = marker.get("value")
+                if not bloodwork_service._has_value(value):
+                    continue
+                reference = marker.get("reference_range") or {}
+                ref_text = ""
+                if (
+                    reference.get("low") is not None
+                    and reference.get("high") is not None
+                ):
+                    ref_text = f"{reference.get('low')} - {reference.get('high')}"
+                reference_note = marker.get("reference_note") or ""
+                if not ref_text and reference_note:
+                    ref_text = reference_note
+                st.markdown(
+                    f"- {marker_name}: {value}{unit_text} (Ref {ref_text or 'N/A'})"
+                )
 
-        col_back, col_publish = st.columns([1, 2])
-        with col_back:
-            if st.button("Back to Edit"):
-                st.session_state.bloodwork_step = "enter"
+            st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
+            st.text_input(
+                "Doctor signature",
+                key="bloodwork_signature",
+                placeholder="Type your name",
+            )
+            st.text_area(
+                "Notes (optional)",
+                key="bloodwork_notes",
+                placeholder="Add any clinical notes for the patient",
+            )
+
+            st.markdown(
+                '<div class="review-actions-anchor"></div>',
+                unsafe_allow_html=True,
+            )
+            col_back, col_spacer, col_publish = st.columns([1, 4, 1], gap="small")
+            with col_back:
+                back_clicked = st.form_submit_button("Back to Edit")
+            with col_publish:
+                publish_clicked = st.form_submit_button("Publish Results")
+
+        if back_clicked:
+            st.session_state.bloodwork_step = "enter"
+            st.rerun()
+        if publish_clicked:
+            signature = st.session_state.bloodwork_signature.strip()
+            if not signature:
+                st.error("Signature is required to publish.")
+            else:
+                bloodwork_service.publish_result(
+                    bloodwork_id=bloodwork.id,
+                    doctor_id=doctor.id,
+                    signature=signature,
+                    notes=st.session_state.bloodwork_notes.strip() or None,
+                )
+                patient = next(
+                    (item for item in patients if item.id == bloodwork.patient_id),
+                    None,
+                )
+                patient_name = None
+                if patient:
+                    patient_name = f"{patient.first_name} {patient.last_name}"
+                panel_name = normalized.get("test_name", bloodwork.test_type)
+                st.session_state.bloodwork_publish_summary = {
+                    "patient_name": patient_name,
+                    "panel_name": panel_name,
+                }
+                st.session_state.bloodwork_publish_success = True
+                _reset_flow()
                 st.rerun()
-        with col_publish:
-            if st.button("Publish Results"):
-                signature = st.session_state.bloodwork_signature.strip()
-                if not signature:
-                    st.error("Signature is required to publish.")
-                else:
-                    bloodwork_service.publish_result(
-                        bloodwork_id=bloodwork.id,
-                        doctor_id=doctor.id,
-                        signature=signature,
-                        notes=st.session_state.bloodwork_notes.strip() or None,
-                    )
-                    st.success("Results published successfully.")
-                    _reset_flow()
-                    st.rerun()
 finally:
     db.close()
