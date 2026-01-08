@@ -1,1 +1,0 @@
-"""CareLink application package."""
