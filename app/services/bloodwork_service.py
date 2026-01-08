@@ -22,48 +22,6 @@ PANEL_TEMPLATES: list[dict[str, Any]] = []
 PANEL_TEMPLATES.extend(
     [
         {
-            "key": "specimen_meta",
-            "name": "Specimen / Collection Meta",
-            "markers": [
-                {
-                    "name": "Sample type (serum/plasma/whole blood/urine/saliva)",
-                    "key": "sample_type",
-                    "value_type": "text",
-                    "reference_note": "Varies by test (no universal reference range; specified per analyte).",
-                },
-                {
-                    "name": "Collection date/time",
-                    "key": "collection_datetime",
-                    "value_type": "text",
-                    "reference_note": "Recorded for interpretation (no reference range).",
-                },
-                {
-                    "name": "Fasting status (Y/N + hours)",
-                    "key": "fasting_status",
-                    "value_type": "text",
-                    "reference_note": "Required for certain tests (e.g., glucose, lipids).",
-                },
-                {
-                    "name": "Time since last dose (meds/TRT)",
-                    "key": "time_since_last_dose",
-                    "value_type": "text",
-                    "reference_note": "Relevant for therapeutic drug monitoring or hormone replacement.",
-                },
-                {
-                    "name": "Lab method (LC/MS vs immunoassay)",
-                    "key": "lab_method",
-                    "value_type": "text",
-                    "reference_note": "Affects interpretation, especially for hormones like testosterone.",
-                },
-                {
-                    "name": "Reference range set/version",
-                    "key": "reference_range_set",
-                    "value_type": "text",
-                    "reference_note": "Varies by lab; many UK NHS labs align with Pathology Harmony or local harmonised intervals.",
-                },
-            ],
-        },
-        {
             "key": "vitals",
             "name": "Vitals / Anthropometrics",
             "markers": [

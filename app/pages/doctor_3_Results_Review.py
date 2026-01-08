@@ -25,7 +25,7 @@ st.markdown(
   border: 1px solid #dbe7f3;
   border-radius: 16px;
   padding: 20px 24px;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 .results-hero h2 {
   margin: 0;
@@ -36,7 +36,7 @@ st.markdown(
 .results-hero p {
   margin: 6px 0 0 0;
   color: #475569;
-  font-size: 14px;
+  font-size: 16px;
 }
 .results-section {
   margin: 16px 0 8px;
@@ -57,6 +57,98 @@ st.markdown(
 .results-summary span {
   color: #475569;
 }
+.entry-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.entry-card-anchor {
+  height: 0;
+  margin: 0;
+}
+div[data-testid="stForm"]:has(.entry-card-anchor) {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto 20px;
+}
+.entry-actions-anchor {
+  height: 0;
+}
+.entry-actions-anchor + div[data-testid="stHorizontalBlock"] {
+  align-items: center;
+}
+.entry-actions-anchor + div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:last-child {
+  display: flex;
+  justify-content: flex-end;
+}
+.entry-card h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 700;
+}
+.entry-card p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 16px;
+}
+.entry-head {
+  margin: 4px 0;
+}
+.entry-head span {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.entry-summary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.entry-summary strong {
+  color: #0f172a;
+}
+.entry-summary span {
+  color: #475569;
+}
+.entry-list-anchor {
+  height: 0;
+  margin: 2px 0 0;
+}
+.entry-list-anchor ~ div[data-testid="stHorizontalBlock"] {
+  background: #ffffff;
+  padding: 6px 4px;
+  margin: 0;
+  gap: 6px;
+  column-gap: 6px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.entry-list-anchor ~ div[data-testid="stHorizontalBlock"]:last-child {
+  border-bottom: none;
+}
+.entry-marker {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+.entry-meta {
+  font-size: 16px;
+  color: #64748b;
+  margin-top: 4px;
+}
 
 /* Select card */
 div[data-testid="stForm"] {
@@ -65,8 +157,10 @@ div[data-testid="stForm"] {
   border-radius: 16px;
   padding: 20px 24px;
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  margin: 0 auto 20px;
+}
+div[data-testid="stForm"]:has(.results-card-title) {
   max-width: 920px;
-  margin: 0 auto 16px;
 }
 div[data-testid="stForm"] .results-card-title {
   font-size: 20px;
@@ -78,6 +172,15 @@ div[data-testid="stForm"] [data-testid="stSelectbox"],
 div[data-testid="stForm"] [data-testid="stDateInput"] {
   max-width: 540px;
   width: 100%;
+}
+div[data-testid="stForm"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+div[data-testid="stForm"] [data-testid="stDateInput"] input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+div[data-testid="stForm"] [data-testid="stSelectbox"] span,
+div[data-testid="stForm"] [data-testid="stDateInput"] input::placeholder {
+  color: #0f172a !important;
 }
 
 /* Input fields: white background, dark text */
@@ -193,7 +296,9 @@ try:
             )
             selected_panel_name = st.selectbox("Panel", panel_names)
             selected_date = st.date_input(
-                "Test date", value=st.session_state.bloodwork_test_date
+                "Test date",
+                value=st.session_state.bloodwork_test_date,
+                max_value=date.today(),
             )
             submitted = st.form_submit_button("Next")
 
@@ -228,86 +333,129 @@ try:
             _reset_flow()
             st.rerun()
 
-        summary_html = "\n".join(
-            [
-                '<div class="results-summary">',
-                f"<strong>Patient:</strong> <span>{escape(patient.first_name)} {escape(patient.last_name)}</span><br/>",
-                f"<strong>Panel:</strong> <span>{escape(panel.get('name', 'Panel'))}</span><br/>",
-                f"<strong>Test date:</strong> <span>{st.session_state.bloodwork_test_date.strftime('%B %d, %Y')}</span>",
-                "</div>",
-            ]
-        )
-        st.markdown(summary_html, unsafe_allow_html=True)
-        st.markdown('<div class="results-section">Enter marker values</div>', unsafe_allow_html=True)
+        with st.form("entry_form", enter_to_submit=False):
+            st.markdown('<div class="entry-card-anchor"></div>', unsafe_allow_html=True)
+            entry_summary = "\n".join(
+                [
+                    '<div class="entry-summary">',
+                    f"<strong>Patient:</strong> <span>{escape(patient.first_name)} {escape(patient.last_name)}</span><br/>",
+                    f"<strong>Panel:</strong> <span>{escape(panel.get('name', 'Panel'))}</span><br/>",
+                    f"<strong>Test date:</strong> <span>{st.session_state.bloodwork_test_date.strftime('%B %d, %Y')}</span>",
+                    "</div>",
+                ]
+            )
+            st.markdown(entry_summary, unsafe_allow_html=True)
+            entry_intro = "\n".join(
+                [
+                    '<div class="entry-card">',
+                    "<h3>Enter marker values</h3>",
+                    "<p>Leave a field blank if that marker was not measured in this panel.</p>",
+                    "</div>",
+                ]
+            )
+            st.markdown(entry_intro, unsafe_allow_html=True)
 
-        marker_inputs: list[tuple[dict, str, str]] = []
-        for marker in panel.get("markers", []):
-            marker_key = marker.get("key", marker.get("name"))
-            input_key = f"bloodwork_value_{marker_key}"
-            value_type = marker.get("value_type", "number")
-            marker_inputs.append((marker, input_key, value_type))
-
-            col_left, col_right = st.columns([3, 1])
-            with col_left:
-                reference = marker.get("reference_range", {})
-                ref_text = ""
-                if reference.get("low") is not None and reference.get("high") is not None:
-                    ref_text = f"{reference.get('low')} - {reference.get('high')}"
-                reference_note = marker.get("reference_note", "")
-                if not ref_text and reference_note:
-                    ref_text = reference_note
-                unit = marker.get("unit", "")
-                unit_text = f" ({unit})" if unit else ""
+            head_left, head_mid, head_right = st.columns([2.1, 2.4, 1.1], gap="small")
+            with head_left:
                 st.markdown(
-                    f"**{escape(marker.get('name', 'Marker'))}**{escape(unit_text)}"
+                    '<div class="entry-head"><span>Marker</span></div>',
+                    unsafe_allow_html=True,
                 )
-                st.caption(f"Reference range: {ref_text or 'Not provided'}")
-            with col_right:
-                placeholder = "Enter value" if value_type == "text" else "Enter number"
-                st.text_input(
-                    "Value",
-                    key=input_key,
-                    label_visibility="collapsed",
-                    placeholder=placeholder,
+            with head_mid:
+                st.markdown(
+                    '<div class="entry-head"><span>Reference range</span></div>',
+                    unsafe_allow_html=True,
+                )
+            with head_right:
+                st.markdown(
+                    '<div class="entry-head"><span>Result</span></div>',
+                    unsafe_allow_html=True,
                 )
 
-        col_back, col_save = st.columns([1, 2])
-        with col_back:
-            if st.button("Back"):
-                st.session_state.bloodwork_step = "select"
-                st.rerun()
-        with col_save:
-            if st.button("Save for Review"):
-                values: dict[str, float | str] = {}
-                errors = []
-                for marker, input_key, value_type in marker_inputs:
+            marker_inputs: list[tuple[dict, str, str]] = []
+            with st.container():
+                st.markdown('<div class="entry-list-anchor"></div>', unsafe_allow_html=True)
+                for marker in panel.get("markers", []):
                     marker_key = marker.get("key", marker.get("name"))
-                    raw_value = st.session_state.get(input_key, "").strip()
-                    if not raw_value:
-                        continue
-                    if value_type == "text":
-                        values[marker_key] = raw_value
-                    else:
-                        try:
-                            values[marker_key] = float(raw_value)
-                        except ValueError:
-                            errors.append(
-                                f"Value for {marker.get('name')} must be a number."
-                            )
-                if errors:
-                    st.error("\n".join(errors))
-                elif not values:
-                    st.error("Enter at least one value before saving for review.")
+                    input_key = f"bloodwork_value_{marker_key}"
+                    value_type = marker.get("value_type", "number")
+                    marker_inputs.append((marker, input_key, value_type))
+
+                    reference = marker.get("reference_range", {})
+                    ref_text = ""
+                    if reference.get("low") is not None and reference.get("high") is not None:
+                        ref_text = f"{reference.get('low')} - {reference.get('high')}"
+                    reference_note = marker.get("reference_note", "")
+                    display_reference = ref_text or reference_note or "Not provided"
+                    unit = marker.get("unit", "")
+                    unit_text = f" ({unit})" if unit else ""
+
+                    col_left, col_mid, col_right = st.columns([2.1, 2.4, 1.1], gap="small")
+                    with col_left:
+                        st.markdown(
+                            f'<div class="entry-marker">{escape(marker.get("name", "Marker"))}'
+                            f"{escape(unit_text)}</div>",
+                            unsafe_allow_html=True,
+                        )
+                        if reference_note and ref_text:
+                            st.caption(reference_note)
+                    with col_mid:
+                        st.markdown(
+                            f'<div class="entry-meta">{escape(display_reference)}</div>',
+                            unsafe_allow_html=True,
+                        )
+                    with col_right:
+                        placeholder = "Enter value" if value_type == "text" else "Enter number"
+                        st.text_input(
+                            "Result",
+                            key=input_key,
+                            label_visibility="collapsed",
+                            placeholder=placeholder,
+                        )
+
+            st.markdown('<div class="entry-actions-anchor"></div>', unsafe_allow_html=True)
+            col_back, col_spacer, col_save = st.columns([1, 4, 1], gap="small")
+            with col_back:
+                back_clicked = st.form_submit_button("Back")
+            with col_spacer:
+                st.markdown("", unsafe_allow_html=True)
+            with col_save:
+                save_clicked = st.form_submit_button("Save for Review")
+
+        if back_clicked:
+            st.session_state.bloodwork_step = "select"
+            st.rerun()
+        if save_clicked:
+            values: dict[str, float | str] = {}
+            errors = []
+            for marker, input_key, value_type in marker_inputs:
+                marker_key = marker.get("key", marker.get("name"))
+                raw_value = st.session_state.get(input_key, "").strip()
+                if not raw_value:
+                    continue
+                if value_type == "text":
+                    values[marker_key] = raw_value
                 else:
-                    draft = bloodwork_service.create_draft_result(
-                        patient_id=patient.id,
-                        panel_key=panel["key"],
-                        test_date=st.session_state.bloodwork_test_date,
-                        values=values,
-                    )
-                    st.session_state.bloodwork_draft_id = draft.id
-                    st.session_state.bloodwork_step = "review"
-                    st.rerun()
+                    try:
+                        values[marker_key] = float(raw_value)
+                    except ValueError:
+                        errors.append(
+                            f"Value for {marker.get('name')} must be a number."
+                        )
+            if errors:
+                st.error("\n".join(errors))
+            elif not values:
+                st.error("Enter at least one value before saving for review.")
+            else:
+                draft = bloodwork_service.create_draft_result(
+                    patient_id=patient.id,
+                    panel_key=panel["key"],
+                    test_date=st.session_state.bloodwork_test_date,
+                    values=values,
+                )
+                st.session_state.bloodwork_draft_id = draft.id
+                st.session_state.bloodwork_step = "review"
+                st.rerun()
 
     elif st.session_state.bloodwork_step == "review":
         if not st.session_state.bloodwork_draft_id:

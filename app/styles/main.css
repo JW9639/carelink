@@ -403,6 +403,29 @@ a {
   font-size: 16px !important;
 }
 
+/* Global input colors: black text on white backgrounds */
+.stApp [data-testid="stTextInput"] input,
+.stApp [data-testid="stNumberInput"] input,
+.stApp [data-testid="stTextArea"] textarea,
+.stApp [data-testid="stDateInput"] input,
+.stApp [data-testid="stTimeInput"] input,
+.stApp [data-testid="stColorPicker"] input,
+.stApp [data-testid="stSelectbox"] div[data-baseweb="select"] > div,
+.stApp [data-testid="stMultiSelect"] div[data-baseweb="select"] > div,
+.stApp [data-testid="stSelectbox"] div[data-baseweb="select"] input,
+.stApp [data-testid="stMultiSelect"] div[data-baseweb="select"] input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+.stApp [data-testid="stSelectbox"] div[data-baseweb="select"] span,
+.stApp [data-testid="stMultiSelect"] div[data-baseweb="select"] span {
+  color: #0f172a !important;
+}
+.stApp input::placeholder,
+.stApp textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
 [data-testid="stTextInput"] input:focus {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15) !important;
