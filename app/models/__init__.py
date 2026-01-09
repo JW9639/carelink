@@ -5,6 +5,7 @@ from app.models.appointment import Appointment
 from app.models.audit_log import AuditLog
 from app.models.bloodwork import Bloodwork
 from app.models.doctor import Doctor
+from app.models.doctor_message import DoctorMessage
 from app.models.notification import Notification
 from app.models.patient import Patient
 from app.models.prescription import Prescription
@@ -16,6 +17,7 @@ __all__ = [
     "Base",
     "Bloodwork",
     "Doctor",
+    "DoctorMessage",
     "Notification",
     "Patient",
     "Prescription",

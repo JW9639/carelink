@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from app.models.patient import Patient
     from app.models.doctor import Doctor
     from app.models.audit_log import AuditLog
+    from app.models.doctor_message import DoctorMessage
 
 
 class User(TimestampMixin, Base):
@@ -53,6 +54,11 @@ class User(TimestampMixin, Base):
     )
     notifications_triggered: Mapped[list["Notification"]] = relationship(
         "Notification", back_populates="triggered_by_user"
+    )
+    doctor_messages_sent: Mapped[list["DoctorMessage"]] = relationship(
+        "DoctorMessage",
+        back_populates="sent_by_user",
+        foreign_keys="DoctorMessage.sent_by",
     )
     audit_logs: Mapped[list["AuditLog"]] = relationship(
         "AuditLog", back_populates="user"

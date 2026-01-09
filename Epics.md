@@ -1,10 +1,10 @@
-# CareLink — Epics and Progress
+# CareLink - Epics and Progress
 
 Last updated: January 09, 2026
 
 ---
 
-# EPIC 0 — Setup & Runtime Foundations
+# EPIC 0 - Setup & Runtime Foundations
 
 **E0-S1 [DONE] Create Repo**  
 Description: Initialise GitLab repo.
@@ -15,7 +15,7 @@ app/pages, app/services, app/db/repositories, app/models, app/security, app/ui, 
 
 ---
 
-## EPIC 1 — Configuration, Secrets, Logging & Safe Errors
+## EPIC 1 - Configuration, Secrets, Logging & Safe Errors
 
 **E1-S1 [DONE] Config Loader + .env.example**  
 Description: Implement app/config.py (env vars), include .env.example.  
@@ -31,7 +31,7 @@ Acceptance: Common failures show friendly UI feedback.
 
 ---
 
-## EPIC 2 — Docker & Local Dev Experience
+## EPIC 2 - Docker & Local Dev Experience
 
 **E2-S1 [DONE] Dockerfile for Streamlit App**  
 Description: Build Dockerfile for Streamlit.  
@@ -47,7 +47,7 @@ Acceptance: Repeatable demo environment.
 
 ---
 
-# EPIC 3 — Patient MVP (Build the Patient Experience First)
+# EPIC 3 - Patient MVP (Build the Patient Experience First)
 
 **E3-S1 [DONE] Patient Dashboard**  
 Description: Show upcoming appointment + recent results + active prescriptions + unread notifications.  
@@ -75,8 +75,8 @@ Acceptance: Booking persists; appointment shows in lists.
 **E3-S6 [TODO] Patient Profile (Including Low-Priority Requests)**  
 Description: Demographic/contact info view (editable fields as allowed).  
 Also include 2 low-priority actions:
-- Button: "Request Medical Records" → popup collects brief details → submits request to Admin Requests tab.
-- Button: "Request Private Referral" → popup collects details → submits request to Admin Requests tab for triage/assignment.
+- Button: "Request Medical Records" -> popup collects brief details -> submits request to Admin Requests tab.
+- Button: "Request Private Referral" -> popup collects details -> submits request to Admin Requests tab for triage/assignment.
 Acceptance:
 - Validations + audit log on profile edits
 - Requests create DB records and appear in admin queue (see E5-S8)
@@ -99,15 +99,19 @@ Acceptance:
 
 ---
 
-# EPIC 4 — Doctor MVP (After Patient Works)
+# EPIC 4 - Doctor MVP (After Patient Works)
 
 **E4-S1 [STARTED] Doctor Dashboard**  
 Description: Show today's appointments, pending tasks, quick links to roster.  
 Acceptance: DB-backed; handles empty.
 
 **E4-S2 [TODO] Doctor Patient List + Patient Detail**  
-Description: Doctor sees linked patients only; patient detail shows basic stats.  
-Acceptance: Cannot view unlinked patients.
+Description: Doctor sees linked patients only, with search by name and pagination (X per page). Each row has a View button that opens a patient chart with actions: Prescribe, Order Lab, Send Message.  
+Acceptance:
+- Cannot view unlinked patients
+- Search filters the list
+- Pagination works with real data
+- View opens the chart and shows the action buttons
 
 **E4-S3 [DONE] Bloodwork Draft + Review**  
 Description: Doctor creates draft results; review step before publish.  
@@ -144,9 +148,20 @@ Acceptance:
 - Audit log entry created
 - Patient can see updated status (can be minimal: status string visible in profile request history or notification)
 
+**E4-S9 [STARTED] Doctor Message Center (GP Admin Messages)**  
+Description: Doctor receives messages from GP Admin in a Message Center (similar to patient notifications), labeled by an admin-selected category:
+- Medication refill request for patient (to be added)
+- Bloodwork results (admin message that prompts doctor action)
+- Private referral requests  
+Acceptance:
+- Messages are stored and shown in a doctor inbox
+- Category label is visible on each message
+- Unread/read state is supported
+- Admin selects a category when sending
+
 ---
 
-# EPIC 5 — Admin MVP (Provisioning + Operational Control)
+# EPIC 5 - Admin MVP (Provisioning + Operational Control)
 
 **E5-S1 [STARTED] Admin Dashboard**  
 Description: Operational overview: pending items, quick links.  
@@ -211,7 +226,7 @@ Acceptance:
 
 ---
 
-# EPIC 6 — Core Platform Hardening (Security + Data Integrity)
+# EPIC 6 - Core Platform Hardening (Security + Data Integrity)
 
 **E6-S1 [DONE] Password Hashing + Verification**  
 Description: Implement secure hashing (bcrypt via passlib/bcrypt) and login verification.  
@@ -268,7 +283,7 @@ Acceptance: multi-step actions are atomic (e.g., create appointment + audit).
 
 ---
 
-# EPIC 7 — Audit Logging (Security & Accountability)
+# EPIC 7 - Audit Logging (Security & Accountability)
 
 **E7-S1 [DONE] Audit Log Model**  
 Description: AuditLog records actor, role, action, entity, timestamp, metadata JSON.  
@@ -284,7 +299,7 @@ Acceptance: Filters by date/action/user/entity.
 
 ---
 
-# EPIC 8 — Testing & QA (After Features Exist)
+# EPIC 8 - Testing & QA (After Features Exist)
 
 **E8-S1 [DONE] Unit Test Foundations**  
 Description: Add factories/helpers and baseline test setup.  
@@ -308,7 +323,7 @@ Acceptance: Runs locally + in CI.
 
 ---
 
-# EPIC 9 — GitLab CI/CD Quality Gates
+# EPIC 9 - GitLab CI/CD Quality Gates
 
 **E9-S1 [DONE] Choose Tooling (Lint/Format/Security)**  
 Description: Standardise: formatter + linter + security scanner (one stack).  
@@ -326,7 +341,7 @@ Acceptance: Coverage visible per pipeline.
 
 ---
 
-# EPIC 10 — Documentation + Non-Functional Requirements
+# EPIC 10 - Documentation + Non-Functional Requirements
 
 **E10-S1 [TODO] README (Run, Seed, Demo Accounts)**  
 Description: Docker run steps, env vars, seed scripts, demo accounts, troubleshooting.  
@@ -353,7 +368,7 @@ Acceptance:
 
 **E10-S5 [TODO] Performance Target: <3s Typical Actions + Pagination Definition**  
 Description:
-- Define “typical actions” and enforce pagination where needed (appointments list, audit logs, bloodwork history, notifications list).
+- Define "typical actions" and enforce pagination where needed (appointments list, audit logs, bloodwork history, notifications list).
 - Add lightweight timing measurement (logs or in-app timing) for these actions.
 Acceptance:
 - Typical actions consistently under ~3 seconds in local docker environment with seeded demo data
@@ -361,7 +376,7 @@ Acceptance:
 
 ---
 
-# EPIC 11 — Deployment, Observability & Operations (Optional / Final Hardening)
+# EPIC 11 - Deployment, Observability & Operations (Optional / Final Hardening)
 
 **E11-S1 [TODO] Deployment Target + Runbook**  
 Description: Document hosting target, health checks, and rollback steps.  

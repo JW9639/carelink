@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from app.models.appointment import Appointment
     from app.models.prescription import Prescription
     from app.models.bloodwork import Bloodwork
+    from app.models.doctor_message import DoctorMessage
 
 
 class Doctor(TimestampMixin, Base):
@@ -57,4 +58,7 @@ class Doctor(TimestampMixin, Base):
     )
     bloodwork_reviews: Mapped[list["Bloodwork"]] = relationship(
         "Bloodwork", back_populates="approved_by_doctor"
+    )
+    messages: Mapped[list["DoctorMessage"]] = relationship(
+        "DoctorMessage", back_populates="doctor"
     )

@@ -40,6 +40,7 @@ def render_sidebar(role: str) -> None:
             _nav_button("Patients", "pages/doctor_2_Patients.py")
             _nav_button("Results Review", "pages/doctor_3_Results_Review.py")
             _nav_button("Appointments", "pages/doctor_4_Appointments.py")
+            _nav_button("Messages", "pages/doctor_6_Messages.py")
             _nav_button("Profile", "pages/doctor_5_Profile.py")
         elif role == "admin":
             _nav_button("Dashboard", "pages/admin_1_Dashboard.py")
