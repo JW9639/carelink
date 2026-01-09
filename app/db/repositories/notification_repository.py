@@ -20,7 +20,9 @@ class NotificationRepository:
         self, patient_id: int, unread_only: bool = False
     ) -> list[Notification]:
         """Return notifications for a patient."""
-        query = self.db.query(Notification).filter(Notification.patient_id == patient_id)
+        query = self.db.query(Notification).filter(
+            Notification.patient_id == patient_id
+        )
         if unread_only:
             query = query.filter(Notification.is_read.is_(False))
         return query.order_by(Notification.created_at.desc()).all()

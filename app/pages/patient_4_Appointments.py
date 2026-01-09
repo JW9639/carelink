@@ -513,7 +513,6 @@ try:
             [data-testid="stColumn"]:has(.confirm-marker) button p {
                 color: #ffffff !important;
             }
-            
             /* ========== MODAL DIALOG STYLING ========== */
             /* Modal dialog container - white background */
             div[role="dialog"] {
@@ -709,9 +708,7 @@ try:
                             )
                             is_past = current_date < today
                             is_weekend = i == 0 or i == 6
-                            is_selected = (
-                                st.session_state.selected_date == current_date
-                            )
+                            is_selected = st.session_state.selected_date == current_date
 
                             if is_selected:
                                 st.markdown(
@@ -857,7 +854,9 @@ try:
             # Modal using st.dialog (Streamlit 1.33+)
             @st.dialog("Confirm Your Appointment", width="large")
             def show_confirmation_modal():
-                st.markdown('<div class="confirm-marker"></div>', unsafe_allow_html=True)
+                st.markdown(
+                    '<div class="confirm-marker"></div>', unsafe_allow_html=True
+                )
 
                 # Display selected date/time
                 appt_datetime = datetime.combine(
@@ -908,9 +907,7 @@ try:
                     label_visibility="collapsed",
                 )
 
-                st.markdown(
-                    "<div style='height: 16px;'></div>", unsafe_allow_html=True
-                )
+                st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
                 # Action buttons
                 btn_col1, btn_col2 = st.columns(2)
@@ -922,7 +919,10 @@ try:
 
                 with btn_col2:
                     if st.button(
-                        "Confirm Booking", type="primary", use_container_width=True, key="modal_confirm"
+                        "Confirm Booking",
+                        type="primary",
+                        use_container_width=True,
+                        key="modal_confirm",
                     ):
                         if not reason:
                             st.error("Please enter a reason for your visit.")

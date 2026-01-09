@@ -335,9 +335,7 @@ try:
         patient_ids = [patient.id for patient in patients]
 
         def patient_label(patient_id: int) -> str:
-            patient = next(
-                (item for item in patients if item.id == patient_id), None
-            )
+            patient = next((item for item in patients if item.id == patient_id), None)
             if not patient:
                 return str(patient_id)
             return f"{patient.id} - {patient.first_name} {patient.last_name}"
@@ -383,7 +381,11 @@ try:
             st.session_state.bloodwork_panel_key
         )
         patient = next(
-            (item for item in patients if item.id == st.session_state.bloodwork_patient_id),
+            (
+                item
+                for item in patients
+                if item.id == st.session_state.bloodwork_patient_id
+            ),
             None,
         )
         if not patient:
@@ -432,7 +434,9 @@ try:
 
             marker_inputs: list[tuple[dict, str, str]] = []
             with st.container():
-                st.markdown('<div class="entry-list-anchor"></div>', unsafe_allow_html=True)
+                st.markdown(
+                    '<div class="entry-list-anchor"></div>', unsafe_allow_html=True
+                )
                 for marker in panel.get("markers", []):
                     marker_key = marker.get("key", marker.get("name"))
                     input_key = f"bloodwork_value_{marker_key}"
@@ -441,14 +445,19 @@ try:
 
                     reference = marker.get("reference_range", {})
                     ref_text = ""
-                    if reference.get("low") is not None and reference.get("high") is not None:
+                    if (
+                        reference.get("low") is not None
+                        and reference.get("high") is not None
+                    ):
                         ref_text = f"{reference.get('low')} - {reference.get('high')}"
                     reference_note = marker.get("reference_note", "")
                     display_reference = ref_text or reference_note or "Not provided"
                     unit = marker.get("unit", "")
                     unit_text = f" ({unit})" if unit else ""
 
-                    col_left, col_mid, col_right = st.columns([2.1, 2.4, 1.1], gap="small")
+                    col_left, col_mid, col_right = st.columns(
+                        [2.1, 2.4, 1.1], gap="small"
+                    )
                     with col_left:
                         st.markdown(
                             f'<div class="entry-marker">{escape(marker.get("name", "Marker"))}'
@@ -463,7 +472,9 @@ try:
                             unsafe_allow_html=True,
                         )
                     with col_right:
-                        placeholder = "Enter value" if value_type == "text" else "Enter number"
+                        placeholder = (
+                            "Enter value" if value_type == "text" else "Enter number"
+                        )
                         st.text_input(
                             "Result",
                             key=input_key,
@@ -471,7 +482,9 @@ try:
                             placeholder=placeholder,
                         )
 
-            st.markdown('<div class="entry-actions-anchor"></div>', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="entry-actions-anchor"></div>', unsafe_allow_html=True
+            )
             col_back, col_spacer, col_save = st.columns([1, 4, 1], gap="small")
             with col_back:
                 back_clicked = st.form_submit_button("Back")
@@ -542,7 +555,9 @@ try:
             ]
         )
         with st.form("review_form", enter_to_submit=False):
-            st.markdown('<div class="review-card-anchor"></div>', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="review-card-anchor"></div>', unsafe_allow_html=True
+            )
             st.markdown(review_summary, unsafe_allow_html=True)
             st.markdown(
                 '<div class="results-section">Review captured values</div>',

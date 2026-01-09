@@ -48,7 +48,9 @@ with tab_active:
         for rx in active_prescriptions:
             doctor = rx.prescribed_by_doctor
             doctor_name = (
-                f"Dr. {doctor.first_name} {doctor.last_name}" if doctor else "Prescriber"
+                f"Dr. {doctor.first_name} {doctor.last_name}"
+                if doctor
+                else "Prescriber"
             )
             notes = escape(rx.notes) if rx.notes else ""
             st.markdown(
@@ -100,7 +102,9 @@ with tab_history:
         for rx in history_prescriptions:
             doctor = rx.prescribed_by_doctor
             doctor_name = (
-                f"Dr. {doctor.first_name} {doctor.last_name}" if doctor else "Prescriber"
+                f"Dr. {doctor.first_name} {doctor.last_name}"
+                if doctor
+                else "Prescriber"
             )
             notes = escape(rx.notes) if rx.notes else ""
             end_date = rx.end_date.strftime("%B %d, %Y") if rx.end_date else "Ended"

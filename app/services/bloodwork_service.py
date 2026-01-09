@@ -12,7 +12,6 @@ from app.db.repositories.bloodwork_repository import BloodworkRepository
 from app.models.bloodwork import Bloodwork
 
 
-
 def _rr(low: float, high: float) -> dict[str, float]:
     return {"low": low, "optimal_low": low, "optimal_high": high, "high": high}
 
@@ -29,13 +28,17 @@ PANEL_TEMPLATES.extend(
                     "name": "Height",
                     "key": "height",
                     "unit": "cm",
-                    "reference_note": "No standard reference range (individual measurement).",
+                    "reference_note": (
+                        "No standard reference range " "(individual measurement)."
+                    ),
                 },
                 {
                     "name": "Weight",
                     "key": "weight",
                     "unit": "kg",
-                    "reference_note": "No standard reference range (individual measurement).",
+                    "reference_note": (
+                        "No standard reference range " "(individual measurement)."
+                    ),
                 },
                 {
                     "name": "BMI",
@@ -47,7 +50,10 @@ PANEL_TEMPLATES.extend(
                     "name": "Waist circumference",
                     "key": "waist_circumference",
                     "unit": "cm",
-                    "reference_note": "Men <94 cm (low risk), <102 cm (high risk); Women <80 cm (low risk), <88 cm (high risk).",
+                    "reference_note": (
+                        "Men <94 cm (low risk), <102 cm (high risk); "
+                        "Women <80 cm (low risk), <88 cm (high risk)."
+                    ),
                 },
                 {
                     "name": "Hip circumference",

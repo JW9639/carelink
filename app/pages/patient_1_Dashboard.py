@@ -51,13 +51,13 @@ finally:
 hour = datetime.now().hour
 if hour < 12:
     greeting = "Good morning"
-  
+
 elif hour < 18:
     greeting = "Good afternoon"
-  
+
 else:
     greeting = "Good evening"
-   
+
 
 render_page_header(
     f"{greeting}, {first_name}!",

@@ -11,7 +11,9 @@ from app.services.appointment_service import AppointmentService
 from app.utils.constants import AppointmentStatus, BookingSource
 
 
-def test_get_available_slots_blocks_overlaps(test_db, test_patient, test_doctor, test_user):
+def test_get_available_slots_blocks_overlaps(
+    test_db, test_patient, test_doctor, test_user
+):
     target_date = date.today() + timedelta(days=1)
     scheduled = datetime.combine(target_date, time(10, 0), tzinfo=timezone.utc)
     appointment = Appointment(

@@ -86,7 +86,9 @@ def _range_positions(
     return low_pct, high_pct, scale_min, scale_max
 
 
-def _value_position(value: float | None, scale_min: float, scale_max: float) -> float | None:
+def _value_position(
+    value: float | None, scale_min: float, scale_max: float
+) -> float | None:
     if value is None:
         return None
     try:
@@ -174,19 +176,21 @@ if not panel_cards:
 
 if st.session_state.bloodwork_view == "panels":
     with st.container():
-        st.markdown('<div class="bloodwork-panels-anchor"></div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="bloodwork-panels-anchor"></div>', unsafe_allow_html=True
+        )
         panels_per_page = 6
         total_panels = len(panel_cards)
         total_pages = max(1, math.ceil(total_panels / panels_per_page))
-        current_page = min(
-            max(st.session_state.bloodwork_panel_page, 1), total_pages
-        )
+        current_page = min(max(st.session_state.bloodwork_panel_page, 1), total_pages)
         st.session_state.bloodwork_panel_page = current_page
 
         if total_pages > 1:
             col_prev, col_page, col_next = st.columns([1, 2, 1], gap="small")
             with col_prev:
-                if st.button("Previous", use_container_width=True, disabled=current_page == 1):
+                if st.button(
+                    "Previous", use_container_width=True, disabled=current_page == 1
+                ):
                     st.session_state.bloodwork_panel_page = current_page - 1
                     st.rerun()
             with col_page:
@@ -203,7 +207,11 @@ if st.session_state.bloodwork_view == "panels":
                     unsafe_allow_html=True,
                 )
             with col_next:
-                if st.button("Next", use_container_width=True, disabled=current_page == total_pages):
+                if st.button(
+                    "Next",
+                    use_container_width=True,
+                    disabled=current_page == total_pages,
+                ):
                     st.session_state.bloodwork_panel_page = current_page + 1
                     st.rerun()
 
@@ -217,7 +225,9 @@ if st.session_state.bloodwork_view == "panels":
             cat_summary = bloodwork_service.summarize_category(category)
             doctor = bw.approved_by_doctor
             doctor_name = (
-                f"Dr. {doctor.first_name} {doctor.last_name}" if doctor else "Assigned Clinician"
+                f"Dr. {doctor.first_name} {doctor.last_name}"
+                if doctor
+                else "Assigned Clinician"
             )
             panel_name = escape(category.get("name") or panel["test_name"] or "Panel")
             status_text = (
@@ -273,10 +283,15 @@ elif st.session_state.bloodwork_view == "markers":
         st.session_state.bloodwork_view = "panels"
         st.rerun()
 
-    st.markdown(f"<h3 style='color: #000000; margin-bottom: 8px;'>{category_name}</h3>", unsafe_allow_html=True)
+    st.markdown(
+        f"<h3 style='color: #000000; margin-bottom: 8px;'>{category_name}</h3>",
+        unsafe_allow_html=True,
+    )
 
     markers = [
-        marker for marker in category.get("markers", []) if _has_value(marker.get("value"))
+        marker
+        for marker in category.get("markers", [])
+        if _has_value(marker.get("value"))
     ]
     if not markers:
         st.info("No results were reported for this panel.")
@@ -313,7 +328,7 @@ elif st.session_state.bloodwork_view == "markers":
         interpretation_html = ""
         if interpretation:
             interpretation_html = (
-                "<div style=\"font-size: 16px; color: #0f172a; margin-top: 10px;\">"
+                '<div style="font-size: 16px; color: #0f172a; margin-top: 10px;">'
                 f"Interpretation: {escape(str(interpretation))}</div>"
             )
         range_background = "#e5e7eb"
@@ -327,26 +342,24 @@ elif st.session_state.bloodwork_view == "markers":
         boundary_html = ""
         if low_pct is not None and high_pct is not None:
             boundary_html = (
-                "<div style=\"position:absolute; left:{0}%; top:-4px; width:2px; "
-                "height:18px; background:#94a3b8; transform: translateX(-50%);\"></div>"
-                "<div style=\"position:absolute; left:{1}%; top:-4px; width:2px; "
-                "height:18px; background:#94a3b8; transform: translateX(-50%);\"></div>"
+                '<div style="position:absolute; left:{0}%; top:-4px; width:2px; '
+                'height:18px; background:#94a3b8; transform: translateX(-50%);"></div>'
+                '<div style="position:absolute; left:{1}%; top:-4px; width:2px; '
+                'height:18px; background:#94a3b8; transform: translateX(-50%);"></div>'
             ).format(low_pct, high_pct)
         value_html = ""
         if value_pct is not None:
             value_pct = max(0.0, min(100.0, value_pct))
             value_html = (
-                "<div style=\"position:absolute; left:{0}%; top:-8px; width:0; height:0; "
+                '<div style="position:absolute; left:{0}%; top:-8px; width:0; height:0; '
                 "border-left:7px solid transparent; border-right:7px solid transparent; "
-                "border-top:12px solid #0f172a; transform: translateX(-50%);\"></div>"
+                'border-top:12px solid #0f172a; transform: translateX(-50%);"></div>'
             ).format(value_pct)
 
         reference_display = (
             escape(reference_text)
             if reference_text
-            else escape(reference_note)
-            if reference_note
-            else "Not available"
+            else escape(reference_note) if reference_note else "Not available"
         )
         card_html = "\n".join(
             [
