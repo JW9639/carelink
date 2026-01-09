@@ -60,9 +60,7 @@ try:
         patients = patient_repo.get_by_doctor_id(doctor.id)
 
         today = date.today()
-        start_of_day = datetime.combine(today, time.min).replace(
-            tzinfo=timezone.utc
-        )
+        start_of_day = datetime.combine(today, time.min).replace(tzinfo=timezone.utc)
         end_of_day = datetime.combine(today, time.max).replace(tzinfo=timezone.utc)
 
         appointments_today = appointment_repo.get_doctor_appointments(
