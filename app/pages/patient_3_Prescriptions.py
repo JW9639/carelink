@@ -10,6 +10,7 @@ from app.db.session import SessionLocal
 from app.services.patient_service import PatientService
 from app.services.prescription_service import PrescriptionService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Prescriptions", ["patient"]):
@@ -32,8 +33,10 @@ try:
 finally:
     db.close()
 
-st.markdown("## Prescriptions")
-st.markdown("View your current medications and prescription history.")
+render_page_header(
+    "Prescriptions",
+    "View your current medications and prescription history.",
+)
 st.markdown("---")
 
 tab_active, tab_history = st.tabs(["Active", "History"])

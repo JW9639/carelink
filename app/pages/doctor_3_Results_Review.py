@@ -12,6 +12,7 @@ from app.db.repositories.patient_repository import PatientRepository
 from app.db.session import SessionLocal
 from app.services.bloodwork_service import BloodworkService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Results Review", ["doctor"]):
@@ -314,15 +315,10 @@ try:
     patients = patient_repo.get_by_doctor_id(doctor.id)
     panels = bloodwork_service.get_panel_templates()
 
-    hero_html = "\n".join(
-        [
-            '<div class="results-hero">',
-            "<h2>Results Review</h2>",
-            "<p>Capture lab values, confirm ranges, and publish results to the patient portal.</p>",
-            "</div>",
-        ]
+    render_page_header(
+        "Results Review",
+        "Capture lab values, confirm ranges, and publish results to the patient portal.",
     )
-    st.markdown(hero_html, unsafe_allow_html=True)
 
     if st.session_state.bloodwork_publish_success:
         _show_publish_dialog()

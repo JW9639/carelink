@@ -10,6 +10,7 @@ import streamlit as st
 from app.db.session import SessionLocal
 from app.services.patient_service import PatientService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Patient Dashboard", ["patient"]):
@@ -46,8 +47,6 @@ try:
 finally:
     db.close()
 
-safe_first_name = escape(first_name)
-
 # Current time for greeting
 hour = datetime.now().hour
 if hour < 12:
@@ -60,21 +59,9 @@ else:
     greeting = "Good evening"
    
 
-# Welcome Section with gradient background
-st.markdown(
-    f"""
-    <div style="
-        background: linear-gradient(135deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 168, 150, 0.08) 100%);
-        border-radius: 20px;
-        padding: 32px;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(0, 102, 204, 0.1);
-    ">
-        <h1 style="color: #1e293b; margin: 0 0 8px 0; font-weight: 700; font-size: 2rem;">{greeting}, {safe_first_name}!</h1>
-        <p style="color: #64748b; margin: 0; font-size: 1.1rem;">Welcome back to your health dashboard. Here's what's happening today.</p>
-    </div>
-    """,
-    unsafe_allow_html=True,
+render_page_header(
+    f"{greeting}, {first_name}!",
+    "Welcome back to your health dashboard. Here's what's happening today.",
 )
 
 # Quick Stats Row
@@ -94,7 +81,6 @@ with col1:
     st.markdown(
         f"""
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(0, 102, 204, 0.15), rgba(0, 102, 204, 0.05)); color: #0066cc;">📅</div>
             <div class="stat-content">
                 <div class="stat-number">{appt_count}</div>
                 <div class="stat-label">Appointment{'s' if appt_count != 1 else ''}</div>
@@ -108,7 +94,6 @@ with col2:
     st.markdown(
         f"""
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(6, 214, 160, 0.15), rgba(6, 214, 160, 0.05)); color: #059669;">💊</div>
             <div class="stat-content">
                 <div class="stat-number">{rx_count}</div>
                 <div class="stat-label">Prescription{'s' if rx_count != 1 else ''}</div>
@@ -122,7 +107,6 @@ with col3:
     st.markdown(
         f"""
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706;">🔬</div>
             <div class="stat-content">
                 <div class="stat-number">{pending_count}</div>
                 <div class="stat-label">Pending Result{'s' if pending_count != 1 else ''}</div>
@@ -136,7 +120,6 @@ with col4:
     st.markdown(
         f"""
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: #dc2626;">🔔</div>
             <div class="stat-content">
                 <div class="stat-number">{notif_count}</div>
                 <div class="stat-label">Notification{'s' if notif_count != 1 else ''}</div>
@@ -171,9 +154,9 @@ with left_col:
 
         # Status display based on pending or confirmed
         if next_appt_info.is_pending:
-            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706; border-radius: 20px; font-size: 13px; font-weight: 600;">⏳ Pending Review</span>'
+            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); color: #d97706; border-radius: 20px; font-size: 13px; font-weight: 600;">Pending Review</span>'
         else:
-            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">✓ Confirmed</span>'
+            status_html = '<span style="display: inline-block; padding: 6px 14px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); color: #059669; border-radius: 20px; font-size: 13px; font-weight: 600;">Confirmed</span>'
 
         st.markdown(
             f"""
@@ -186,10 +169,10 @@ with left_col:
                     <div class="appointment-details">
                         <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 1.25rem; font-weight: 700;">{safe_reason}</h4>
                         <p style="margin: 0 0 6px 0; color: #475569; font-size: 15px;">
-                            <strong style="color: #1e293b;">{safe_doctor_name}</strong> • {safe_specialty}
+                            <strong style="color: #1e293b;">{safe_doctor_name}</strong> - {safe_specialty}
                         </p>
                         <p style="margin: 0; color: #64748b; font-size: 14px;">
-                            🕐 {time_str}
+                            Time: {time_str}
                         </p>
                     </div>
                 </div>

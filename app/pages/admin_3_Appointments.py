@@ -10,6 +10,7 @@ from app.db.session import SessionLocal
 from app.db.repositories.doctor_repository import DoctorRepository
 from app.services.appointment_service import AppointmentService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Appointments", ["admin"]):
@@ -31,9 +32,10 @@ try:
         f"Dr. {d.first_name} {d.last_name} ({d.specialty})": d.id for d in all_doctors
     }
 
-    # Page header
-    st.markdown("### Appointment Management")
-    st.markdown("Review pending appointments and assign doctors.")
+    render_page_header(
+        "Appointment Management",
+        "Review pending appointments and assign doctors.",
+    )
     st.markdown("---")
 
     # Show success message

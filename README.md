@@ -1,5 +1,8 @@
 # CareLink
 
+[![pipeline status](https://gitlab-se.eeecs.qub.ac.uk/40365072/carelink_2/badges/main/pipeline.svg)](https://gitlab-se.eeecs.qub.ac.uk/40365072/carelink_2/-/pipelines)
+[![coverage report](https://gitlab-se.eeecs.qub.ac.uk/40365072/carelink_2/badges/main/coverage.svg)](https://gitlab-se.eeecs.qub.ac.uk/40365072/carelink_2/-/pipelines)
+
 CareLink is a role-based patient and doctor dashboard for integrated patient
 management and hybrid appointment booking built with Streamlit, PostgreSQL,
 SQLAlchemy 2.0, and Pydantic.
@@ -55,11 +58,14 @@ SQLAlchemy 2.0, and Pydantic.
 2. Run formatting and linting:
    - `black --check app tests`
    - `flake8 app tests`
-3. Apply migrations (after configuring DB): `alembic upgrade head`
+3. Run security checks:
+   - `bandit -r app`
+4. Apply migrations (after configuring DB): `alembic upgrade head`
 
 ## Running Tests
 
 - Unit tests with coverage: `pytest`
+- Coverage XML (CI-compatible): `pytest --cov-report=xml:coverage.xml`
 
 ## Project Structure
 

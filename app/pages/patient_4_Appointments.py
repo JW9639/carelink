@@ -13,6 +13,7 @@ from app.db.session import SessionLocal
 from app.services.appointment_service import AppointmentService
 from app.services.patient_service import PatientService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 from app.utils.constants import AppointmentStatus
 
 
@@ -62,13 +63,9 @@ try:
         st.error("Patient profile not found.")
         st.stop()
 
-    # Page header
-    st.markdown(
-        """
-    <h2 style="color: #1e293b; margin-bottom: 8px;">Appointments</h2>
-    <p style="color: #64748b; font-size: 16px; margin-bottom: 24px;">View your appointments or book a new visit.</p>
-    """,
-        unsafe_allow_html=True,
+    render_page_header(
+        "Appointments",
+        "View your appointments or book a new visit.",
     )
 
     # Show success message if just booked
@@ -141,7 +138,7 @@ try:
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div style="font-weight: 600; color: #1e293b; font-size: 15px;">{appt_date}</div>
-                            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} • {appt.duration_minutes} min • {doctor_info}</div>
+                            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} - {appt.duration_minutes} min - {doctor_info}</div>
                             {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {reason_text}</div>' if reason_text else ''}
                         </div>
                         <div style="
@@ -166,7 +163,7 @@ try:
 
                 with col1:
                     if st.button(
-                        "◀ Previous",
+                        "Previous",
                         disabled=st.session_state.upcoming_page == 0,
                         key="prev_upcoming",
                     ):
@@ -181,7 +178,7 @@ try:
 
                 with col3:
                     if st.button(
-                        "Next ▶",
+                        "Next",
                         disabled=st.session_state.upcoming_page
                         >= total_upcoming_pages - 1,
                         key="next_upcoming",
@@ -263,7 +260,7 @@ try:
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div style="font-weight: 600; color: #475569; font-size: 15px;">{appt_date}</div>
-                            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} • {appt.duration_minutes} min • {doctor_info}</div>
+                            <div style="color: #64748b; font-size: 14px; margin-top: 4px;">{appt_time} - {appt.duration_minutes} min - {doctor_info}</div>
                             {f'<div style="color: #94a3b8; font-size: 13px; margin-top: 4px;">Reason: {reason_text}</div>' if reason_text else ''}
                         </div>
                         <div style="
@@ -288,7 +285,7 @@ try:
 
                 with col1:
                     if st.button(
-                        "◀ Previous",
+                        "Previous",
                         disabled=st.session_state.history_page == 0,
                         key="prev_history",
                     ):
@@ -303,7 +300,7 @@ try:
 
                 with col3:
                     if st.button(
-                        "Next ▶",
+                        "Next",
                         disabled=st.session_state.history_page >= total_pages - 1,
                         key="next_history",
                     ):
@@ -646,7 +643,7 @@ try:
             nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
 
             with nav_col1:
-                if st.button("← Prev", key="prev_month", use_container_width=True):
+                if st.button("Prev", key="prev_month", use_container_width=True):
                     if st.session_state.calendar_month == 1:
                         st.session_state.calendar_month = 12
                         st.session_state.calendar_year -= 1
@@ -664,7 +661,7 @@ try:
                 )
 
             with nav_col3:
-                if st.button("Next →", key="next_month", use_container_width=True):
+                if st.button("Next", key="next_month", use_container_width=True):
                     if st.session_state.calendar_month == 12:
                         st.session_state.calendar_month = 1
                         st.session_state.calendar_year += 1
@@ -718,7 +715,7 @@ try:
 
                             if is_selected:
                                 st.markdown(
-                                    f"<div style='text-align:center;padding:2px;'><div style='display:flex;align-items:center;justify-content:center;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:600;padding:8px 4px;box-shadow:0 2px 4px rgba(16,185,129,0.3);'>✓ {day}</div></div>",
+                                    f"<div style='text-align:center;padding:2px;'><div style='display:flex;align-items:center;justify-content:center;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:600;padding:8px 4px;box-shadow:0 2px 4px rgba(16,185,129,0.3);'>* {day}</div></div>",
                                     unsafe_allow_html=True,
                                 )
                             elif is_past or is_weekend:
@@ -763,7 +760,7 @@ try:
                 with dur_col1:
                     is_30_selected = st.session_state.selected_duration == 30
                     if st.button(
-                        "✓ 30 min" if is_30_selected else "30 min",
+                        "* 30 min" if is_30_selected else "30 min",
                         key="dur_30",
                         type="primary" if is_30_selected else "secondary",
                         use_container_width=True,
@@ -774,7 +771,7 @@ try:
                 with dur_col2:
                     is_60_selected = st.session_state.selected_duration == 60
                     if st.button(
-                        "✓ 60 min" if is_60_selected else "60 min",
+                        "* 60 min" if is_60_selected else "60 min",
                         key="dur_60",
                         type="primary" if is_60_selected else "secondary",
                         use_container_width=True,
@@ -801,7 +798,7 @@ try:
                         if slot.is_available:
                             btn_type = "primary" if is_selected else "secondary"
                             if st.button(
-                                f"✓ {slot.display}" if is_selected else slot.display,
+                                f"* {slot.display}" if is_selected else slot.display,
                                 key=f"am_{slot.time}",
                                 type=btn_type,
                                 use_container_width=True,
@@ -827,7 +824,7 @@ try:
                         if slot.is_available:
                             btn_type = "primary" if is_selected else "secondary"
                             if st.button(
-                                f"✓ {slot.display}" if is_selected else slot.display,
+                                f"* {slot.display}" if is_selected else slot.display,
                                 key=f"pm_{slot.time}",
                                 type=btn_type,
                                 use_container_width=True,
@@ -846,7 +843,7 @@ try:
             with btn_col:
                 st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
                 if st.button(
-                    "Continue to Confirm →", type="primary", use_container_width=True
+                    "Continue to Confirm", type="primary", use_container_width=True
                 ):
                     st.session_state.show_booking_modal = True
                     st.rerun()
@@ -919,7 +916,7 @@ try:
                 btn_col1, btn_col2 = st.columns(2)
 
                 with btn_col1:
-                    if st.button("← Back", use_container_width=True, key="modal_back"):
+                    if st.button("Back", use_container_width=True, key="modal_back"):
                         st.session_state.show_booking_modal = False
                         st.rerun()
 

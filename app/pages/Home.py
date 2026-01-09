@@ -101,9 +101,8 @@ def main() -> None:
     col1, col2, col3 = st.columns([1.5, 1.5, 1.5])
 
     with col2:
-        # Login form header
         st.markdown(
-            '<h2 style="text-align: center; color: #2b2d42; font-weight: 700; margin-bottom: 1.5rem;">Sign In to CareLink</h2>',
+            '<div class="login-title">Sign In to CareLink</div>',
             unsafe_allow_html=True,
         )
 
@@ -137,7 +136,7 @@ def main() -> None:
 
     # Fixed footer
     st.markdown(
-        '<div class="app-footer">© 2025 CareLink Healthcare System</div>',
+        '<div class="app-footer">(c) 2025 CareLink Healthcare System</div>',
         unsafe_allow_html=True,
     )
 

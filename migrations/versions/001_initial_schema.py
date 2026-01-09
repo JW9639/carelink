@@ -10,7 +10,6 @@ from __future__ import annotations
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.exc import ProgrammingError
 
 
 revision = "001_initial_schema"
@@ -25,10 +24,22 @@ def upgrade() -> None:
     
     # Create enum types using conditional logic
     enum_types = [
-        ("userrole", ['patient', 'doctor', 'admin']),
-        ("appointmentstatus", ['scheduled', 'completed', 'cancelled', 'no_show']),
-        ("bookingsource", ['online', 'phone']),
-        ("notificationtype", ['appointment_reminder', 'results_ready', 'follow_up', 'prescription_update', 'general'])
+        ("userrole", ["patient", "doctor", "admin"]),
+        (
+            "appointmentstatus",
+            ["scheduled", "completed", "cancelled", "no_show", "pending"],
+        ),
+        ("bookingsource", ["online", "phone"]),
+        (
+            "notificationtype",
+            [
+                "appointment_reminder",
+                "results_ready",
+                "follow_up",
+                "prescription_update",
+                "general",
+            ],
+        ),
     ]
     
     for enum_name, enum_values in enum_types:
@@ -152,14 +163,27 @@ def upgrade() -> None:
         "appointments",
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("patient_id", sa.Integer(), sa.ForeignKey("patients.id"), nullable=False),
-        sa.Column("doctor_id", sa.Integer(), sa.ForeignKey("doctors.id"), nullable=False),
+        sa.Column("doctor_id", sa.Integer(), sa.ForeignKey("doctors.id"), nullable=True),
         sa.Column("scheduled_datetime", sa.DateTime(timezone=True), nullable=False),
-        sa.Column("duration_minutes", sa.Integer(), nullable=False, server_default="15"),
+        sa.Column(
+            "duration_minutes",
+            sa.Integer(),
+            nullable=False,
+            server_default=sa.text("30"),
+        ),
         sa.Column(
             "status",
-            postgresql.ENUM('scheduled', 'completed', 'cancelled', 'no_show', name='appointmentstatus', create_type=False),
+            postgresql.ENUM(
+                "scheduled",
+                "completed",
+                "cancelled",
+                "no_show",
+                "pending",
+                name="appointmentstatus",
+                create_type=False,
+            ),
             nullable=False,
-            server_default="scheduled",
+            server_default=sa.text("'pending'"),
         ),
         sa.Column(
             "booking_source",

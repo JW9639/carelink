@@ -12,6 +12,7 @@ from app.db.session import SessionLocal
 from app.services.bloodwork_service import BloodworkService
 from app.services.patient_service import PatientService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Bloodwork", ["patient"]):
@@ -143,13 +144,9 @@ try:
 finally:
     db.close()
 
-st.markdown(
-    "<h2 style='color: #1e293b; margin-bottom: 4px;'>Bloodwork Results</h2>",
-    unsafe_allow_html=True,
-)
-st.markdown(
-    "<p style='color: #0f172a; font-size: 16px; margin-top: 0;'>Review your published lab results and explore individual markers in detail.</p>",
-    unsafe_allow_html=True,
+render_page_header(
+    "Bloodwork Results",
+    "Review your published lab results and explore individual markers in detail.",
 )
 st.markdown("---")
 
@@ -197,7 +194,7 @@ if st.session_state.bloodwork_view == "panels":
                 end_idx = min(current_page * panels_per_page, total_panels)
                 st.markdown(
                     f"<div style='text-align: center; color: #0f172a; font-size: 16px;'>"
-                    f"Showing {start_idx}–{end_idx} of {total_panels} panels</div>",
+                    f"Showing {start_idx}-{end_idx} of {total_panels} panels</div>",
                     unsafe_allow_html=True,
                 )
                 st.markdown(

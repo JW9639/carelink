@@ -134,6 +134,15 @@ section.stSidebar,
   border: none !important;
 }
 
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  margin: 0 0 1.75rem 0;
+  letter-spacing: 0.5px;
+}
+
 /* Form group spacing */
 .form-group {
   margin-bottom: 1.25rem;

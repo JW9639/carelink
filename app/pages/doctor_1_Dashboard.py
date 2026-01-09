@@ -5,13 +5,16 @@ from __future__ import annotations
 import streamlit as st
 
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 
 
 if not apply_dashboard_layout("Doctor Dashboard", ["doctor"]):
     st.stop()
 
-st.markdown(f"### Welcome back, Dr. {st.session_state.get('user_name', '')}!")
-st.markdown("---")
+render_page_header(
+    f"Welcome back, Dr. {st.session_state.get('user_name', '')}!",
+    "Here is a snapshot of today's workload.",
+)
 
 st.markdown("## Today at a Glance")
 col1, col2, col3, col4 = st.columns(4)

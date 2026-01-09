@@ -10,6 +10,7 @@ from app.db.session import SessionLocal
 from app.services.notification_service import NotificationService
 from app.services.patient_service import PatientService
 from app.ui.layouts.dashboard_layout import apply_dashboard_layout
+from app.ui.components.page_header import render_page_header
 from app.utils.constants import NotificationType
 
 
@@ -45,8 +46,10 @@ try:
 finally:
     db.close()
 
-st.markdown("## Notifications")
-st.markdown("Stay up to date with messages from your care team.")
+render_page_header(
+    "Notifications",
+    "Stay up to date with messages from your care team.",
+)
 st.markdown("---")
 
 unread_notifications = [n for n in notifications if not n.is_read]
